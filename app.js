@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.5
+   BORATEC V1.6
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -10579,6 +10579,7 @@ window.hideConversationForMe =
 
 let btCommunityChannel = null;
 let btCommunityOpened = false;
+let btCommunityReplyTo = null;
 
 
 function createCommunityInterface(){
@@ -10836,6 +10837,105 @@ function createCommunityInterface(){
         .bt-community-nav-icon{
             position:relative;
         }
+
+        .bt-community-actions{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin-top:6px;
+        }
+
+        .bt-community-action{
+            border:0;
+            background:transparent;
+            color:#8fa7bc;
+            padding:3px 5px;
+            border-radius:7px;
+            font-family:inherit;
+            font-size:10px;
+            font-weight:800;
+            cursor:pointer;
+        }
+
+        .bt-community-action:hover{
+            background:rgba(255,255,255,.05);
+        }
+
+        .bt-community-action.liked{
+            color:#ff9a38;
+        }
+
+        .bt-community-reply-preview{
+            margin-bottom:6px;
+            padding:7px 9px;
+            border-left:3px solid #ff7900;
+            border-radius:7px;
+            background:rgba(255,255,255,.045);
+            cursor:pointer;
+        }
+
+        .bt-community-reply-preview strong{
+            display:block;
+            color:#ff9a38;
+            font-size:9px;
+            margin-bottom:2px;
+        }
+
+        .bt-community-reply-preview span{
+            display:block;
+            color:#9eb1c2;
+            font-size:10px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        #btCommunityReplyBar{
+            display:none;
+            align-items:center;
+            gap:8px;
+            padding:7px 12px;
+            flex-shrink:0;
+            background:#0a2239;
+            border-top:1px solid rgba(255,255,255,.06);
+        }
+
+        #btCommunityReplyBar.show{
+            display:flex;
+        }
+
+        .bt-community-reply-bar-text{
+            flex:1;
+            min-width:0;
+            font-size:10px;
+            color:#9eb1c2;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .bt-community-reply-bar-text strong{
+            color:#ff9a38;
+        }
+
+        .bt-community-reply-cancel{
+            width:28px;
+            height:28px;
+            border:0;
+            border-radius:8px;
+            background:rgba(255,255,255,.06);
+            color:#fff;
+            cursor:pointer;
+        }
+
+        .bt-community-message.bt-community-highlight{
+            animation:btCommunityHighlight 1.4s ease;
+        }
+
+        @keyframes btCommunityHighlight{
+            0%,100%{background:transparent;}
+            35%{background:rgba(255,121,0,.12);}
+        }
     `;
 
     document.head.appendChild(
@@ -10880,6 +10980,18 @@ function createCommunityInterface(){
             <div class="bt-community-empty">
                 Carregando comunidade...
             </div>
+        </div>
+
+        <div id="btCommunityReplyBar">
+            <div class="bt-community-reply-bar-text" id="btCommunityReplyText"></div>
+            <button
+                class="bt-community-reply-cancel"
+                type="button"
+                onclick="cancelCommunityReply()"
+                title="Cancelar resposta"
+            >
+                ✕
+            </button>
         </div>
 
         <form
@@ -11136,6 +11248,7 @@ async function loadCommunityMessages(
             id,
             sender_id,
             content,
+            reply_to_id,
             created_at,
             profiles (
                 id,
@@ -11158,11 +11271,25 @@ async function loadCommunityMessages(
             throw error;
         }
 
+        const messages =
+            data
+            ||
+            [];
+
+        const messageMap =
+            new Map(
+                messages.map(
+                    item => [
+                        item.id,
+                        item
+                    ]
+                )
+            );
 
         const senderIds =
             [
                 ...new Set(
-                    (data || [])
+                    messages
                     .map(
                         item =>
                             item.sender_id
@@ -11209,11 +11336,75 @@ async function loadCommunityMessages(
         }
 
 
-        if(
-            !data
-            ||
-            data.length === 0
-        ){
+        const messageIds =
+            messages
+            .map(
+                item =>
+                    item.id
+            );
+
+        const likesCount =
+            new Map();
+
+        const myLikes =
+            new Set();
+
+        if(messageIds.length){
+
+            const {
+                data:likes,
+                error:likesError
+            } =
+            await boraSupabase
+            .from(
+                "community_message_likes"
+            )
+            .select(`
+                message_id,
+                user_id
+            `)
+            .in(
+                "message_id",
+                messageIds
+            );
+
+            if(!likesError){
+
+                (likes || [])
+                .forEach(
+                    like => {
+
+                        likesCount.set(
+                            like.message_id,
+                            (
+                                likesCount.get(
+                                    like.message_id
+                                )
+                                ||
+                                0
+                            )
+                            +
+                            1
+                        );
+
+                        if(
+                            boraUser
+                            &&
+                            like.user_id
+                            ===
+                            boraUser.id
+                        ){
+                            myLikes.add(
+                                like.message_id
+                            );
+                        }
+                    }
+                );
+            }
+        }
+
+
+        if(messages.length === 0){
 
             container.innerHTML = `
                 <div class="bt-community-empty">
@@ -11228,7 +11419,7 @@ async function loadCommunityMessages(
 
 
         container.innerHTML =
-            data
+            messages
             .map(
                 message => {
 
@@ -11308,9 +11499,68 @@ async function loadCommunityMessages(
                         :
                         "";
 
+                    const parent =
+                        message.reply_to_id
+                        ?
+                        messageMap.get(
+                            message.reply_to_id
+                        )
+                        :
+                        null;
+
+                    let replyHTML =
+                        "";
+
+                    if(parent){
+
+                        const parentProfile =
+                            parent.profiles
+                            ||
+                            {};
+
+                        const parentName =
+                            parentProfile.professional_name
+                            ||
+                            parentProfile.name
+                            ||
+                            "Profissional BoraTec";
+
+                        const shortText =
+                            String(
+                                parent.content
+                                ||
+                                ""
+                            )
+                            .replace(/\s+/g," ")
+                            .slice(0,90);
+
+                        replyHTML = `
+                            <div
+                                class="bt-community-reply-preview"
+                                onclick="goToCommunityMessage('${parent.id}')"
+                            >
+                                <strong>↩ ${escapeHtml(parentName)}</strong>
+                                <span>${escapeHtml(shortText)}</span>
+                            </div>
+                        `;
+                    }
+
+                    const usefulCount =
+                        likesCount.get(
+                            message.id
+                        )
+                        ||
+                        0;
+
+                    const liked =
+                        myLikes.has(
+                            message.id
+                        );
+
                     return `
                         <div
                             class="bt-community-message ${own ? "own" : ""}"
+                            id="btCommunityMessage_${message.id}"
                             data-community-message-id="${message.id}"
                         >
 
@@ -11350,7 +11600,32 @@ async function loadCommunityMessages(
 
                                 </div>
 
+                                ${replyHTML}
+
                                 <div class="bt-community-text">${escapeHtml(message.content)}</div>
+
+                                <div class="bt-community-actions">
+
+                                    <button
+                                        class="bt-community-action ${liked ? "liked" : ""}"
+                                        type="button"
+                                        onclick="toggleCommunityUseful('${message.id}')"
+                                    >
+                                        👍 Útil${usefulCount ? ` ${usefulCount}` : ""}
+                                    </button>
+
+                                    <button
+                                        class="bt-community-action"
+                                        type="button"
+                                        onclick="replyCommunityMessage(
+                                            '${message.id}',
+                                            '${message.sender_id}'
+                                        )"
+                                    >
+                                        ↩ Responder
+                                    </button>
+
+                                </div>
 
                             </div>
 
@@ -11384,6 +11659,246 @@ async function loadCommunityMessages(
                 Não foi possível carregar a comunidade.
             </div>
         `;
+    }
+}
+
+
+function replyCommunityMessage(
+    messageId,
+    senderId
+){
+
+    const messageElement =
+        document.querySelector(
+            `[data-community-message-id="${messageId}"]`
+        );
+
+    if(!messageElement){
+        return;
+    }
+
+    const name =
+        messageElement
+        .querySelector(
+            ".bt-community-name"
+        )
+        ?.textContent
+        ?.trim()
+        ||
+        "Profissional";
+
+    const content =
+        messageElement
+        .querySelector(
+            ".bt-community-text"
+        )
+        ?.textContent
+        ?.trim()
+        ||
+        "";
+
+    btCommunityReplyTo = {
+        id:
+            messageId,
+        senderId:
+            senderId,
+        name:
+            name,
+        content:
+            content
+    };
+
+    const bar =
+        document.getElementById(
+            "btCommunityReplyBar"
+        );
+
+    const text =
+        document.getElementById(
+            "btCommunityReplyText"
+        );
+
+    if(text){
+        text.innerHTML =
+            `<strong>↩ Respondendo ${escapeHtml(name)}</strong> — ${escapeHtml(content.slice(0,80))}`;
+    }
+
+    bar
+    ?.classList
+    .add(
+        "show"
+    );
+
+    const input =
+        document.getElementById(
+            "btCommunityInput"
+        );
+
+    if(input){
+        input.placeholder =
+            `Responder ${name}...`;
+
+        input.focus();
+    }
+}
+
+
+function cancelCommunityReply(){
+
+    btCommunityReplyTo =
+        null;
+
+    document
+    .getElementById(
+        "btCommunityReplyBar"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+    const input =
+        document.getElementById(
+            "btCommunityInput"
+        );
+
+    if(input){
+        input.placeholder =
+            "Compartilhe uma dúvida, dica ou informação...";
+    }
+}
+
+
+function goToCommunityMessage(
+    messageId
+){
+
+    const element =
+        document.getElementById(
+            `btCommunityMessage_${messageId}`
+        );
+
+    if(!element){
+        return;
+    }
+
+    element.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
+
+    element.classList.remove(
+        "bt-community-highlight"
+    );
+
+    void element.offsetWidth;
+
+    element.classList.add(
+        "bt-community-highlight"
+    );
+}
+
+
+async function toggleCommunityUseful(
+    messageId
+){
+
+    if(
+        !messageId
+        ||
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    try{
+
+        const {
+            data:existing,
+            error:checkError
+        } =
+        await boraSupabase
+        .from(
+            "community_message_likes"
+        )
+        .select(
+            "id"
+        )
+        .eq(
+            "message_id",
+            messageId
+        )
+        .eq(
+            "user_id",
+            boraUser.id
+        )
+        .maybeSingle();
+
+        if(checkError){
+            throw checkError;
+        }
+
+        if(existing?.id){
+
+            const {
+                error
+            } =
+            await boraSupabase
+            .from(
+                "community_message_likes"
+            )
+            .delete()
+            .eq(
+                "id",
+                existing.id
+            )
+            .eq(
+                "user_id",
+                boraUser.id
+            );
+
+            if(error){
+                throw error;
+            }
+
+        }
+        else{
+
+            const {
+                error
+            } =
+            await boraSupabase
+            .from(
+                "community_message_likes"
+            )
+            .insert({
+                message_id:
+                    messageId,
+                user_id:
+                    boraUser.id
+            });
+
+            if(error){
+                throw error;
+            }
+        }
+
+        await loadCommunityMessages(
+            false
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro Útil comunidade:",
+            error
+        );
+
+        showToast(
+            "Não foi possível registrar como útil"
+        );
     }
 }
 
@@ -11452,7 +11967,11 @@ async function sendCommunityMessage(
             sender_id:
                 boraUser.id,
             content:
-                content
+                content,
+            reply_to_id:
+                btCommunityReplyTo?.id
+                ||
+                null
         });
 
         if(error){
@@ -11466,6 +11985,8 @@ async function sendCommunityMessage(
             input.style.height =
                 "auto";
         }
+
+        cancelCommunityReply();
 
         await loadCommunityMessages(
             true
@@ -11589,6 +12110,22 @@ function listenCommunityRealtime(){
                 if(btCommunityOpened){
                     await loadCommunityMessages(
                         true
+                    );
+                }
+            }
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"community_message_likes"
+            },
+            async () => {
+
+                if(btCommunityOpened){
+                    await loadCommunityMessages(
+                        false
                     );
                 }
             }
@@ -11737,6 +12274,18 @@ window.sendCommunityMessage =
 
 window.deleteCommunityMessage =
     deleteCommunityMessage;
+
+window.replyCommunityMessage =
+    replyCommunityMessage;
+
+window.cancelCommunityReply =
+    cancelCommunityReply;
+
+window.goToCommunityMessage =
+    goToCommunityMessage;
+
+window.toggleCommunityUseful =
+    toggleCommunityUseful;
 
 /* =========================================================
    MENU V1.0
