@@ -6,7 +6,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<meta name="theme-color" content="#101316">
+<meta name="theme-color" content="#06182b">
 
 <!-- =========================================================
      BORATEC PWA
@@ -56,18 +56,18 @@ content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 :root{
 
-    --bg:#101316;
-    --bg2:#151a1f;
-    --bg3:#1b2228;
+    --bg:#06182b;
+    --bg2:#081d33;
+    --bg3:#0b2744;
 
-    --card:#1c2329;
-    --card2:#222a31;
+    --card:#0d2947;
+    --card2:#102f50;
 
-    --orange:#00bff3;
-    --orange2:#2499d4;
+    --orange:#ff7900;
+    --orange2:#ff922f;
 
-    --blue:#00bff3;
-    --blue2:#087fb8;
+    --blue:#1687ff;
+    --blue2:#006ee6;
 
     --green:#19c875;
     --red:#ff4c5b;
@@ -104,9 +104,9 @@ body{
     background:
         radial-gradient(
             circle at 50% -100px,
-            #1b2a33 0,
-            #12171b 42%,
-            #0c1013 100%
+            #123b61 0,
+            #071b30 42%,
+            #051526 100%
         );
 
     color:var(--text);
@@ -254,7 +254,7 @@ body{
         linear-gradient(
             135deg,
             var(--orange),
-            #37c6f4
+            #ff9b3e
         );
 
     color:white;
@@ -516,7 +516,7 @@ body{
 
     background:white;
 
-    color:#15212a;
+    color:#09203a;
 
     border-color:white;
 }
@@ -563,7 +563,7 @@ body{
     background:
         rgba(255,121,0,.12);
 
-    color:#37c6f4;
+    color:#ff9a42;
 
     padding:
         6px 9px;
@@ -676,7 +676,7 @@ body{
 
     letter-spacing:.8px;
 
-    color:#37c6f4;
+    color:#ff9a45;
 }
 
 .type.helper{
@@ -879,8 +879,8 @@ body{
     background:
         linear-gradient(
             135deg,
-            #00bff3,
-            #087fb8
+            #1687ff,
+            #006fe8
         );
 
     color:white;
@@ -904,7 +904,7 @@ body{
         linear-gradient(
             135deg,
             var(--orange),
-            #2499d4
+            #ff922f
         );
 
     box-shadow:
@@ -1069,7 +1069,7 @@ body{
         linear-gradient(
             135deg,
             var(--orange),
-            #37c6f4
+            #ff9b38
         );
 
     color:white;
@@ -1133,7 +1133,7 @@ body{
     max-width:760px;
 
     background:
-        #171d22;
+        #0b2139;
 
     border-radius:
         25px 25px 0 0;
@@ -1415,7 +1415,7 @@ textarea.input{
 
 .input option{
 
-    background:#171d22;
+    background:#0b2139;
 
     color:white;
 }
@@ -1465,7 +1465,7 @@ textarea.input{
         linear-gradient(
             135deg,
             var(--orange),
-            #2499d4
+            #ff9431
         );
 
     color:white;
@@ -1570,7 +1570,7 @@ textarea.input{
 
     background:white;
 
-    color:#15212a;
+    color:#09203a;
 
     border-radius:12px;
 
@@ -1616,7 +1616,7 @@ textarea.input{
             25px 0;
 
         background:
-            #090c0f;
+            #030d18;
     }
 
     .app{
@@ -1632,8 +1632,8 @@ textarea.input{
 
         background:
             linear-gradient(
-                #12181d,
-                #0c1013
+                #071c31,
+                #051526
             );
     }
 
@@ -1668,6 +1668,434 @@ textarea.input{
         max-height:88vh;
     }
 
+}
+
+
+
+/* =========================================================
+   BORATEC R10 — INDUSTRIAL TECH UI
+   Camada visual apenas. Não altera IDs, eventos ou lógica.
+========================================================= */
+
+:root{
+    --bt-industrial-bg:#090d10;
+    --bt-industrial-bg2:#0e1418;
+    --bt-industrial-panel:#12191e;
+    --bt-industrial-panel2:#182127;
+    --bt-industrial-edge:#303a42;
+    --bt-industrial-edge-hi:#59656d;
+    --bt-industrial-blue:#08baf0;
+    --bt-industrial-blue2:#087eae;
+    --bt-industrial-red:#e34843;
+    --bt-industrial-text:#f3f6f8;
+    --bt-industrial-muted:#8f9ba3;
+    --bt-industrial-metal:#aeb7bd;
+}
+
+html,
+body{
+    background:
+        radial-gradient(circle at 50% -180px, rgba(8,186,240,.10), transparent 34%),
+        linear-gradient(180deg,#070a0c 0%,#0b1013 42%,#080b0d 100%) !important;
+}
+
+.app{
+    background:
+        linear-gradient(180deg,rgba(17,23,27,.98),rgba(8,12,15,.99)) !important;
+}
+
+/* ---------- HEADER / PAINEL SUPERIOR ---------- */
+
+.header{
+    background:
+        linear-gradient(180deg,rgba(16,22,26,.98),rgba(8,12,15,.98)) !important;
+    border-bottom:1px solid #374149 !important;
+    box-shadow:
+        inset 0 -1px 0 rgba(255,255,255,.025),
+        0 10px 28px rgba(0,0,0,.28) !important;
+}
+
+.header-inner{
+    position:relative;
+}
+
+.header-inner::after{
+    content:"";
+    position:absolute;
+    left:17px;
+    right:17px;
+    bottom:-1px;
+    height:2px;
+    background:linear-gradient(90deg,
+        transparent 0%,
+        rgba(8,186,240,.85) 12%,
+        rgba(8,186,240,.20) 48%,
+        transparent 82%);
+    pointer-events:none;
+}
+
+.logo{
+    text-shadow:0 2px 12px rgba(0,0,0,.45);
+}
+
+.logo span{
+    color:var(--bt-industrial-blue) !important;
+    text-shadow:0 0 14px rgba(8,186,240,.24);
+}
+
+.logo small{
+    color:#93a0a8 !important;
+}
+
+.icon-button,
+.avatar{
+    background:
+        linear-gradient(145deg,#1b242a,#0e1418) !important;
+    border:1px solid #3d4850 !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 5px 13px rgba(0,0,0,.28) !important;
+}
+
+.avatar{
+    color:#fff !important;
+    outline:1px solid rgba(8,186,240,.28);
+}
+
+/* ---------- INTRO ---------- */
+
+.hello{
+    color:var(--bt-industrial-blue) !important;
+}
+
+.intro h1{
+    color:#f5f7f8;
+    text-shadow:0 2px 10px rgba(0,0,0,.35);
+}
+
+.intro p{
+    color:#909ca4 !important;
+}
+
+.availability{
+    background:linear-gradient(180deg,#171f24,#0f1519) !important;
+    border:1px solid #344048 !important;
+    color:#5dd39a !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.availability.active{
+    background:linear-gradient(135deg,#178d61,#0c6e48) !important;
+    border-color:#3dd394 !important;
+    color:#fff !important;
+}
+
+/* ---------- TABS COMO CHAVES DE PAINEL ---------- */
+
+.tabs-wrap{
+    background:rgba(9,13,16,.97) !important;
+    border-bottom:1px solid #252e34 !important;
+}
+
+.tabs{
+    gap:8px !important;
+}
+
+.tab{
+    position:relative;
+    overflow:hidden;
+    min-height:38px;
+    background:
+        linear-gradient(180deg,#171e23,#0f1418) !important;
+    color:#a1abb2 !important;
+    border:1px solid #39444c !important;
+    border-radius:8px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04),
+        0 3px 8px rgba(0,0,0,.22) !important;
+    letter-spacing:.25px;
+}
+
+.tab::before{
+    content:"";
+    position:absolute;
+    left:7px;
+    right:7px;
+    bottom:0;
+    height:1px;
+    background:rgba(255,255,255,.04);
+}
+
+.tab.active{
+    color:#fff !important;
+    background:
+        linear-gradient(180deg,#0d769c,#075576) !important;
+    border-color:#19c7f7 !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.13),
+        0 0 0 1px rgba(8,186,240,.16),
+        0 0 15px rgba(8,186,240,.12) !important;
+}
+
+/* ---------- FEED ---------- */
+
+.feed-header h2{
+    color:#f1f4f5;
+}
+
+.feed-header p{
+    color:#86939c !important;
+}
+
+.feed-count{
+    background:linear-gradient(180deg,#17242b,#10171b) !important;
+    border:1px solid #35424a;
+    color:#55ccef !important;
+    border-radius:7px !important;
+}
+
+/* ---------- CARD INDUSTRIAL ---------- */
+
+.job-card{
+    isolation:isolate;
+    border-radius:10px !important;
+    padding:17px !important;
+    background:
+        linear-gradient(145deg,#192127 0%,#12191e 48%,#0d1317 100%) !important;
+    border:1px solid #3a454d !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        inset 0 0 0 1px rgba(0,0,0,.35),
+        0 8px 22px rgba(0,0,0,.30) !important;
+}
+
+.job-card::after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    inset:6px;
+    border:1px solid rgba(255,255,255,.025);
+    border-radius:7px;
+    pointer-events:none;
+}
+
+.job-card .card-top::after{
+    content:"";
+    position:absolute;
+    top:0;
+    right:0;
+    width:54px;
+    height:3px;
+    background:linear-gradient(90deg,transparent,var(--bt-industrial-blue));
+    opacity:.8;
+}
+
+.job-card.urgent{
+    border-color:#743633 !important;
+}
+
+.job-card.urgent::before{
+    width:3px !important;
+    background:var(--bt-industrial-red) !important;
+    box-shadow:0 0 10px rgba(227,72,67,.36);
+}
+
+.type{
+    color:#55ccef !important;
+}
+
+.type.helper{
+    color:#8bbce9 !important;
+}
+
+.type.available{
+    color:#63d59e !important;
+}
+
+.time{
+    color:#77838b !important;
+}
+
+.job-title{
+    color:#f4f6f7;
+}
+
+.job-info{
+    color:#99a5ad !important;
+}
+
+.job-description{
+    color:#c2c9cd !important;
+}
+
+.professional{
+    border-top:1px solid #303940 !important;
+}
+
+.prof-avatar{
+    background:
+        radial-gradient(circle at 35% 25%,#28343b,#11181c) !important;
+    border:1px solid #46525a;
+    border-radius:8px !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.prof-rating{
+    color:#89969e !important;
+}
+
+.price small{
+    color:#7f8b93 !important;
+}
+
+.price strong{
+    color:#f4f6f7 !important;
+}
+
+/* ---------- BOTÕES COMO COMANDOS ---------- */
+
+.action-btn,
+.action-btn.orange,
+.submit,
+.chat-button{
+    position:relative;
+    overflow:hidden;
+    border-radius:8px !important;
+    border:1px solid #22c9f6 !important;
+    background:
+        linear-gradient(180deg,#0aaee0 0%,#087fae 100%) !important;
+    color:#fff !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        inset 0 -1px 0 rgba(0,0,0,.25),
+        0 4px 12px rgba(0,0,0,.28),
+        0 0 12px rgba(8,186,240,.10) !important;
+}
+
+.action-btn:active,
+.submit:active,
+.chat-button:active{
+    transform:translateY(1px) scale(.99);
+}
+
+/* ---------- MODAIS / PAINÉIS ---------- */
+
+.overlay{
+    background:rgba(2,5,7,.84) !important;
+}
+
+.sheet{
+    background:
+        linear-gradient(180deg,#171f24,#0e1418) !important;
+    border:1px solid #414c54 !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        0 20px 60px rgba(0,0,0,.48) !important;
+}
+
+.handle{
+    background:#55616a !important;
+}
+
+.sheet-header{
+    border-bottom:1px solid #313b42 !important;
+}
+
+.sheet-header small{
+    color:#51c9ed !important;
+}
+
+.close{
+    background:linear-gradient(180deg,#202a30,#12191d) !important;
+    border:1px solid #3b474f !important;
+}
+
+.publish-option{
+    background:
+        linear-gradient(145deg,#182127,#10161a) !important;
+    border:1px solid #39454d !important;
+    border-radius:9px !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.publish-option .option-icon,
+.publish-option:nth-child(2) .option-icon,
+.publish-option:nth-child(3) .option-icon{
+    background:rgba(8,186,240,.09) !important;
+    border:1px solid rgba(8,186,240,.18);
+    border-radius:8px !important;
+}
+
+.input{
+    background:#0d1317 !important;
+    border:1px solid #3a454d !important;
+    border-radius:7px !important;
+    color:#f4f6f7 !important;
+}
+
+.input:focus{
+    border-color:#12bde9 !important;
+    box-shadow:0 0 0 2px rgba(8,186,240,.10) !important;
+}
+
+.privacy{
+    background:rgba(8,126,174,.08) !important;
+    border:1px solid rgba(8,186,240,.16) !important;
+}
+
+/* ---------- BOTTOM NAV ---------- */
+
+.bottom-nav{
+    background:
+        linear-gradient(180deg,rgba(16,22,26,.99),rgba(7,10,12,.995)) !important;
+    border-top:1px solid #3a454d !important;
+    box-shadow:
+        0 -8px 26px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.03) !important;
+}
+
+.nav-button{
+    color:#7f8b93 !important;
+}
+
+.nav-button.active{
+    color:#f6f8f9 !important;
+    text-shadow:0 0 10px rgba(8,186,240,.14);
+}
+
+.nav-button.active::after{
+    height:2px !important;
+    background:#08baf0 !important;
+    box-shadow:0 0 8px rgba(8,186,240,.50);
+}
+
+.publish-fab{
+    border-radius:8px !important;
+    background:
+        linear-gradient(180deg,#0bb7e8,#087aa7) !important;
+    border:1px solid #24c9f3 !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 6px 15px rgba(0,0,0,.30),
+        0 0 13px rgba(8,186,240,.16) !important;
+}
+
+/* ---------- TOAST ---------- */
+
+.toast{
+    background:#e9eef1 !important;
+    color:#11171b !important;
+    border:1px solid #fff;
+    border-radius:7px !important;
+}
+
+/* ---------- DESKTOP FRAME ---------- */
+
+@media(min-width:800px){
+    .app{
+        border-color:#3d474e !important;
+        box-shadow:0 30px 80px rgba(0,0,0,.62) !important;
+    }
 }
 
 </style>
@@ -3620,7 +4048,7 @@ renderFeed();
      BORATEC - SUPABASE + APP.JS
 ========================================================= -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./app.js?v=2000"></script>
+<script src="./app.js?v=2100"></script>
 
 
 </body>
