@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#06182b">
+
+<title>BoraTec — Entrar</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#06182b;
+    --card:#0d2947;
+    --orange:#ff7900;
+    --orange2:#ff9638;
+    --blue:#1687ff;
+    --green:#19c875;
+    --red:#ff4c5b;
+    --white:#fff;
+    --text:#f5f8fc;
+    --muted:#91a7bd;
+    --border:rgba(255,255,255,.09);
+}
+
+html{
+    background:var(--bg);
+}
+
+body{
+    min-height:100vh;
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    color:var(--text);
+
+    background:
+        radial-gradient(
+            circle at 50% -150px,
+            #16466f 0,
+            #081d33 35%,
+            #041321 75%,
+            #020b13 100%
+        );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:25px 16px;
+}
+
+.login-page{
+    width:100%;
+    max-width:430px;
+}
+
+/* LOGO */
+
+.brand{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.logo{
+    font-size:42px;
+    font-weight:950;
+    letter-spacing:-2.5px;
+    line-height:1;
+}
+
+.logo span{
+    color:var(--orange);
+}
+
+.brand small{
+    display:block;
+    margin-top:8px;
+    color:#8198af;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.3px;
+}
+
+.brand-text{
+    margin-top:18px;
+    color:#a1b4c7;
+    font-size:13px;
+    line-height:1.55;
+}
+
+/* CARD */
+
+.auth-card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16,47,80,.96),
+            rgba(8,30,52,.98)
+        );
+
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:22px;
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.35);
+}
+
+/* TABS */
+
+.auth-tabs{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    background:rgba(255,255,255,.05);
+
+    padding:4px;
+
+    border-radius:13px;
+
+    margin-bottom:23px;
+}
+
+.auth-tab{
+    height:42px;
+    border:none;
+    border-radius:10px;
+
+    background:transparent;
+
+    color:#839bb1;
+
+    font-size:12px;
+    font-weight:850;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.auth-tab.active{
+    background:var(--orange);
+    color:white;
+
+    box-shadow:
+        0 5px 16px rgba(255,121,0,.25);
+}
+
+/* HEADER */
+
+.form-header{
+    margin-bottom:20px;
+}
+
+.form-header small{
+    color:var(--orange);
+
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.form-header h1{
+    font-size:23px;
+    letter-spacing:-.7px;
+    margin-top:4px;
+}
+
+.form-header p{
+    color:var(--muted);
+
+    font-size:11px;
+    line-height:1.5;
+
+    margin-top:6px;
+}
+
+/* FORM */
+
+.field{
+    margin-bottom:14px;
+}
+
+.field label{
+    display:block;
+
+    color:#b7c7d6;
+
+    font-size:9px;
+    font-weight:850;
+
+    margin-bottom:6px;
+}
+
+.input{
+    width:100%;
+    height:48px;
+
+    border-radius:12px;
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    background:
+        rgba(255,255,255,.055);
+
+    outline:none;
+
+    padding:0 13px;
+
+    color:white;
+
+    font-family:inherit;
+    font-size:13px;
+
+    transition:.2s;
+}
+
+.input::placeholder{
+    color:#607a92;
+}
+
+.input:focus{
+    border-color:
+        rgba(255,121,0,.65);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255,121,0,.08);
+}
+
+/* REGISTER FIELDS */
+
+.register-fields{
+    display:none;
+}
+
+.register-fields.show{
+    display:block;
+}
+
+/* PASSWORD */
+
+.password-wrap{
+    position:relative;
+}
+
+.password-wrap .input{
+    padding-right:52px;
+}
+
+.show-password{
+    position:absolute;
+
+    right:7px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:38px;
+    height:36px;
+
+    border:none;
+
+    border-radius:9px;
+
+    background:transparent;
+
+    color:#8198af;
+
+    cursor:pointer;
+}
+
+/* BUTTON */
+
+.submit{
+    width:100%;
+    height:50px;
+
+    border:none;
+
+    border-radius:13px;
+
+    margin-top:5px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            var(--orange2)
+        );
+
+    color:white;
+
+    font-size:12px;
+    font-weight:950;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 22px rgba(255,121,0,.25);
+
+    transition:.2s;
+}
+
+.submit:hover{
+    transform:translateY(-1px);
+}
+
+.submit:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* MESSAGE */
+
+.message{
+    display:none;
+
+    margin-top:14px;
+
+    padding:11px 12px;
+
+    border-radius:11px;
+
+    font-size:10px;
+    line-height:1.45;
+}
+
+.message.show{
+    display:block;
+}
+
+.message.error{
+    background:rgba(255,76,91,.1);
+    color:#ff8993;
+
+    border:
+        1px solid rgba(255,76,91,.18);
+}
+
+.message.success{
+    background:rgba(25,200,117,.1);
+    color:#5ce7a3;
+
+    border:
+        1px solid rgba(25,200,117,.18);
+}
+
+/* DIVIDER */
+
+.divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    margin:20px 0;
+
+    color:#5e768e;
+
+    font-size:9px;
+}
+
+.divider::before,
+.divider::after{
+    content:"";
+    height:1px;
+    flex:1;
+    background:rgba(255,255,255,.07);
+}
+
+/* FOOTER */
+
+.info{
+    text-align:center;
+
+    color:#7189a0;
+
+    font-size:9px;
+    line-height:1.6;
+}
+
+.info strong{
+    color:#a8bacb;
+}
+
+.loading{
+    display:inline-block;
+
+    width:13px;
+    height:13px;
+
+    border:2px solid rgba(255,255,255,.3);
+    border-top-color:white;
+
+    border-radius:50%;
+
+    animation:spin .7s linear infinite;
+
+    vertical-align:-2px;
+
+    margin-right:6px;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@media(max-width:450px){
+
+    body{
+        align-items:flex-start;
+        padding-top:45px;
+    }
+
+    .auth-card{
+        padding:19px;
+        border-radius:20px;
+    }
+
+    .logo{
+        font-size:38px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="login-page">
+
+    <div class="brand">
+
+        <div class="logo">
+            Bora<span>Tec</span>
+        </div>
+
+        <small>
+            A REDE DOS PROFISSIONAIS
+        </small>
+
+        <div class="brand-text">
+            Profissionais gerando trabalho
+            para profissionais.
+        </div>
+
+    </div>
+
+
+    <section class="auth-card">
+
+        <div class="auth-tabs">
+
+            <button
+                id="loginTab"
+                class="auth-tab active"
+                type="button"
+                onclick="changeMode('login')"
+            >
+                Entrar
+            </button>
+
+            <button
+                id="registerTab"
+                class="auth-tab"
+                type="button"
+                onclick="changeMode('register')"
+            >
+                Criar conta
+            </button>
+
+        </div>
+
+
+        <div class="form-header">
+
+            <small id="formSmall">
+                BEM-VINDO
+            </small>
+
+            <h1 id="formTitle">
+                Entre no BoraTec
+            </h1>
+
+            <p id="formDescription">
+                Acesse sua rede de oportunidades profissionais.
+            </p>
+
+        </div>
+
+
+        <form id="authForm">
+
+            <div
+                id="registerFields"
+                class="register-fields"
+            >
+
+                <div class="field">
+
+                    <label>
+                        SEU NOME
+                    </label>
+
+                    <input
+                        id="name"
+                        class="input"
+                        type="text"
+                        placeholder="Ex.: Carlos Eduardo"
+                        autocomplete="name"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        NOME PROFISSIONAL
+                    </label>
+
+                    <input
+                        id="professionalName"
+                        class="input"
+                        type="text"
+                        placeholder="Ex.: Carlos Refrigeração"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    E-MAIL
+                </label>
+
+                <input
+                    id="email"
+                    class="input"
+                    type="email"
+                    placeholder="seuemail@exemplo.com"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    SENHA
+                </label>
+
+                <div class="password-wrap">
+
+                    <input
+                        id="password"
+                        class="input"
+                        type="password"
+                        placeholder="Digite sua senha"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        class="show-password"
+                        type="button"
+                        onclick="togglePassword()"
+                        aria-label="Mostrar senha"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="submitButton"
+                class="submit"
+                type="submit"
+            >
+                Entrar
+            </button>
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+        </form>
+
+
+        <div class="divider">
+            BORATEC
+        </div>
+
+
+        <div class="info">
+
+            Ao entrar você concorda em utilizar a rede
+            de forma profissional.
+
+            <br>
+
+            <strong>
+                Seu contato não será exibido
+                automaticamente nas publicações.
+            </strong>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- SUPABASE JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+/* =========================================================
+   BORATEC
+   AUTENTICAÇÃO V0.1
+========================================================= */
+
+
+/* =========================================================
+   CONFIGURAÇÃO SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "https://kgagljuutvlpdeqjgqsj.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_dToKktNJesqf1N_fHs4uUQ_Q3th_tCs";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let currentMode = "login";
+
+
+/* =========================================================
+   ALTERAR LOGIN / CADASTRO
+========================================================= */
+
+function changeMode(mode){
+
+    currentMode = mode;
+
+    const loginTab =
+        document.getElementById("loginTab");
+
+    const registerTab =
+        document.getElementById("registerTab");
+
+    const registerFields =
+        document.getElementById("registerFields");
+
+    const name =
+        document.getElementById("name");
+
+    const formSmall =
+        document.getElementById("formSmall");
+
+    const formTitle =
+        document.getElementById("formTitle");
+
+    const formDescription =
+        document.getElementById("formDescription");
+
+    const submitButton =
+        document.getElementById("submitButton");
+
+
+    clearMessage();
+
+
+    if(mode === "register"){
+
+        loginTab.classList.remove("active");
+        registerTab.classList.add("active");
+
+        registerFields.classList.add("show");
+
+        name.required = true;
+
+        formSmall.textContent =
+            "NOVO PROFISSIONAL";
+
+        formTitle.textContent =
+            "Crie sua conta";
+
+        formDescription.textContent =
+            "Entre para a rede BoraTec e conecte-se com outros profissionais.";
+
+        submitButton.textContent =
+            "Criar minha conta";
+
+    }else{
+
+        registerTab.classList.remove("active");
+        loginTab.classList.add("active");
+
+        registerFields.classList.remove("show");
+
+        name.required = false;
+
+        formSmall.textContent =
+            "BEM-VINDO";
+
+        formTitle.textContent =
+            "Entre no BoraTec";
+
+        formDescription.textContent =
+            "Acesse sua rede de oportunidades profissionais.";
+
+        submitButton.textContent =
+            "Entrar";
+
+    }
+
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+document
+.getElementById("authForm")
+.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+        if(currentMode === "register"){
+
+            await registerUser();
+
+        }else{
+
+            await loginUser();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CADASTRO
+========================================================= */
+
+async function registerUser(){
+
+    const name =
+        document
+        .getElementById("name")
+        .value
+        .trim();
+
+    const professionalName =
+        document
+        .getElementById("professionalName")
+        .value
+        .trim();
+
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const password =
+        document
+        .getElementById("password")
+        .value;
+
+
+    if(name.length < 2){
+
+        showMessage(
+            "Digite seu nome.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    setLoading(true);
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.auth.signUp({
+
+            email:email,
+
+            password:password,
+
+            options:{
+
+                data:{
+
+                    name:name,
+
+                    professional_name:
+                        professionalName || name
+
+                }
+
+            }
+
+        });
+
+
+        if(error){
+            throw error;
+        }
+
+
+        /*
+        Se confirmação de e-mail estiver habilitada,
+        session será null.
+        */
+
+        if(!data.session){
+
+            showMessage(
+                "Conta criada! Confira seu e-mail para confirmar o cadastro.",
+                "success"
+            );
+
+            return;
+        }
+
+
+        window.location.href =
+            "index.html";
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            translateError(error.message),
+            "error"
+        );
+
+    }finally{
+
+        setLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function loginUser(){
+
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const password =
+        document
+        .getElementById("password")
+        .value;
+
+
+    setLoading(true);
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient.auth
+        .signInWithPassword({
+
+            email:email,
+            password:password
+
+        });
+
+
+        if(error){
+            throw error;
+        }
+
+
+        if(!data.user){
+
+            throw new Error(
+                "Não foi possível entrar."
+            );
+
+        }
+
+
+        window.location.href =
+            "index.html";
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            translateError(error.message),
+            "error"
+        );
+
+    }finally{
+
+        setLoading(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   VERIFICAR SE JÁ ESTÁ LOGADO
+========================================================= */
+
+async function checkSession(){
+
+    try{
+
+        const {
+            data
+        } =
+        await supabaseClient.auth.getSession();
+
+
+        if(data.session){
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro ao verificar sessão:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MOSTRAR / ESCONDER SENHA
+========================================================= */
+
+function togglePassword(){
+
+    const password =
+        document.getElementById("password");
+
+
+    if(password.type === "password"){
+
+        password.type = "text";
+
+    }else{
+
+        password.type = "password";
+
+    }
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+function setLoading(loading){
+
+    const button =
+        document.getElementById(
+            "submitButton"
+        );
+
+
+    button.disabled =
+        loading;
+
+
+    if(loading){
+
+        button.innerHTML =
+            '<span class="loading"></span>' +
+            (
+                currentMode === "register"
+                ?
+                "Criando conta..."
+                :
+                "Entrando..."
+            );
+
+    }else{
+
+        button.textContent =
+            currentMode === "register"
+            ?
+            "Criar minha conta"
+            :
+            "Entrar";
+
+    }
+
+}
+
+
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        text;
+
+    message.className =
+        "message show " + type;
+
+}
+
+
+function clearMessage(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =========================================================
+   TRADUÇÃO DE ERROS COMUNS
+========================================================= */
+
+function translateError(message){
+
+    const text =
+        String(message || "")
+        .toLowerCase();
+
+
+    if(
+        text.includes(
+            "invalid login credentials"
+        )
+    ){
+
+        return "E-mail ou senha incorretos.";
+
+    }
+
+
+    if(
+        text.includes(
+            "email not confirmed"
+        )
+    ){
+
+        return "Confirme seu e-mail antes de entrar.";
+
+    }
+
+
+    if(
+        text.includes(
+            "user already registered"
+        )
+    ){
+
+        return "Este e-mail já possui uma conta.";
+
+    }
+
+
+    if(
+        text.includes(
+            "password should be"
+        )
+    ){
+
+        return "A senha precisa ter pelo menos 6 caracteres.";
+
+    }
+
+
+    if(
+        text.includes(
+            "unable to validate email"
+        )
+    ){
+
+        return "Digite um endereço de e-mail válido.";
+
+    }
+
+
+    if(
+        text.includes(
+            "signup is disabled"
+        )
+    ){
+
+        return "Novos cadastros estão temporariamente desativados.";
+
+    }
+
+
+    return message ||
+        "Ocorreu um erro. Tente novamente.";
+
+}
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+checkSession();
+
+</script>
+
+</body>
+</html>
