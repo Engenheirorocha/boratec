@@ -14421,13 +14421,19 @@ window.openBoraTecHome = openBoraTecHome;
 
         /* CARROSSEL ROBUSTO */
         #btHomeScreen .bt-v182-actions{
-            height:258px !important;
-            perspective:900px;
+            height:322px !important;
+            perspective:1050px;
+            overflow:visible !important;
         }
 
         #btHomeScreen .bt-v182-action{
-            width:min(76vw,270px) !important;
-            min-height:226px !important;
+            width:min(70vw,245px) !important;
+            min-height:285px !important;
+            transition:
+                transform .34s cubic-bezier(.22,.8,.22,1),
+                opacity .28s ease,
+                filter .28s ease,
+                box-shadow .28s ease !important;
             border-radius:11px !important;
             border:1px solid #44515a !important;
             background:
@@ -14467,19 +14473,24 @@ window.openBoraTecHome = openBoraTecHome;
 
         #btHomeScreen .bt-v182-action.bt-carousel-active{
             filter:none !important;
-            transform:translateX(-50%) scale(1) !important;
+            transform:translateX(-50%) scale(1.02) translateY(-2px) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.055),
+                inset 0 0 0 1px rgba(0,0,0,.32),
+                0 18px 38px rgba(0,0,0,.42),
+                0 0 18px rgba(8,186,240,.08) !important;
         }
 
         #btHomeScreen .bt-v182-action.bt-carousel-prev{
-            opacity:.34 !important;
-            filter:brightness(.54) saturate(.72) !important;
-            transform:translateX(-114%) scale(.80) rotateY(12deg) !important;
+            opacity:.27 !important;
+            filter:brightness(.48) saturate(.66) !important;
+            transform:translateX(-128%) scale(.76) rotateY(14deg) translateY(10px) !important;
         }
 
         #btHomeScreen .bt-v182-action.bt-carousel-next{
-            opacity:.34 !important;
-            filter:brightness(.54) saturate(.72) !important;
-            transform:translateX(14%) scale(.80) rotateY(-12deg) !important;
+            opacity:.27 !important;
+            filter:brightness(.48) saturate(.66) !important;
+            transform:translateX(28%) scale(.76) rotateY(-14deg) translateY(10px) !important;
         }
 
         #btHomeScreen .bt-v182-action-icon{
@@ -14627,9 +14638,34 @@ window.openBoraTecHome = openBoraTecHome;
                 0 0 12px rgba(8,186,240,.15) !important;
         }
 
-        @media(min-width:800px){
+
+        @media(max-width:520px){
+            #btHomeScreen .bt-v182-actions{
+                height:316px !important;
+            }
+
             #btHomeScreen .bt-v182-action{
-                width:278px !important;
+                width:min(69vw,238px) !important;
+                min-height:282px !important;
+            }
+
+            #btHomeScreen .bt-v182-action.bt-carousel-prev{
+                transform:translateX(-130%) scale(.74) rotateY(15deg) translateY(12px) !important;
+            }
+
+            #btHomeScreen .bt-v182-action.bt-carousel-next{
+                transform:translateX(30%) scale(.74) rotateY(-15deg) translateY(12px) !important;
+            }
+        }
+
+        @media(min-width:800px){
+            #btHomeScreen .bt-v182-actions{
+                height:330px !important;
+            }
+
+            #btHomeScreen .bt-v182-action{
+                width:248px !important;
+                min-height:288px !important;
             }
         }
     `;
