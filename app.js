@@ -5,7 +5,7 @@
 
    FUNCIONANDO:
    - Login / sessão
-   - Perafil real
+   - Perfil real
    - Feed Supabase
    - Publicação real
    - Interesse
@@ -6302,3 +6302,2337 @@ document.addEventListener(
     }
 );
 
+/* =========================================================
+   BORATEC V1.0
+   REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
+========================================================= */
+
+let btAllPosts = [];
+let btNotificationsChannel = null;
+let btCurrentProfileId = null;
+
+const btFeedFilters = {
+    type: "",
+    city: "",
+    category: "",
+    minValue: ""
+};
+
+
+/* =========================================================
+   ESTILOS / INTERFACES V1.0
+========================================================= */
+
+function createBoraTecV1Interface(){
+
+    if(document.getElementById("btV1Style")){
+        return;
+    }
+
+    const style = document.createElement("style");
+    style.id = "btV1Style";
+
+    style.textContent = `
+    .bt-v1-floating{
+        position:fixed;
+        z-index:3500;
+        border:none;
+        color:#fff;
+        cursor:pointer;
+        box-shadow:0 10px 28px rgba(0,0,0,.28);
+        font-family:inherit;
+    }
+
+    #btFilterButton{
+        left:16px;
+        bottom:88px;
+        min-height:42px;
+        padding:0 14px;
+        border-radius:13px;
+        background:#123b60;
+        border:1px solid rgba(255,255,255,.10);
+        font-size:11px;
+        font-weight:900;
+    }
+
+    #btNotificationButton{
+        top:14px;
+        right:70px;
+        width:42px;
+        height:42px;
+        border-radius:50%;
+        background:#123b60;
+        border:1px solid rgba(255,255,255,.10);
+        font-size:17px;
+    }
+
+    #btNotificationBadge{
+        position:absolute;
+        top:-5px;
+        right:-5px;
+        min-width:19px;
+        height:19px;
+        padding:0 5px;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        border-radius:20px;
+        background:#ff7900;
+        color:#fff;
+        font-size:9px;
+        font-weight:900;
+        border:2px solid #071b2d;
+    }
+
+    .bt-v1-overlay{
+        position:fixed;
+        inset:0;
+        z-index:7000;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:14px;
+        background:rgba(1,9,18,.92);
+    }
+
+    .bt-v1-overlay.show{
+        display:flex;
+    }
+
+    .bt-v1-panel{
+        width:100%;
+        max-width:470px;
+        max-height:92vh;
+        overflow:auto;
+        background:#0f2d49;
+        color:#fff;
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:20px;
+        box-shadow:0 20px 70px rgba(0,0,0,.38);
+    }
+
+    .bt-v1-head{
+        position:sticky;
+        top:0;
+        z-index:2;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        padding:17px;
+        background:#0f2d49;
+        border-bottom:1px solid rgba(255,255,255,.07);
+    }
+
+    .bt-v1-head small{
+        display:block;
+        color:#ff8a1d;
+        font-size:9px;
+        font-weight:900;
+        letter-spacing:.8px;
+        margin-bottom:3px;
+    }
+
+    .bt-v1-head h3{
+        margin:0;
+        font-size:17px;
+    }
+
+    .bt-v1-close{
+        width:38px;
+        height:38px;
+        flex:0 0 auto;
+        border:none;
+        border-radius:11px;
+        color:#fff;
+        background:rgba(255,255,255,.07);
+        cursor:pointer;
+        font-size:18px;
+    }
+
+    .bt-v1-body{
+        padding:16px;
+    }
+
+    .bt-field{
+        margin-bottom:12px;
+    }
+
+    .bt-field label{
+        display:block;
+        margin-bottom:6px;
+        font-size:10px;
+        font-weight:900;
+        color:#dbe8f4;
+    }
+
+    .bt-field input,
+    .bt-field select,
+    .bt-field textarea{
+        width:100%;
+        min-height:43px;
+        box-sizing:border-box;
+        border-radius:11px;
+        border:1px solid rgba(255,255,255,.09);
+        background:#092039;
+        color:#fff;
+        padding:10px 11px;
+        outline:none;
+        font-family:inherit;
+        font-size:12px;
+    }
+
+    .bt-field textarea{
+        min-height:88px;
+        resize:vertical;
+    }
+
+    .bt-grid-2{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+    }
+
+    .bt-primary{
+        width:100%;
+        min-height:45px;
+        border:none;
+        border-radius:12px;
+        background:linear-gradient(135deg,#ff7900,#ff9a35);
+        color:#fff;
+        font-size:11px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    .bt-secondary{
+        min-height:39px;
+        border:1px solid rgba(255,255,255,.10);
+        border-radius:11px;
+        padding:0 12px;
+        background:rgba(255,255,255,.06);
+        color:#fff;
+        font-size:10px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    .bt-empty{
+        padding:34px 16px;
+        color:#8fa9bf;
+        text-align:center;
+        line-height:1.6;
+        font-size:12px;
+    }
+
+    .bt-profile-top{
+        display:flex;
+        align-items:center;
+        gap:13px;
+        margin-bottom:15px;
+    }
+
+    .bt-profile-avatar{
+        width:62px;
+        height:62px;
+        flex:0 0 auto;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:50%;
+        background:#153f65;
+        color:#fff;
+        font-weight:900;
+        font-size:17px;
+        overflow:hidden;
+    }
+
+    .bt-profile-avatar img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+
+    .bt-profile-name{
+        font-size:18px;
+        font-weight:900;
+        margin-bottom:4px;
+    }
+
+    .bt-profile-place{
+        color:#91aac0;
+        font-size:11px;
+    }
+
+    .bt-reputation-hero{
+        padding:14px;
+        border-radius:14px;
+        background:rgba(255,255,255,.045);
+        margin-bottom:14px;
+    }
+
+    .bt-reputation-score{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        margin-bottom:7px;
+    }
+
+    .bt-reputation-score strong{
+        font-size:25px;
+        color:#ff9b34;
+    }
+
+    .bt-reputation-score span{
+        color:#adc0d2;
+        font-size:10px;
+    }
+
+    .bt-metrics{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        margin-top:12px;
+    }
+
+    .bt-metric{
+        padding:10px;
+        border-radius:11px;
+        background:#09223a;
+    }
+
+    .bt-metric small{
+        display:block;
+        color:#829cb3;
+        font-size:9px;
+        margin-bottom:3px;
+    }
+
+    .bt-metric strong{
+        font-size:14px;
+    }
+
+    .bt-chip-wrap{
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        margin-top:7px;
+    }
+
+    .bt-chip{
+        padding:6px 9px;
+        border-radius:30px;
+        background:rgba(20,126,232,.15);
+        border:1px solid rgba(20,126,232,.28);
+        color:#89c4ff;
+        font-size:9px;
+        font-weight:800;
+    }
+
+    .bt-section-title{
+        margin:15px 0 7px;
+        font-size:10px;
+        font-weight:900;
+        color:#ff9a34;
+        letter-spacing:.5px;
+    }
+
+    .bt-interested-card,
+    .bt-notification-card{
+        padding:13px;
+        margin-bottom:9px;
+        border-radius:14px;
+        background:rgba(255,255,255,.045);
+        border:1px solid rgba(255,255,255,.06);
+    }
+
+    .bt-interested-name{
+        font-size:13px;
+        font-weight:900;
+        margin-bottom:5px;
+    }
+
+    .bt-interested-meta{
+        color:#95acc0;
+        font-size:10px;
+        line-height:1.55;
+    }
+
+    .bt-interested-actions{
+        display:flex;
+        gap:8px;
+        margin-top:10px;
+    }
+
+    .bt-interested-actions button{
+        flex:1;
+    }
+
+    .bt-notification-card.unread{
+        border-color:rgba(255,136,25,.35);
+        background:rgba(255,136,25,.07);
+    }
+
+    .bt-notification-title{
+        font-size:12px;
+        font-weight:900;
+        margin-bottom:4px;
+    }
+
+    .bt-notification-body{
+        color:#a4b7c9;
+        font-size:10px;
+        line-height:1.5;
+    }
+
+    .bt-notification-time{
+        margin-top:7px;
+        color:#637e95;
+        font-size:9px;
+    }
+
+    .bt-prof-click{
+        cursor:pointer;
+    }
+
+    .bt-prof-click:hover{
+        opacity:.9;
+    }
+
+    .bt-feed-rep-new{
+        color:#ff8a1d;
+        font-weight:900;
+    }
+
+    .bt-feed-rep{
+        color:#ffc06d;
+        font-weight:900;
+    }
+
+    @media(max-width:520px){
+        .bt-grid-2{
+            grid-template-columns:1fr;
+        }
+    }
+    `;
+
+    document.head.appendChild(style);
+
+    const holder = document.createElement("div");
+    holder.innerHTML = `
+
+        <button
+            id="btFilterButton"
+            class="bt-v1-floating"
+            type="button"
+            onclick="openFeedFilters()"
+        >
+            🔎 Filtros
+        </button>
+
+        <button
+            id="btNotificationButton"
+            class="bt-v1-floating"
+            type="button"
+            onclick="openNotifications()"
+            aria-label="Notificações"
+        >
+            🔔
+            <span id="btNotificationBadge">0</span>
+        </button>
+
+
+        <div id="btFilterOverlay" class="bt-v1-overlay">
+            <div class="bt-v1-panel">
+
+                <div class="bt-v1-head">
+                    <div>
+                        <small>BORATEC</small>
+                        <h3>Filtrar oportunidades</h3>
+                    </div>
+
+                    <button
+                        class="bt-v1-close"
+                        type="button"
+                        onclick="closeFeedFilters()"
+                    >×</button>
+                </div>
+
+                <div class="bt-v1-body">
+
+                    <div class="bt-field">
+                        <label>Tipo</label>
+                        <select id="btFilterType">
+                            <option value="">Todos</option>
+                            <option value="service">Serviços</option>
+                            <option value="helper">Precisa de ajudante</option>
+                            <option value="available">Profissional disponível</option>
+                        </select>
+                    </div>
+
+                    <div class="bt-field">
+                        <label>Cidade / região</label>
+                        <input
+                            id="btFilterCity"
+                            placeholder="Ex.: Cabo Frio"
+                        >
+                    </div>
+
+                    <div class="bt-field">
+                        <label>Especialidade / categoria</label>
+                        <input
+                            id="btFilterCategory"
+                            placeholder="Ex.: Ar-condicionado"
+                        >
+                    </div>
+
+                    <div class="bt-field">
+                        <label>Valor mínimo</label>
+                        <input
+                            id="btFilterMinValue"
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="Ex.: 300"
+                        >
+                    </div>
+
+                    <div class="bt-grid-2">
+                        <button
+                            class="bt-secondary"
+                            type="button"
+                            onclick="clearFeedFilters()"
+                        >
+                            Limpar
+                        </button>
+
+                        <button
+                            class="bt-primary"
+                            type="button"
+                            onclick="applyFeedFiltersFromUI()"
+                        >
+                            Aplicar filtros
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div id="btProfileOverlay" class="bt-v1-overlay">
+            <div class="bt-v1-panel">
+                <div class="bt-v1-head">
+                    <div>
+                        <small>PERFIL PROFISSIONAL</small>
+                        <h3 id="btProfileHeader">BoraTec</h3>
+                    </div>
+
+                    <button
+                        class="bt-v1-close"
+                        type="button"
+                        onclick="closePublicProfile()"
+                    >×</button>
+                </div>
+
+                <div
+                    id="btProfileBody"
+                    class="bt-v1-body"
+                >
+                    <div class="bt-empty">Carregando perfil...</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="btInterestedOverlay" class="bt-v1-overlay">
+            <div class="bt-v1-panel">
+                <div class="bt-v1-head">
+                    <div>
+                        <small>OPORTUNIDADE</small>
+                        <h3>Profissionais interessados</h3>
+                    </div>
+
+                    <button
+                        class="bt-v1-close"
+                        type="button"
+                        onclick="closeInterestedProfessionals()"
+                    >×</button>
+                </div>
+
+                <div
+                    id="btInterestedBody"
+                    class="bt-v1-body"
+                >
+                    <div class="bt-empty">Carregando interessados...</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="btNotificationsOverlay" class="bt-v1-overlay">
+            <div class="bt-v1-panel">
+                <div class="bt-v1-head">
+                    <div>
+                        <small>BORATEC</small>
+                        <h3>Notificações</h3>
+                    </div>
+
+                    <button
+                        class="bt-v1-close"
+                        type="button"
+                        onclick="closeNotifications()"
+                    >×</button>
+                </div>
+
+                <div class="bt-v1-body">
+
+                    <button
+                        class="bt-secondary"
+                        type="button"
+                        style="width:100%;margin-bottom:12px;"
+                        onclick="markAllNotificationsRead()"
+                    >
+                        ✓ Marcar todas como lidas
+                    </button>
+
+                    <div id="btNotificationsBody">
+                        <div class="bt-empty">Carregando notificações...</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    `;
+
+    while(holder.firstChild){
+        document.body.appendChild(holder.firstChild);
+    }
+}
+
+
+/* =========================================================
+   FEED COM REPUTAÇÃO
+========================================================= */
+
+loadOpportunities =
+async function(){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from("opportunities")
+        .select(`
+            id,
+            author_id,
+            type,
+            title,
+            description,
+            category,
+            state,
+            city,
+            neighborhood,
+            service_date,
+            value,
+            value_negotiable,
+            urgency,
+            status,
+            created_at,
+            profiles (
+                id,
+                name,
+                professional_name,
+                photo_url
+            )
+        `)
+        .eq("status","open")
+        .order("created_at",{ ascending:false });
+
+
+        if(error){
+            throw error;
+        }
+
+        const authorIds =
+            [...new Set(
+                (data || [])
+                .map(item => item.author_id)
+                .filter(Boolean)
+            )];
+
+        const reputationMap = new Map();
+
+        if(authorIds.length){
+
+            const {
+                data:reputations,
+                error:repError
+            } =
+            await boraSupabase
+            .from("v_profile_reputation")
+            .select(`
+                id,
+                reputation,
+                ratings_count,
+                completed_jobs,
+                recommend_percent
+            `)
+            .in("id", authorIds);
+
+            if(!repError){
+
+                (reputations || [])
+                .forEach(rep => {
+                    reputationMap.set(
+                        rep.id,
+                        rep
+                    );
+                });
+            }
+            else{
+                console.warn(
+                    "Reputação do feed não carregada:",
+                    repError
+                );
+            }
+        }
+
+        btAllPosts =
+            (data || [])
+            .map(item => {
+
+                const post =
+                    convertDatabaseOpportunity(item);
+
+                const rep =
+                    reputationMap.get(item.author_id)
+                    ||
+                    {};
+
+                post.rating =
+                    Number(rep.reputation || 0);
+
+                post.ratingsCount =
+                    Number(rep.ratings_count || 0);
+
+                post.jobs =
+                    Number(rep.completed_jobs || 0);
+
+                post.recommendPercent =
+                    Number(rep.recommend_percent || 0);
+
+                post.photoUrl =
+                    item.profiles?.photo_url
+                    ||
+                    null;
+
+                post.cityRaw =
+                    item.city
+                    ||
+                    "";
+
+                post.categoryRaw =
+                    item.category
+                    ||
+                    "";
+
+                return post;
+            });
+
+        applyCurrentFeedFilters();
+
+    }catch(error){
+
+        console.error(
+            "Erro oportunidades V1:",
+            error
+        );
+
+        showToast(
+            "Erro ao carregar oportunidades"
+        );
+    }
+};
+
+
+/* =========================================================
+   CARD V1.0
+========================================================= */
+
+cardHTML =
+function(post){
+
+    let typeText = "SERVIÇO";
+    let typeClass = "";
+    let typeIcon = "🔥";
+    let button = "Quero fazer";
+    let buttonClass = "action-btn";
+
+    if(post.type === "service"){
+        typeText =
+            post.urgent
+            ? "SERVIÇO URGENTE"
+            : "SERVIÇO";
+    }
+
+    if(post.type === "helper"){
+        typeText = "PRECISO DE AJUDANTE";
+        typeClass = "helper";
+        typeIcon = "👷";
+        button = "Tenho interesse";
+    }
+
+    if(post.type === "available"){
+        typeText = "PROFISSIONAL DISPONÍVEL";
+        typeClass = "available";
+        typeIcon = "●";
+        button = "Chamar";
+        buttonClass = "action-btn orange";
+    }
+
+    const priceHTML =
+        post.price !== null
+        &&
+        post.price !== undefined
+        ?
+        `
+        <div class="price">
+            <small>Valor informado</small>
+            <strong>${money(post.price)}</strong>
+        </div>
+        `
+        :
+        `
+        <div class="price">
+            <small>Valor</small>
+            <strong
+                style="font-size:12px;color:#9bb0c4;"
+            >
+                A combinar
+            </strong>
+        </div>
+        `;
+
+    const isOwnPost =
+        boraUser
+        &&
+        post.authorId === boraUser.id;
+
+    const actionHTML =
+        isOwnPost
+        ?
+        `
+        <button
+            class="action-btn orange"
+            onclick="openInterestedProfessionals('${post.id}')"
+        >
+            👥 Interessados
+        </button>
+        `
+        :
+        `
+        <button
+            class="${buttonClass}"
+            onclick="interest('${post.id}')"
+        >
+            ${button}
+        </button>
+        `;
+
+    const reputationHTML =
+        Number(post.ratingsCount || 0) > 0
+        ?
+        `
+        <span class="bt-feed-rep">
+            ⭐ ${Number(post.rating || 0).toFixed(1)}
+        </span>
+        &nbsp;•&nbsp;
+        ${Number(post.jobs || 0)} serviços
+        &nbsp;•&nbsp;
+        ${Number(post.recommendPercent || 0).toFixed(0)}% recomendam
+        `
+        :
+        `
+        <span class="bt-feed-rep-new">NOVO</span>
+        &nbsp;•&nbsp;
+        ${Number(post.jobs || 0)} serviços BoraTec
+        `;
+
+    const avatarHTML =
+        post.photoUrl
+        ?
+        `
+        <img
+            src="${escapeHtml(post.photoUrl)}"
+            alt="Perfil"
+            style="
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                border-radius:50%;
+            "
+        >
+        `
+        :
+        safe(post.initials);
+
+    return `
+    <article
+        class="job-card ${post.urgent ? "urgent" : ""}"
+    >
+
+        <div class="card-top">
+
+            <div class="type ${typeClass}">
+                <span>${typeIcon}</span>
+                ${typeText}
+            </div>
+
+            <div class="time">
+                ${safe(post.time)}
+            </div>
+
+        </div>
+
+        <div class="job-title">
+            ${safe(post.title)}
+        </div>
+
+        <div class="job-info">
+            <span>📍 ${safe(post.location)}</span>
+            <span>📅 ${safe(post.date)}</span>
+            <span>❄ ${safe(post.category)}</span>
+        </div>
+
+        <div class="job-description">
+            ${safe(post.description)}
+        </div>
+
+        <div
+            class="professional bt-prof-click"
+            onclick="openPublicProfile('${post.authorId}')"
+            title="Ver perfil profissional"
+        >
+
+            <div class="prof-avatar">
+                ${avatarHTML}
+            </div>
+
+            <div class="prof-data">
+
+                <div class="prof-name">
+                    ${safe(post.author)}
+                </div>
+
+                <div class="prof-rating">
+                    ${reputationHTML}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="job-action">
+            ${priceHTML}
+            ${actionHTML}
+        </div>
+
+    </article>
+    `;
+};
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+function openFeedFilters(){
+
+    document
+    .getElementById("btFilterType")
+    .value =
+        btFeedFilters.type;
+
+    document
+    .getElementById("btFilterCity")
+    .value =
+        btFeedFilters.city;
+
+    document
+    .getElementById("btFilterCategory")
+    .value =
+        btFeedFilters.category;
+
+    document
+    .getElementById("btFilterMinValue")
+    .value =
+        btFeedFilters.minValue;
+
+    document
+    .getElementById("btFilterOverlay")
+    .classList.add("show");
+}
+
+function closeFeedFilters(){
+    document
+    .getElementById("btFilterOverlay")
+    ?.classList.remove("show");
+}
+
+function applyFeedFiltersFromUI(){
+
+    btFeedFilters.type =
+        document
+        .getElementById("btFilterType")
+        .value;
+
+    btFeedFilters.city =
+        document
+        .getElementById("btFilterCity")
+        .value
+        .trim();
+
+    btFeedFilters.category =
+        document
+        .getElementById("btFilterCategory")
+        .value
+        .trim();
+
+    btFeedFilters.minValue =
+        document
+        .getElementById("btFilterMinValue")
+        .value
+        .trim();
+
+    applyCurrentFeedFilters();
+    closeFeedFilters();
+}
+
+function clearFeedFilters(){
+
+    btFeedFilters.type = "";
+    btFeedFilters.city = "";
+    btFeedFilters.category = "";
+    btFeedFilters.minValue = "";
+
+    document.getElementById("btFilterType").value = "";
+    document.getElementById("btFilterCity").value = "";
+    document.getElementById("btFilterCategory").value = "";
+    document.getElementById("btFilterMinValue").value = "";
+
+    applyCurrentFeedFilters();
+    closeFeedFilters();
+}
+
+function applyCurrentFeedFilters(){
+
+    const normalize =
+        value =>
+        String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .toLowerCase();
+
+    const minValue =
+        btFeedFilters.minValue
+        ? Number(btFeedFilters.minValue)
+        : null;
+
+    posts =
+        btAllPosts
+        .filter(post => {
+
+            if(
+                btFeedFilters.type
+                &&
+                post.type !== btFeedFilters.type
+            ){
+                return false;
+            }
+
+            if(
+                btFeedFilters.city
+                &&
+                !normalize(post.location)
+                .includes(
+                    normalize(btFeedFilters.city)
+                )
+            ){
+                return false;
+            }
+
+            if(
+                btFeedFilters.category
+                &&
+                !normalize(post.category)
+                .includes(
+                    normalize(btFeedFilters.category)
+                )
+            ){
+                return false;
+            }
+
+            if(
+                minValue !== null
+                &&
+                Number.isFinite(minValue)
+            ){
+                if(
+                    post.price === null
+                    ||
+                    post.price === undefined
+                    ||
+                    Number(post.price) < minValue
+                ){
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+    renderFeed();
+
+    const button =
+        document
+        .getElementById("btFilterButton");
+
+    const activeCount =
+        [
+            btFeedFilters.type,
+            btFeedFilters.city,
+            btFeedFilters.category,
+            btFeedFilters.minValue
+        ]
+        .filter(Boolean)
+        .length;
+
+    if(button){
+        button.textContent =
+            activeCount
+            ? `🔎 Filtros (${activeCount})`
+            : "🔎 Filtros";
+    }
+}
+
+
+/* =========================================================
+   PERFIL PÚBLICO / PRÓPRIO PERFIL
+========================================================= */
+
+async function openPublicProfile(profileId){
+
+    if(!profileId){
+        return;
+    }
+
+    btCurrentProfileId = profileId;
+
+    const overlay =
+        document.getElementById("btProfileOverlay");
+
+    const body =
+        document.getElementById("btProfileBody");
+
+    overlay.classList.add("show");
+
+    body.innerHTML =
+        `<div class="bt-empty">Carregando perfil...</div>`;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "get_public_profile",
+            {
+                p_profile_id: profileId
+            }
+        );
+
+        if(error){
+            throw error;
+        }
+
+        if(!data){
+            throw new Error("Perfil não encontrado");
+        }
+
+        renderPublicProfile(data);
+
+    }catch(error){
+
+        console.error(
+            "Erro perfil público:",
+            error
+        );
+
+        body.innerHTML =
+            `<div class="bt-empty">Não foi possível carregar o perfil.</div>`;
+    }
+}
+
+function closePublicProfile(){
+    document
+    .getElementById("btProfileOverlay")
+    ?.classList.remove("show");
+}
+
+function renderPublicProfile(profile){
+
+    const body =
+        document.getElementById("btProfileBody");
+
+    const header =
+        document.getElementById("btProfileHeader");
+
+    const professionalName =
+        profile.professional_name
+        ||
+        profile.name
+        ||
+        "Profissional BoraTec";
+
+    header.textContent =
+        professionalName;
+
+    const ratingsCount =
+        Number(profile.ratings_count || 0);
+
+    const reputation =
+        Number(profile.reputation || 0);
+
+    const completed =
+        Number(profile.completed_jobs || 0);
+
+    const recommend =
+        Number(profile.recommend_percent || 0);
+
+    const isOwn =
+        boraUser
+        &&
+        profile.id === boraUser.id;
+
+    const avatar =
+        profile.photo_url
+        ?
+        `<img src="${escapeHtml(profile.photo_url)}" alt="Perfil">`
+        :
+        escapeHtml(
+            getInitials(professionalName)
+        );
+
+    const location =
+        [profile.city, profile.state]
+        .filter(Boolean)
+        .join(" - ")
+        ||
+        "Local não informado";
+
+    const specialties =
+        Array.isArray(profile.specialties)
+        ? profile.specialties
+        : [];
+
+    const regions =
+        Array.isArray(profile.regions_served)
+        ? profile.regions_served
+        : [];
+
+    const reputationTitle =
+        ratingsCount > 0
+        ?
+        `⭐ ${reputation.toFixed(1)}`
+        :
+        "NOVO";
+
+    body.innerHTML = `
+
+        <div class="bt-profile-top">
+
+            <div class="bt-profile-avatar">
+                ${avatar}
+            </div>
+
+            <div>
+                <div class="bt-profile-name">
+                    ${escapeHtml(professionalName)}
+                </div>
+
+                <div class="bt-profile-place">
+                    📍 ${escapeHtml(location)}
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="bt-reputation-hero">
+
+            <div class="bt-reputation-score">
+                <strong>${reputationTitle}</strong>
+                <span>
+                    ${
+                        ratingsCount > 0
+                        ? `${ratingsCount} avaliações recebidas`
+                        : "Ainda sem avaliações"
+                    }
+                </span>
+            </div>
+
+            <div class="bt-metrics">
+
+                <div class="bt-metric">
+                    <small>Serviços concluídos</small>
+                    <strong>${completed}</strong>
+                </div>
+
+                <div class="bt-metric">
+                    <small>Recomendam</small>
+                    <strong>
+                        ${
+                            ratingsCount > 0
+                            ? `${recommend.toFixed(0)}%`
+                            : "—"
+                        }
+                    </strong>
+                </div>
+
+                <div class="bt-metric">
+                    <small>Técnica / organização</small>
+                    <strong>
+                        ${
+                            ratingsCount > 0
+                            ? Number(profile.technical_avg || 0).toFixed(1)
+                            : "—"
+                        }
+                    </strong>
+                </div>
+
+                <div class="bt-metric">
+                    <small>Cumpriu combinado</small>
+                    <strong>
+                        ${
+                            ratingsCount > 0
+                            ? Number(profile.agreement_avg || 0).toFixed(1)
+                            : "—"
+                        }
+                    </strong>
+                </div>
+
+                <div class="bt-metric">
+                    <small>Atendimento / postura</small>
+                    <strong>
+                        ${
+                            ratingsCount > 0
+                            ? Number(profile.customer_care_avg || 0).toFixed(1)
+                            : "—"
+                        }
+                    </strong>
+                </div>
+
+                <div class="bt-metric">
+                    <small>Financeiro</small>
+                    <strong>
+                        ${
+                            ratingsCount > 0
+                            ? Number(profile.financial_avg || 0).toFixed(1)
+                            : "—"
+                        }
+                    </strong>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="bt-section-title">
+            SOBRE
+        </div>
+
+        <div
+            style="
+                color:#a8bacb;
+                font-size:11px;
+                line-height:1.6;
+            "
+        >
+            ${
+                profile.bio
+                ? escapeHtml(profile.bio)
+                : "Este profissional ainda não adicionou uma apresentação."
+            }
+        </div>
+
+
+        <div class="bt-section-title">
+            ESPECIALIDADES
+        </div>
+
+        <div class="bt-chip-wrap">
+
+            ${
+                specialties.length
+                ?
+                specialties
+                .map(item =>
+                    `<span class="bt-chip">${escapeHtml(item)}</span>`
+                )
+                .join("")
+                :
+                `<span style="color:#7892a8;font-size:10px;">Não informadas</span>`
+            }
+
+        </div>
+
+
+        <div class="bt-section-title">
+            REGIÕES ATENDIDAS
+        </div>
+
+        <div class="bt-chip-wrap">
+
+            ${
+                regions.length
+                ?
+                regions
+                .map(item =>
+                    `<span class="bt-chip">${escapeHtml(item)}</span>`
+                )
+                .join("")
+                :
+                `<span style="color:#7892a8;font-size:10px;">Não informadas</span>`
+            }
+
+        </div>
+
+
+        <div
+            style="
+                margin-top:12px;
+                color:#7892a8;
+                font-size:10px;
+            "
+        >
+            Raio informado:
+            ${Number(profile.service_radius_km || 30)} km
+        </div>
+
+
+        ${
+            isOwn
+            ?
+            `
+            <div class="bt-section-title">
+                EDITAR MEU PERFIL
+            </div>
+
+            <div class="bt-field">
+                <label>Nome profissional</label>
+                <input
+                    id="btOwnProfessionalName"
+                    value="${escapeHtml(profile.professional_name || "")}"
+                    placeholder="Ex.: Rocha Refrigeração"
+                >
+            </div>
+
+            <div class="bt-field">
+                <label>Apresentação</label>
+                <textarea
+                    id="btOwnBio"
+                    placeholder="Conte sua experiência..."
+                >${escapeHtml(profile.bio || "")}</textarea>
+            </div>
+
+            <div class="bt-grid-2">
+
+                <div class="bt-field">
+                    <label>Cidade</label>
+                    <input
+                        id="btOwnCity"
+                        value="${escapeHtml(profile.city || "")}"
+                    >
+                </div>
+
+                <div class="bt-field">
+                    <label>Estado</label>
+                    <input
+                        id="btOwnState"
+                        value="${escapeHtml(profile.state || "")}"
+                        maxlength="2"
+                        placeholder="RJ"
+                    >
+                </div>
+
+            </div>
+
+            <div class="bt-field">
+                <label>Especialidades — separar por vírgula</label>
+                <input
+                    id="btOwnSpecialties"
+                    value="${escapeHtml(specialties.join(", "))}"
+                    placeholder="Ar-condicionado, Refrigeração"
+                >
+            </div>
+
+            <div class="bt-field">
+                <label>Regiões atendidas — separar por vírgula</label>
+                <input
+                    id="btOwnRegions"
+                    value="${escapeHtml(regions.join(", "))}"
+                    placeholder="Cabo Frio, Búzios, Rio das Ostras"
+                >
+            </div>
+
+            <div class="bt-field">
+                <label>Raio de atendimento em km</label>
+                <input
+                    id="btOwnRadius"
+                    type="number"
+                    min="1"
+                    max="500"
+                    value="${Number(profile.service_radius_km || 30)}"
+                >
+            </div>
+
+            <button
+                class="bt-primary"
+                type="button"
+                onclick="saveOwnProfessionalProfile()"
+            >
+                Salvar meu perfil
+            </button>
+            `
+            :
+            ""
+        }
+    `;
+}
+
+async function saveOwnProfessionalProfile(){
+
+    if(
+        !boraUser
+        ||
+        btCurrentProfileId !== boraUser.id
+    ){
+        return;
+    }
+
+    const splitList =
+        value =>
+        String(value || "")
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+
+    const professionalName =
+        document
+        .getElementById("btOwnProfessionalName")
+        .value
+        .trim();
+
+    const bio =
+        document
+        .getElementById("btOwnBio")
+        .value
+        .trim();
+
+    const city =
+        document
+        .getElementById("btOwnCity")
+        .value
+        .trim();
+
+    const state =
+        document
+        .getElementById("btOwnState")
+        .value
+        .trim()
+        .toUpperCase();
+
+    const specialties =
+        splitList(
+            document
+            .getElementById("btOwnSpecialties")
+            .value
+        );
+
+    const regions =
+        splitList(
+            document
+            .getElementById("btOwnRegions")
+            .value
+        );
+
+    const radius =
+        Math.max(
+            1,
+            Math.min(
+                500,
+                Number(
+                    document
+                    .getElementById("btOwnRadius")
+                    .value
+                    ||
+                    30
+                )
+            )
+        );
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("profiles")
+        .update({
+            professional_name:
+                professionalName || null,
+            bio:
+                bio || null,
+            city:
+                city || null,
+            state:
+                state || null,
+            specialties,
+            regions_served:
+                regions,
+            service_radius_km:
+                radius,
+            updated_at:
+                new Date().toISOString()
+        })
+        .eq("id", boraUser.id);
+
+        if(error){
+            throw error;
+        }
+
+        await loadBoraTecProfile();
+        updateBoraTecUserInterface();
+        await loadOpportunities();
+
+        showToast(
+            "✅ Perfil atualizado"
+        );
+
+        await openPublicProfile(
+            boraUser.id
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro salvar perfil:",
+            error
+        );
+
+        showToast(
+            "Não foi possível salvar o perfil"
+        );
+    }
+}
+
+
+/* =========================================================
+   INTERESSADOS / COMPARAÇÃO
+========================================================= */
+
+async function openInterestedProfessionals(opportunityId){
+
+    if(!opportunityId){
+        return;
+    }
+
+    const overlay =
+        document
+        .getElementById("btInterestedOverlay");
+
+    const body =
+        document
+        .getElementById("btInterestedBody");
+
+    overlay.classList.add("show");
+
+    body.innerHTML =
+        `<div class="bt-empty">Carregando interessados...</div>`;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "get_opportunity_interests",
+            {
+                p_opportunity_id:
+                    opportunityId
+            }
+        );
+
+        if(error){
+            throw error;
+        }
+
+        if(
+            !data
+            ||
+            data.length === 0
+        ){
+
+            body.innerHTML = `
+                <div class="bt-empty">
+                    👥<br><br>
+                    Ainda não há profissionais interessados nesta oportunidade.
+                </div>
+            `;
+
+            return;
+        }
+
+        body.innerHTML =
+            data
+            .map((item,index) => {
+
+                const ratings =
+                    Number(item.ratings_count || 0);
+
+                const reputation =
+                    Number(item.reputation || 0);
+
+                const repText =
+                    ratings > 0
+                    ?
+                    `⭐ ${reputation.toFixed(1)} • ${Number(item.completed_jobs || 0)} serviços • ${Number(item.recommend_percent || 0).toFixed(0)}% recomendam`
+                    :
+                    `NOVO • ${Number(item.completed_jobs || 0)} serviços`;
+
+                const location =
+                    [item.city,item.state]
+                    .filter(Boolean)
+                    .join(" - ")
+                    ||
+                    "Local não informado";
+
+                const specialties =
+                    Array.isArray(item.specialties)
+                    &&
+                    item.specialties.length
+                    ?
+                    item.specialties.join(" • ")
+                    :
+                    "Especialidades não informadas";
+
+                return `
+                <div class="bt-interested-card">
+
+                    <div
+                        style="
+                            color:#ff9430;
+                            font-size:9px;
+                            font-weight:900;
+                            margin-bottom:5px;
+                        "
+                    >
+                        #${index + 1} NA COMPARAÇÃO
+                    </div>
+
+                    <div class="bt-interested-name">
+                        ${escapeHtml(item.professional_name || "Profissional")}
+                    </div>
+
+                    <div class="bt-interested-meta">
+                        ${escapeHtml(repText)}<br>
+                        📍 ${escapeHtml(location)}<br>
+                        🔧 ${escapeHtml(specialties)}
+                    </div>
+
+                    <div class="bt-interested-actions">
+
+                        <button
+                            class="bt-secondary"
+                            type="button"
+                            onclick="openPublicProfile('${item.professional_id}')"
+                        >
+                            Ver perfil
+                        </button>
+
+                        <button
+                            class="bt-primary"
+                            type="button"
+                            onclick="openInterestConversation('${item.interest_id}','${escapeJs(item.professional_name || "Profissional")}')"
+                        >
+                            💬 Conversar
+                        </button>
+
+                    </div>
+
+                </div>
+                `;
+            })
+            .join("");
+
+    }catch(error){
+
+        console.error(
+            "Erro interessados:",
+            error
+        );
+
+        body.innerHTML =
+            `<div class="bt-empty">Não foi possível carregar os interessados.</div>`;
+    }
+}
+
+function closeInterestedProfessionals(){
+    document
+    .getElementById("btInterestedOverlay")
+    ?.classList.remove("show");
+}
+
+async function openInterestConversation(
+    interestId,
+    professionalName
+){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from("conversations")
+        .select(`
+            id,
+            opportunity_id,
+            interest_id
+        `)
+        .eq("interest_id", interestId)
+        .maybeSingle();
+
+        if(error){
+            throw error;
+        }
+
+        if(!data?.id){
+            showToast(
+                "Conversa ainda não encontrada"
+            );
+            return;
+        }
+
+        closeInterestedProfessionals();
+
+        openChat(
+            data.id,
+            professionalName || "Conversa"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro abrir conversa do interessado:",
+            error
+        );
+
+        showToast(
+            "Não foi possível abrir a conversa"
+        );
+    }
+}
+
+
+/* =========================================================
+   NOTIFICAÇÕES
+========================================================= */
+
+async function openNotifications(){
+
+    document
+    .getElementById("btNotificationsOverlay")
+    .classList.add("show");
+
+    await loadNotifications();
+}
+
+function closeNotifications(){
+    document
+    .getElementById("btNotificationsOverlay")
+    ?.classList.remove("show");
+}
+
+async function loadNotifications(){
+
+    const body =
+        document
+        .getElementById("btNotificationsBody");
+
+    if(!body){
+        return;
+    }
+
+    body.innerHTML =
+        `<div class="bt-empty">Carregando notificações...</div>`;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from("notifications")
+        .select(`
+            id,
+            type,
+            title,
+            body,
+            entity_type,
+            entity_id,
+            is_read,
+            created_at
+        `)
+        .order(
+            "created_at",
+            { ascending:false }
+        )
+        .limit(50);
+
+        if(error){
+            throw error;
+        }
+
+        if(
+            !data
+            ||
+            data.length === 0
+        ){
+
+            body.innerHTML = `
+                <div class="bt-empty">
+                    🔔<br><br>
+                    Você ainda não possui notificações.
+                </div>
+            `;
+
+            await refreshNotificationBadge();
+            return;
+        }
+
+        body.innerHTML =
+            data
+            .map(item => `
+
+                <div
+                    class="
+                        bt-notification-card
+                        ${item.is_read ? "" : "unread"}
+                    "
+                    onclick="openNotificationItem(
+                        '${item.id}',
+                        '${escapeJs(item.entity_type || "")}',
+                        '${item.entity_id || ""}'
+                    )"
+                    style="cursor:pointer;"
+                >
+
+                    <div class="bt-notification-title">
+                        ${escapeHtml(item.title || "Notificação")}
+                    </div>
+
+                    <div class="bt-notification-body">
+                        ${escapeHtml(item.body || "")}
+                    </div>
+
+                    <div class="bt-notification-time">
+                        ${escapeHtml(timeAgo(item.created_at))}
+                    </div>
+
+                </div>
+
+            `)
+            .join("");
+
+        await refreshNotificationBadge();
+
+    }catch(error){
+
+        console.error(
+            "Erro notificações:",
+            error
+        );
+
+        body.innerHTML =
+            `<div class="bt-empty">Não foi possível carregar as notificações.</div>`;
+    }
+}
+
+async function refreshNotificationBadge(){
+
+    if(!boraSupabase || !boraUser){
+        return;
+    }
+
+    try{
+
+        const {
+            count,
+            error
+        } =
+        await boraSupabase
+        .from("notifications")
+        .select(
+            "id",
+            {
+                count:"exact",
+                head:true
+            }
+        )
+        .eq("is_read",false);
+
+        if(error){
+            throw error;
+        }
+
+        const badge =
+            document
+            .getElementById("btNotificationBadge");
+
+        if(!badge){
+            return;
+        }
+
+        const total =
+            Number(count || 0);
+
+        badge.textContent =
+            total > 99
+            ? "99+"
+            : String(total);
+
+        badge.style.display =
+            total > 0
+            ? "flex"
+            : "none";
+
+    }catch(error){
+
+        console.warn(
+            "Contador notificações:",
+            error
+        );
+    }
+}
+
+async function markAllNotificationsRead(){
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .rpc("read_all_notifications");
+
+        if(error){
+            throw error;
+        }
+
+        await loadNotifications();
+
+    }catch(error){
+
+        console.error(
+            "Erro marcar notificações:",
+            error
+        );
+
+        showToast(
+            "Não foi possível atualizar notificações"
+        );
+    }
+}
+
+async function openNotificationItem(
+    notificationId,
+    entityType,
+    entityId
+){
+
+    try{
+
+        await boraSupabase
+        .rpc(
+            "read_notification",
+            {
+                p_notification_id:
+                    notificationId
+            }
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Falha marcar notificação:",
+            error
+        );
+    }
+
+    closeNotifications();
+
+    await refreshNotificationBadge();
+
+    if(
+        entityType === "conversation"
+        &&
+        entityId
+    ){
+        openChat(
+            entityId,
+            "Conversa BoraTec"
+        );
+        return;
+    }
+
+    if(
+        entityType === "job"
+        &&
+        entityId
+    ){
+        openMyJobs();
+        return;
+    }
+
+    if(
+        entityType === "opportunity"
+        &&
+        entityId
+    ){
+        openInterestedProfessionals(
+            entityId
+        );
+        return;
+    }
+}
+
+function listenNotificationsRealtime(){
+
+    if(
+        !boraSupabase
+        ||
+        !boraUser
+    ){
+        return;
+    }
+
+    if(btNotificationsChannel){
+
+        boraSupabase
+        .removeChannel(
+            btNotificationsChannel
+        );
+    }
+
+    btNotificationsChannel =
+        boraSupabase
+        .channel(
+            `boratec-notifications-${boraUser.id}`
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"INSERT",
+                schema:"public",
+                table:"notifications",
+                filter:
+                    `user_id=eq.${boraUser.id}`
+            },
+            async payload => {
+
+                showToast(
+                    `🔔 ${payload.new?.title || "Nova notificação"}`
+                );
+
+                await refreshNotificationBadge();
+
+                const overlay =
+                    document
+                    .getElementById(
+                        "btNotificationsOverlay"
+                    );
+
+                if(
+                    overlay
+                    ?.classList
+                    .contains("show")
+                ){
+                    await loadNotifications();
+                }
+            }
+        )
+        .subscribe();
+}
+
+
+/* =========================================================
+   MENU V1.0
+========================================================= */
+
+const boraTecSelectNavBeforeV1 =
+    window.selectNav
+    ||
+    selectNav;
+
+selectNav =
+function(
+    button,
+    page
+){
+
+    const normalized =
+        String(page || "")
+        .trim()
+        .toLowerCase();
+
+    if(normalized === "perfil"){
+
+        if(boraUser?.id){
+            openPublicProfile(
+                boraUser.id
+            );
+        }
+
+        return;
+    }
+
+    if(
+        normalized === "notificações"
+        ||
+        normalized === "notificacoes"
+    ){
+        openNotifications();
+        return;
+    }
+
+    return boraTecSelectNavBeforeV1(
+        button,
+        page
+    );
+};
+
+
+/* =========================================================
+   INICIALIZAÇÃO V1.0
+========================================================= */
+
+async function initializeBoraTecV1(){
+
+    createBoraTecV1Interface();
+
+    let attempts = 0;
+
+    const waitForAuth =
+        setInterval(
+            async () => {
+
+                attempts++;
+
+                if(
+                    boraSupabase
+                    &&
+                    boraUser
+                ){
+
+                    clearInterval(
+                        waitForAuth
+                    );
+
+                    await refreshNotificationBadge();
+
+                    listenNotificationsRealtime();
+
+                    return;
+                }
+
+                if(attempts >= 20){
+                    clearInterval(
+                        waitForAuth
+                    );
+                }
+
+            },
+            250
+        );
+}
+
+
+/* =========================================================
+   GLOBAL V1.0
+========================================================= */
+
+window.selectNav =
+    selectNav;
+
+window.openFeedFilters =
+    openFeedFilters;
+
+window.closeFeedFilters =
+    closeFeedFilters;
+
+window.applyFeedFiltersFromUI =
+    applyFeedFiltersFromUI;
+
+window.clearFeedFilters =
+    clearFeedFilters;
+
+window.openPublicProfile =
+    openPublicProfile;
+
+window.closePublicProfile =
+    closePublicProfile;
+
+window.saveOwnProfessionalProfile =
+    saveOwnProfessionalProfile;
+
+window.openInterestedProfessionals =
+    openInterestedProfessionals;
+
+window.closeInterestedProfessionals =
+    closeInterestedProfessionals;
+
+window.openInterestConversation =
+    openInterestConversation;
+
+window.openNotifications =
+    openNotifications;
+
+window.closeNotifications =
+    closeNotifications;
+
+window.markAllNotificationsRead =
+    markAllNotificationsRead;
+
+window.openNotificationItem =
+    openNotificationItem;
+
+
+/* =========================================================
+   DOM READY V1.0
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeBoraTecV1
+);
