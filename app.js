@@ -1698,7 +1698,7 @@ function createChatInterface(){
         position:fixed;
         inset:0;
 
-        background:#06182b;
+        background:#101316;
 
         z-index:3000;
 
@@ -1815,8 +1815,8 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #ff7900,
-            #ff982f
+            #00bff3,
+            #2499d4
         );
 
         color:white;
@@ -2042,7 +2042,7 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #ff7900,
+            #00bff3,
             #ff962e
         );
 
@@ -2063,7 +2063,7 @@ function createChatInterface(){
 
         z-index:2900;
 
-        background:#06182b;
+        background:#101316;
 
         display:none;
 
@@ -2146,7 +2146,7 @@ function createChatInterface(){
 
         display:block;
 
-        color:#ff922f;
+        color:#2499d4;
 
         margin-top:5px;
 
@@ -2282,7 +2282,7 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #ff7900,
+            #00bff3,
             #ff962e
         );
 
@@ -4269,7 +4269,7 @@ function createMyJobsInterface(){
         position:fixed;
         inset:0;
         z-index:2850;
-        background:#06182b;
+        background:#101316;
         display:none;
         overflow-y:auto;
         color:white;
@@ -4408,7 +4408,7 @@ function createMyJobsInterface(){
         border:none;
         border-radius:12px;
         margin-top:5px;
-        background:linear-gradient(135deg,#ff7900,#ff982f);
+        background:linear-gradient(135deg,#00bff3,#2499d4);
         color:white;
         font-size:11px;
         font-weight:900;
@@ -5658,7 +5658,7 @@ function createRatingInterface(){
         margin-top:15px;
         border:none;
         border-radius:12px;
-        background:linear-gradient(135deg,#ff7900,#ff982f);
+        background:linear-gradient(135deg,#00bff3,#2499d4);
         color:white;
         font-weight:900;
         font-size:11px;
@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC R11 PWA
+   BORATEC R10 - TEMA GRAFITE AZUL (TESTE)
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -6440,7 +6440,7 @@ function createBoraTecV1Interface(){
         align-items:center;
         justify-content:center;
         border-radius:20px;
-        background:#ff7900;
+        background:#00bff3;
         color:#fff;
         font-size:9px;
         font-weight:900;
@@ -6574,7 +6574,7 @@ function createBoraTecV1Interface(){
         min-height:45px;
         border:none;
         border-radius:12px;
-        background:linear-gradient(135deg,#ff7900,#ff9a35);
+        background:linear-gradient(135deg,#00bff3,#31b9e8);
         color:#fff;
         font-size:11px;
         font-weight:900;
@@ -6656,7 +6656,7 @@ function createBoraTecV1Interface(){
 
     .bt-reputation-score strong{
         font-size:25px;
-        color:#ff9b34;
+        color:#31b9e8;
     }
 
     .bt-reputation-score span{
@@ -10607,7 +10607,7 @@ function createCommunityInterface(){
             z-index:7600;
             display:none;
             flex-direction:column;
-            background:#06182b;
+            background:#101316;
             color:#fff;
         }
 
@@ -10811,7 +10811,7 @@ function createCommunityInterface(){
             flex:0 0 46px;
             border:0;
             border-radius:14px;
-            background:#ff7900;
+            background:#00bff3;
             color:#fff;
             font-size:18px;
             font-weight:900;
@@ -10868,7 +10868,7 @@ function createCommunityInterface(){
         .bt-community-reply-preview{
             margin-bottom:6px;
             padding:7px 9px;
-            border-left:3px solid #ff7900;
+            border-left:3px solid #00bff3;
             border-radius:7px;
             background:rgba(255,255,255,.045);
             cursor:pointer;
@@ -12402,7 +12402,7 @@ function setupBoraTecPWA(){
 
         ensureMeta(
             "theme-color",
-            "#06182b"
+            "#101316"
         );
 
         ensureMeta(
@@ -12616,7 +12616,7 @@ function createBoraTecHome(){
             overflow-y:auto;
             background:
                 radial-gradient(circle at 85% -10%,rgba(19,120,190,.18),transparent 34%),
-                linear-gradient(180deg,#06182b 0%,#071a2e 100%);
+                linear-gradient(180deg,#101316 0%,#11171b 100%);
             color:#fff;
         }
 
@@ -13449,7 +13449,7 @@ async function loadBoraTecHome(){
                         ">
                             ${city ? `<span>${city}</span>` : ""}
                             ${item.category ? `<span>🧰 ${escapeHTML(item.category)}</span>` : ""}
-                            ${value ? `<span style="color:#ff9b32;font-weight:800">${value}</span>` : ""}
+                            ${value ? `<span style="color:#31b9e8;font-weight:800">${value}</span>` : ""}
                         </div>
                     </div>
                 `;
@@ -13690,7 +13690,7 @@ function createBoraTecSplash(){
             display:flex;
             align-items:center;
             justify-content:center;
-            background:#06182b;
+            background:#101316;
             opacity:1;
             transition:opacity .28s ease;
         }
@@ -14087,7 +14087,7 @@ function setupBoraTecV18HomeStyle(){
 #btHomeScreen{
     background:
         radial-gradient(circle at 85% -10%, rgba(22,123,190,.18), transparent 34%),
-        linear-gradient(180deg,#06182b 0%,#071a2e 100%) !important;
+        linear-gradient(180deg,#101316 0%,#11171b 100%) !important;
 }
 
 #btHomeScreen .bt-home-shell{
