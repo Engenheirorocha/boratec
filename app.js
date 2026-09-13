@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8.3
+   BORATEC V1.8.4
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12784,6 +12784,16 @@ function createBoraTecHome(){
                     <div class="bt-v182-action-icon">🔎</div>
                     <strong>Encontrar profissional</strong>
                     <small>Veja técnicos e ajudantes disponíveis na rede.</small>
+                </button>
+
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="openCommunityFromHome()"
+                >
+                    <div class="bt-v182-action-icon">💬</div>
+                    <strong>Comunidade</strong>
+                    <small>Troque dúvidas, dicas e informações com profissionais da rede.</small>
                 </button>
 
             </div>
