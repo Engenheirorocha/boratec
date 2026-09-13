@@ -1,429 +1,3597 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#081a2f" />
-  <meta name="description" content="BoraTec — rede profissional de climatização e refrigeração." />
-  <title>BoraTec — Cenário 01</title>
+<meta charset="UTF-8">
 
-  <link rel="stylesheet" href="styles.css" />
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="theme-color" content="#06182b">
+
+<title>BoraTec — Rede dos Profissionais</title>
+
+<style>
+
+/* =========================================================
+   BORATEC
+   MVP - INTERFACE DARK / MOBILE FIRST
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+
+    --bg:#06182b;
+    --bg2:#081d33;
+    --bg3:#0b2744;
+
+    --card:#0d2947;
+    --card2:#102f50;
+
+    --orange:#ff7900;
+    --orange2:#ff922f;
+
+    --blue:#1687ff;
+    --blue2:#006ee6;
+
+    --green:#19c875;
+    --red:#ff4c5b;
+    --yellow:#ffbd3e;
+
+    --white:#ffffff;
+
+    --text:#f5f8fc;
+    --muted:#91a7bd;
+
+    --border:rgba(255,255,255,.08);
+
+    --shadow:
+        0 12px 35px rgba(0,0,0,.22);
+
+    --radius:18px;
+}
+
+html{
+    background:var(--bg);
+}
+
+body{
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 50% -100px,
+            #123b61 0,
+            #071b30 42%,
+            #051526 100%
+        );
+
+    color:var(--text);
+
+    min-height:100vh;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app{
+
+    width:100%;
+
+    max-width:760px;
+
+    margin:0 auto;
+
+    min-height:100vh;
+
+    position:relative;
+
+    padding-bottom:105px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    background:
+        rgba(6,24,43,.94);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+.header-inner{
+
+    height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+        env(safe-area-inset-top)
+        17px
+        0;
+
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:950;
+
+    letter-spacing:-1.5px;
+
+    color:white;
+
+    line-height:1;
+}
+
+.logo span{
+    color:var(--orange);
+}
+
+.logo small{
+
+    display:block;
+
+    color:var(--muted);
+
+    font-size:9px;
+
+    letter-spacing:.9px;
+
+    margin-top:5px;
+
+    font-weight:700;
+}
+
+.header-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+}
+
+.icon-button{
+
+    width:42px;
+    height:42px;
+
+    border:none;
+
+    border-radius:13px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    border:
+        1px solid rgba(255,255,255,.06);
+}
+
+.avatar{
+
+    width:42px;
+    height:42px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            #ff9b3e
+        );
+
+    color:white;
+
+    font-weight:900;
+
+    font-size:13px;
+
+    border:
+        2px solid rgba(255,255,255,.18);
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.intro{
+
+    padding:
+        22px
+        17px
+        16px;
+}
+
+.intro-top{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:15px;
+}
+
+.hello{
+
+    color:var(--orange);
+
+    font-size:11px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    margin-bottom:5px;
+}
+
+.intro h1{
+
+    font-size:24px;
+
+    letter-spacing:-.8px;
+
+    line-height:1.15;
+}
+
+.intro p{
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    margin-top:6px;
+
+    line-height:1.45;
+}
+
+.availability{
+
+    border:none;
+
+    background:
+        rgba(25,200,117,.12);
+
+    color:#55e69e;
+
+    border-radius:30px;
+
+    padding:9px 12px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    white-space:nowrap;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    border:
+        1px solid rgba(25,200,117,.22);
+}
+
+.availability .dot{
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:var(--green);
+
+    box-shadow:
+        0 0 8px rgba(25,200,117,.8);
+}
+
+.availability.active{
+
+    background:var(--green);
+
+    color:white;
+}
+
+.availability.active .dot{
+
+    background:white;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.search-area{
+
+    padding:
+        0
+        17px
+        15px;
+}
+
+.search-box{
+
+    height:47px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:14px;
+
+    padding:0 14px;
+}
+
+.search-box span{
+
+    color:#7890a7;
+}
+
+.search-box input{
+
+    flex:1;
+
+    border:none;
+
+    outline:none;
+
+    background:none;
+
+    color:white;
+
+    font-size:13px;
+}
+
+.search-box input::placeholder{
+
+    color:#72899f;
+}
+
+
+/* =========================================================
+   ABAS
+========================================================= */
+
+.tabs-wrap{
+
+    padding:
+        0
+        17px;
+
+    position:sticky;
+
+    top:72px;
+
+    z-index:80;
+
+    background:
+        rgba(6,24,43,.96);
+
+    backdrop-filter:
+        blur(15px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.04);
+}
+
+.tabs{
+
+    display:flex;
+
+    gap:7px;
+
+    overflow-x:auto;
+
+    padding:
+        9px 0 13px;
+
+    scrollbar-width:none;
+}
+
+.tabs::-webkit-scrollbar{
+    display:none;
+}
+
+.tab{
+
+    border:none;
+
+    background:
+        rgba(255,255,255,.06);
+
+    color:#9bb0c5;
+
+    padding:
+        9px 15px;
+
+    border-radius:30px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    border:
+        1px solid rgba(255,255,255,.05);
+
+    transition:.2s;
+}
+
+.tab.active{
+
+    background:white;
+
+    color:#09203a;
+
+    border-color:white;
+}
+
+
+/* =========================================================
+   FEED HEADER
+========================================================= */
+
+.feed-header{
+
+    padding:
+        19px
+        17px
+        12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+}
+
+.feed-header h2{
+
+    font-size:17px;
+
+    letter-spacing:-.3px;
+}
+
+.feed-header p{
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    margin-top:3px;
+}
+
+.feed-count{
+
+    background:
+        rgba(255,121,0,.12);
+
+    color:#ff9a42;
+
+    padding:
+        6px 9px;
+
+    border-radius:20px;
+
+    font-size:10px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   FEED
+========================================================= */
+
+.feed{
+
+    padding:
+        0
+        13px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:11px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.job-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--card2),
+            var(--card)
+        );
+
+    border-radius:var(--radius);
+
+    padding:16px;
+
+    border:
+        1px solid rgba(255,255,255,.075);
+
+    box-shadow:
+        0 7px 20px rgba(0,0,0,.13);
+
+    transition:.2s;
+}
+
+.job-card:active{
+
+    transform:
+        scale(.99);
+}
+
+.job-card.urgent::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:4px;
+
+    height:100%;
+
+    background:var(--orange);
+}
+
+
+/* =========================================================
+   CARD TOP
+========================================================= */
+
+.card-top{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:space-between;
+
+    gap:10px;
+}
+
+.type{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:.8px;
+
+    color:#ff9a45;
+}
+
+.type.helper{
+
+    color:#65afff;
+}
+
+.type.available{
+
+    color:#4cdd96;
+}
+
+.time{
+
+    color:#7189a1;
+
+    font-size:9px;
+}
+
+
+/* =========================================================
+   JOB
+========================================================= */
+
+.job-title{
+
+    margin-top:9px;
+
+    font-size:17px;
+
+    font-weight:900;
+
+    letter-spacing:-.3px;
+
+    line-height:1.25;
+}
+
+.job-info{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:
+        6px 12px;
+
+    margin-top:8px;
+
+    color:#a4b7ca;
+
+    font-size:11px;
+}
+
+.job-description{
+
+    margin-top:11px;
+
+    color:#b8c7d6;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   PROFESSIONAL
+========================================================= */
+
+.professional{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    margin-top:14px;
+
+    padding-top:13px;
+
+    border-top:
+        1px solid rgba(255,255,255,.07);
+}
+
+.prof-avatar{
+
+    width:36px;
+    height:36px;
+
+    min-width:36px;
+
+    border-radius:11px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-size:11px;
+
+    font-weight:900;
+
+    color:white;
+}
+
+.prof-data{
+
+    flex:1;
+
+    min-width:0;
+}
+
+.prof-name{
+
+    font-size:11px;
+
+    font-weight:800;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+}
+
+.prof-rating{
+
+    color:#91a7bd;
+
+    font-size:9px;
+
+    margin-top:2px;
+}
+
+.star{
+
+    color:var(--yellow);
+}
+
+
+/* =========================================================
+   PRICE / BUTTON
+========================================================= */
+
+.job-action{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-top:13px;
+}
+
+.price small{
+
+    display:block;
+
+    color:#7890a6;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    margin-bottom:1px;
+}
+
+.price strong{
+
+    font-size:18px;
+
+    color:white;
+
+    letter-spacing:-.4px;
+}
+
+.price span{
+
+    color:#8197ad;
+
+    font-size:9px;
+}
+
+.action-btn{
+
+    border:none;
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1687ff,
+            #006fe8
+        );
+
+    color:white;
+
+    padding:
+        11px 15px;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 5px 15px rgba(0,118,255,.2);
+}
+
+.action-btn.orange{
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            #ff922f
+        );
+
+    box-shadow:
+        0 5px 15px rgba(255,121,0,.2);
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty{
+
+    text-align:center;
+
+    padding:
+        60px
+        20px;
+
+    color:#7189a0;
+}
+
+.empty-icon{
+
+    font-size:34px;
+
+    margin-bottom:9px;
+}
+
+.empty strong{
+
+    display:block;
+
+    color:#a5b8ca;
+
+    font-size:13px;
+}
+
+.empty p{
+
+    font-size:11px;
+
+    margin-top:5px;
+}
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav{
+
+    position:fixed;
+
+    bottom:0;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:100%;
+
+    max-width:760px;
+
+    height:
+        calc(
+            71px +
+            env(safe-area-inset-bottom)
+        );
+
+    background:
+        rgba(5,20,36,.97);
+
+    backdrop-filter:
+        blur(20px);
+
+    border-top:
+        1px solid rgba(255,255,255,.08);
+
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        1fr
+        1fr;
+
+    z-index:200;
+
+    padding-bottom:
+        env(safe-area-inset-bottom);
+}
+
+.nav-button{
+
+    border:none;
+
+    background:none;
+
+    color:#71879d;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:4px;
+
+    font-size:9px;
+
+    position:relative;
+}
+
+.nav-button span{
+
+    font-size:20px;
+}
+
+.nav-button.active{
+
+    color:white;
+}
+
+.nav-button.active::after{
+
+    content:"";
+
+    position:absolute;
+
+    bottom:6px;
+
+    width:18px;
+
+    height:3px;
+
+    background:var(--orange);
+
+    border-radius:5px;
+}
+
+
+/* =========================================================
+   PUBLICAR CENTRAL
+========================================================= */
+
+.publish-fab{
+
+    width:48px;
+    height:48px;
+
+    border-radius:16px;
+
+    border:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            #ff9b38
+        );
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:28px;
+
+    font-weight:300;
+
+    box-shadow:
+        0 6px 20px rgba(255,121,0,.35);
+
+    margin-bottom:0;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(0,8,17,.78);
+
+    backdrop-filter:
+        blur(7px);
+
+    z-index:500;
+
+    display:none;
+
+    align-items:flex-end;
+
+    justify-content:center;
+}
+
+.overlay.show{
+
+    display:flex;
+}
+
+
+/* =========================================================
+   SHEET
+========================================================= */
+
+.sheet{
+
+    width:100%;
+
+    max-width:760px;
+
+    background:
+        #0b2139;
+
+    border-radius:
+        25px 25px 0 0;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-bottom:none;
+
+    max-height:92vh;
+
+    overflow:auto;
+
+    animation:
+        sheetUp .22s ease;
+
+    padding-bottom:
+        env(safe-area-inset-bottom);
+}
+
+@keyframes sheetUp{
+
+    from{
+
+        transform:
+            translateY(100%);
+
+    }
+
+    to{
+
+        transform:
+            translateY(0);
+
+    }
+}
+
+.handle{
+
+    width:42px;
+
+    height:4px;
+
+    border-radius:10px;
+
+    background:#40566d;
+
+    margin:
+        10px auto 5px;
+}
+
+.sheet-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+        14px
+        18px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+}
+
+.sheet-header small{
+
+    display:block;
+
+    color:var(--orange);
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    margin-bottom:3px;
+}
+
+.sheet-header h2{
+
+    font-size:19px;
+}
+
+.close{
+
+    width:36px;
+    height:36px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+}
+
+
+/* =========================================================
+   PUBLISH OPTIONS
+========================================================= */
+
+.publish-options{
+
+    padding:16px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:9px;
+}
+
+.publish-option{
+
+    width:100%;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:white;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    cursor:pointer;
+
+    text-align:left;
+}
+
+.publish-option .option-icon{
+
+    width:45px;
+    height:45px;
+
+    border-radius:13px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:21px;
+
+    background:
+        rgba(255,121,0,.12);
+}
+
+.publish-option:nth-child(2)
+.option-icon{
+
+    background:
+        rgba(22,135,255,.13);
+}
+
+.publish-option:nth-child(3)
+.option-icon{
+
+    background:
+        rgba(25,200,117,.13);
+}
+
+.publish-option strong{
+
+    display:block;
+
+    font-size:13px;
+
+    margin-bottom:3px;
+}
+
+.publish-option span{
+
+    color:#849bb1;
+
+    font-size:10px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form{
+
+    padding:
+        17px;
+
+    display:none;
+}
+
+.form.show{
+
+    display:block;
+}
+
+.field{
+
+    margin-bottom:14px;
+}
+
+.field label{
+
+    display:block;
+
+    color:#b5c5d5;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    margin-bottom:6px;
+}
+
+.input{
+
+    width:100%;
+
+    height:45px;
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    background:
+        rgba(255,255,255,.055);
+
+    color:white;
+
+    border-radius:11px;
+
+    padding:
+        0 12px;
+
+    outline:none;
+
+    font-family:inherit;
+
+    font-size:12px;
+}
+
+textarea.input{
+
+    height:95px;
+
+    padding-top:11px;
+
+    resize:none;
+}
+
+.input:focus{
+
+    border-color:
+        rgba(255,121,0,.65);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(255,121,0,.08);
+}
+
+.input option{
+
+    background:#0b2139;
+
+    color:white;
+}
+
+.form-row{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:10px;
+}
+
+.privacy{
+
+    background:
+        rgba(22,135,255,.08);
+
+    border:
+        1px solid rgba(22,135,255,.12);
+
+    border-radius:11px;
+
+    padding:10px;
+
+    color:#89a5bf;
+
+    font-size:9px;
+
+    line-height:1.45;
+
+    margin-bottom:14px;
+}
+
+.submit{
+
+    width:100%;
+
+    height:47px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            #ff9431
+        );
+
+    color:white;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    font-size:12px;
+}
+
+
+/* =========================================================
+   INTEREST MODAL
+========================================================= */
+
+.interest-sheet{
+
+    padding:
+        20px 18px 25px;
+
+    text-align:center;
+}
+
+.interest-icon{
+
+    width:64px;
+    height:64px;
+
+    margin:
+        0 auto 12px;
+
+    border-radius:20px;
+
+    background:
+        rgba(25,200,117,.12);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:29px;
+}
+
+.interest-sheet h2{
+
+    font-size:20px;
+}
+
+.interest-sheet p{
+
+    color:#8da3b8;
+
+    font-size:11px;
+
+    line-height:1.5;
+
+    margin:
+        8px auto 18px;
+
+    max-width:350px;
+}
+
+.chat-button{
+
+    width:100%;
+
+    border:none;
+
+    height:47px;
+
+    border-radius:12px;
+
+    background:var(--blue);
+
+    color:white;
+
+    font-weight:900;
+
+    cursor:pointer;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+
+    position:fixed;
+
+    z-index:1000;
+
+    left:50%;
+
+    bottom:90px;
+
+    transform:
+        translate(-50%,20px);
+
+    background:white;
+
+    color:#09203a;
+
+    border-radius:12px;
+
+    padding:
+        11px 16px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    box-shadow:var(--shadow);
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    white-space:nowrap;
+
+    max-width:
+        calc(100% - 30px);
+}
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+        translate(-50%,0);
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media(min-width:800px){
+
+    body{
+
+        padding:
+            25px 0;
+
+        background:
+            #030d18;
+    }
+
+    .app{
+
+        min-height:
+            calc(100vh - 50px);
+
+        border:
+            1px solid rgba(255,255,255,.08);
+
+        box-shadow:
+            0 30px 80px rgba(0,0,0,.5);
+
+        background:
+            linear-gradient(
+                #071c31,
+                #051526
+            );
+    }
+
+    .header{
+
+        border-radius:
+            18px 18px 0 0;
+    }
+
+    .bottom-nav{
+
+        bottom:25px;
+
+        border-radius:
+            0 0 18px 18px;
+    }
+
+    .overlay{
+
+        align-items:center;
+    }
+
+    .sheet{
+
+        max-width:560px;
+
+        border-radius:24px;
+
+        border:
+            1px solid rgba(255,255,255,.08);
+
+        max-height:88vh;
+    }
+
+}
+
+</style>
 </head>
+
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <header class="topbar">
 
-      <div class="brand-wrap">
+<!-- ======================================================
+     HEADER
+====================================================== -->
+
+<header class="header">
+
+    <div class="header-inner">
 
         <div class="logo">
-          BT
+
+            Bora<span>Tec</span>
+
+            <small>
+                A REDE DOS PROFISSIONAIS
+            </small>
+
         </div>
+
+
+        <div class="header-actions">
+
+            <button
+                class="icon-button"
+                onclick="showToast('Nenhuma nova notificação')"
+            >
+                🔔
+            </button>
+
+            <div class="avatar">
+                TR
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     INTRO
+====================================================== -->
+
+<section class="intro">
+
+    <div class="intro-top">
 
         <div>
 
-          <div class="brand">
-            BoraTec
-            <span>BETA</span>
-          </div>
+            <div class="hello">
+                BOM DIA, TIAGO
+            </div>
 
-          <div class="subtitle">
-            Rede profissional de climatização
-          </div>
+            <h1>
+                Serviços na sua região
+            </h1>
 
-        </div>
-
-      </div>
-
-      <button class="icon-btn" aria-label="Notificações">
-        🔔
-      </button>
-
-    </header>
-
-
-    <main>
-
-      <!-- BOAS VINDAS -->
-
-      <section class="welcome">
-
-        <div>
-
-          <div class="eyebrow">
-            BOM DIA, TIAGO
-          </div>
-
-          <h1>
-            O que você precisa hoje?
-          </h1>
+            <p>
+                Profissionais gerando trabalho
+                para profissionais.
+            </p>
 
         </div>
 
-        <button
-          class="availability"
-          id="availabilityBtn"
-        >
-          <i></i>
-          Estou disponível
-        </button>
-
-      </section>
-
-
-      <!-- AÇÕES PRINCIPAIS -->
-
-      <section
-        class="actions"
-        aria-label="Ações rápidas"
-      >
 
         <button
-          class="action-card primary"
-          data-compose="servico"
+            id="availability"
+            class="availability"
+            onclick="toggleAvailability()"
         >
 
-          <div class="action-icon">
-            🔥
-          </div>
+            <span class="dot"></span>
 
-          <strong>
-            Tenho serviço
-          </strong>
-
-          <small>
-            Repasse para um parceiro
-          </small>
+            <span id="availabilityText">
+                Disponível
+            </span>
 
         </button>
 
+    </div>
 
-        <button
-          class="action-card"
-          data-compose="ajudante"
+</section>
+
+
+<!-- ======================================================
+     PESQUISA
+====================================================== -->
+
+<section class="search-area">
+
+    <div class="search-box">
+
+        <span>
+            🔎
+        </span>
+
+        <input
+            id="searchInput"
+            placeholder="Buscar bairro, cidade ou serviço..."
+            oninput="renderFeed()"
         >
 
-          <div class="action-icon">
-            👷
-          </div>
+    </div>
 
-          <strong>
-            Preciso de ajudante
-          </strong>
+</section>
 
-          <small>
-            Encontre mão de obra
-          </small>
 
-        </button>
+<!-- ======================================================
+     ABAS
+====================================================== -->
 
+<section class="tabs-wrap">
+
+    <div class="tabs">
 
         <button
-          class="action-card"
-          data-compose="disponivel"
+            class="tab active"
+            data-filter="all"
+            onclick="changeFilter('all',this)"
         >
-
-          <div class="action-icon">
-            🟢
-          </div>
-
-          <strong>
-            Quero trabalhar
-          </strong>
-
-          <small>
-            Avise que está disponível
-          </small>
-
+            Todos
         </button>
 
-      </section>
+        <button
+            class="tab"
+            data-filter="service"
+            onclick="changeFilter('service',this)"
+        >
+            Serviços
+        </button>
+
+        <button
+            class="tab"
+            data-filter="helper"
+            onclick="changeFilter('helper',this)"
+        >
+            Ajudantes
+        </button>
+
+        <button
+            class="tab"
+            data-filter="available"
+            onclick="changeFilter('available',this)"
+        >
+            Disponíveis
+        </button>
+
+    </div>
+
+</section>
 
 
-      <!-- CENÁRIO DE EXEMPLO -->
+<!-- ======================================================
+     FEED HEADER
+====================================================== -->
 
-      <section class="scenario-banner">
+<section class="feed-header">
 
-        <div class="scenario-icon">
-          📍
-        </div>
+    <div>
 
-        <div>
-
-          <b>
-            Cenário real
-          </b>
-
-          <p>
-            Você está em Copacabana e surgiu um cliente urgente
-            em Niterói. Publique o serviço e encontre alguém da região.
-          </p>
-
-        </div>
-
-      </section>
-
-
-      <!-- CABEÇALHO DO FEED -->
-
-      <section class="feed-head">
-
-        <div>
-
-          <h2>
+        <h2>
             Oportunidades agora
-          </h2>
+        </h2>
 
-          <p>
+        <p>
             Publicações recentes da rede
-          </p>
+        </p>
 
+    </div>
+
+    <div
+        id="feedCount"
+        class="feed-count"
+    >
+        0 oportunidades
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     FEED
+====================================================== -->
+
+<section
+    id="feed"
+    class="feed"
+></section>
+
+
+<!-- ======================================================
+     MENU
+====================================================== -->
+
+<nav class="bottom-nav">
+
+    <button
+        class="nav-button active"
+        onclick="selectNav(this,'Início')"
+    >
+
+        <span>
+            ⌂
+        </span>
+
+        Início
+
+    </button>
+
+
+    <button
+        class="nav-button"
+        onclick="openPublishMenu()"
+    >
+
+        <div class="publish-fab">
+            +
         </div>
 
-        <button class="filter-btn">
-          ⚙️ Filtros
-        </button>
+        Publicar
 
-      </section>
+    </button>
 
 
-      <!-- FILTROS -->
+    <button
+        class="nav-button"
+        onclick="selectNav(this,'Mensagens')"
+    >
 
-      <section class="chips">
+        <span>
+            💬
+        </span>
 
-        <button
-          class="chip active"
-          data-filter="todos"
-        >
-          Tudo
-        </button>
+        Mensagens
 
-        <button
-          class="chip"
-          data-filter="servico"
-        >
-          Serviços
-        </button>
-
-        <button
-          class="chip"
-          data-filter="ajudante"
-        >
-          Ajudantes
-        </button>
-
-        <button
-          class="chip"
-          data-filter="disponivel"
-        >
-          Disponíveis
-        </button>
-
-      </section>
+    </button>
 
 
-      <!-- POSTS -->
+    <button
+        class="nav-button"
+        onclick="selectNav(this,'Perfil')"
+    >
 
-      <section
-        class="posts"
-        id="posts"
-      ></section>
+        <span>
+            ♙
+        </span>
 
-    </main>
-
-
-    <!-- MENU INFERIOR -->
-
-    <nav class="bottom-nav">
-
-      <button class="active">
-        <span>⌂</span>
-        Início
-      </button>
-
-      <button>
-        <span>💬</span>
-        Conversas
-      </button>
-
-      <button>
-        <span>👥</span>
-        Rede
-      </button>
-
-      <button>
-        <span>⭐</span>
         Perfil
-      </button>
 
-    </nav>
+    </button>
 
-  </div>
+</nav>
 
 
-  <!-- TELA PARA PUBLICAR SERVIÇO -->
+</div>
 
-  <div
-    class="sheet-backdrop hidden"
-    id="sheetBackdrop"
-  >
 
-    <section class="sheet">
+<!-- ======================================================
+     PUBLICAÇÃO
+====================================================== -->
 
-      <div class="sheet-handle"></div>
+<div
+    id="publishOverlay"
+    class="overlay"
+    onclick="closeOnOverlay(event,'publishOverlay')"
+>
 
-      <div class="sheet-head">
+<div class="sheet">
+
+    <div class="handle"></div>
+
+
+    <div class="sheet-header">
 
         <div>
 
-          <div class="eyebrow orange">
-            REPASSAR SERVIÇO
-          </div>
+            <small id="sheetSmall">
+                PUBLICAR
+            </small>
 
-          <h2>
-            Publique para a rede
-          </h2>
+            <h2 id="sheetTitle">
+                O que você precisa?
+            </h2>
 
         </div>
 
         <button
-          class="close"
-          id="closeSheet"
+            class="close"
+            onclick="closePublish()"
         >
-          ✕
+            ×
         </button>
 
-      </div>
+    </div>
 
 
-      <form id="serviceForm">
+    <!-- OPÇÕES -->
 
-        <label>
+    <div
+        id="publishOptions"
+        class="publish-options"
+    >
 
-          Onde é o serviço?
+        <button
+            class="publish-option"
+            onclick="selectPublishType('service')"
+        >
 
-          <input
-            id="region"
-            required
-            placeholder="Ex.: Niterói - Icaraí"
-            value="Niterói - Icaraí"
-          />
+            <div class="option-icon">
+                🔥
+            </div>
 
-        </label>
+            <div>
 
+                <strong>
+                    Repassar serviço
+                </strong>
 
-        <div class="two-cols">
+                <span>
+                    Encontre um profissional para atender seu cliente
+                </span>
 
-          <label>
+            </div>
 
-            Tipo
-
-            <select id="serviceType">
-
-              <option>
-                Manutenção
-              </option>
-
-              <option>
-                Instalação
-              </option>
-
-              <option>
-                Limpeza
-              </option>
-
-              <option>
-                Refrigeração
-              </option>
-
-            </select>
-
-          </label>
+        </button>
 
 
-          <label>
+        <button
+            class="publish-option"
+            onclick="selectPublishType('helper')"
+        >
 
-            Quando?
+            <div class="option-icon">
+                👷
+            </div>
 
-            <select id="urgency">
+            <div>
 
-              <option>
-                Agora / urgente
-              </option>
+                <strong>
+                    Preciso de ajudante
+                </strong>
 
-              <option>
-                Hoje
-              </option>
+                <span>
+                    Encontre alguém para trabalhar com você
+                </span>
 
-              <option>
-                Amanhã
-              </option>
+            </div>
 
-              <option>
-                Esta semana
-              </option>
+        </button>
 
-            </select>
 
-          </label>
+        <button
+            class="publish-option"
+            onclick="selectPublishType('available')"
+        >
+
+            <div class="option-icon">
+                🟢
+            </div>
+
+            <div>
+
+                <strong>
+                    Estou disponível
+                </strong>
+
+                <span>
+                    Avise que você está procurando trabalho
+                </span>
+
+            </div>
+
+        </button>
+
+    </div>
+
+
+    <!-- FORMULÁRIO -->
+
+    <form
+        id="publishForm"
+        class="form"
+        onsubmit="publishPost(event)"
+    >
+
+        <input
+            type="hidden"
+            id="postType"
+        >
+
+
+        <div class="field">
+
+            <label>
+                TÍTULO
+            </label>
+
+            <input
+                id="postTitle"
+                class="input"
+                placeholder="Ex.: Instalação de split 12.000 BTUs"
+                required
+            >
 
         </div>
 
 
-        <label>
+        <div class="form-row">
 
-          O que aconteceu?
+            <div class="field">
 
-          <textarea
-            id="description"
-            required
-          >
-Cliente com split que parou de gelar.
-Precisa de atendimento hoje.
-Estou trabalhando em Copacabana
-e não consigo me deslocar até Niterói.
-          </textarea>
+                <label>
+                    CIDADE / BAIRRO
+                </label>
 
-        </label>
+                <input
+                    id="postLocation"
+                    class="input"
+                    placeholder="Ex.: Niterói"
+                    required
+                >
+
+            </div>
 
 
-        <div class="privacy-note">
+            <div class="field">
 
-          🔒 Telefone e WhatsApp não aparecem na publicação.
-          O contato acontece pelo chat privado.
+                <label>
+                    QUANDO?
+                </label>
+
+                <select
+                    id="postDate"
+                    class="input"
+                >
+
+                    <option>
+                        Agora
+                    </option>
+
+                    <option>
+                        Hoje
+                    </option>
+
+                    <option>
+                        Amanhã
+                    </option>
+
+                    <option>
+                        Esta semana
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <div class="field">
+
+                <label>
+                    CATEGORIA
+                </label>
+
+                <select
+                    id="postCategory"
+                    class="input"
+                >
+
+                    <option>
+                        Ar-condicionado
+                    </option>
+
+                    <option>
+                        Refrigeração
+                    </option>
+
+                    <option>
+                        Geladeira / Freezer
+                    </option>
+
+                    <option>
+                        Máquina de lavar
+                    </option>
+
+                    <option>
+                        Câmara fria
+                    </option>
+
+                    <option>
+                        Outro
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    VALOR
+                </label>
+
+                <input
+                    id="postPrice"
+                    class="input"
+                    placeholder="Ex.: 350"
+                    inputmode="decimal"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                DESCRIÇÃO
+            </label>
+
+            <textarea
+                id="postDescription"
+                class="input"
+                placeholder="Explique rapidamente o serviço..."
+                required
+            ></textarea>
+
+        </div>
+
+
+        <div class="privacy">
+
+            🔒 Não coloque telefone ou WhatsApp na publicação.
+            O contato inicial acontece pelo BoraTec.
 
         </div>
 
 
         <button
-          class="publish"
-          type="submit"
+            class="submit"
+            type="submit"
         >
-
-          Publicar oportunidade
-
+            Publicar na rede
         </button>
 
-      </form>
+    </form>
 
-    </section>
+</div>
 
-  </div>
+</div>
 
 
-  <!-- AVISOS -->
+<!-- ======================================================
+     INTERESSE
+====================================================== -->
 
-  <div
-    class="toast hidden"
+<div
+    id="interestOverlay"
+    class="overlay"
+    onclick="closeOnOverlay(event,'interestOverlay')"
+>
+
+<div class="sheet">
+
+    <div class="handle"></div>
+
+    <div class="interest-sheet">
+
+        <div class="interest-icon">
+            🤝
+        </div>
+
+        <h2>
+            Interesse enviado!
+        </h2>
+
+        <p id="interestText">
+
+            O profissional será avisado.
+            Agora vocês podem conversar pelo BoraTec.
+
+        </p>
+
+        <button
+            class="chat-button"
+            onclick="openChatDemo()"
+        >
+            Abrir conversa
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<div
     id="toast"
-  ></div>
+    class="toast"
+></div>
 
 
-  <!-- JAVASCRIPT -->
+<script>
 
-  <script src="app.js"></script>
+/* =========================================================
+   BORATEC - JAVASCRIPT
+========================================================= */
+
+
+/* =========================================================
+   POSTS INICIAIS
+========================================================= */
+
+const initialPosts = [
+
+{
+
+    id:1,
+
+    type:"service",
+
+    title:
+        "Instalação de split 12.000 BTUs",
+
+    location:
+        "Copacabana - RJ",
+
+    date:
+        "Amanhã",
+
+    category:
+        "Ar-condicionado",
+
+    description:
+        "Cliente já possui o aparelho. Precisa realizar instalação completa. Não consigo atender amanhã.",
+
+    price:
+        350,
+
+    author:
+        "Carlos Refrigeração",
+
+    initials:
+        "CR",
+
+    rating:
+        9.6,
+
+    jobs:
+        47,
+
+    time:
+        "há 5 min",
+
+    urgent:false
+
+},
+
+
+{
+
+    id:2,
+
+    type:"service",
+
+    title:
+        "Split não está gelando",
+
+    location:
+        "Icaraí • Niterói - RJ",
+
+    date:
+        "Hoje",
+
+    category:
+        "Manutenção",
+
+    description:
+        "Split liga normalmente, mas não refrigera. Cliente precisa de atendimento ainda hoje.",
+
+    price:
+        250,
+
+    author:
+        "Eduardo Climatização",
+
+    initials:
+        "EC",
+
+    rating:
+        9.8,
+
+    jobs:
+        82,
+
+    time:
+        "há 12 min",
+
+    urgent:true
+
+},
+
+
+{
+
+    id:3,
+
+    type:"helper",
+
+    title:
+        "Ajudante para instalação de 3 splits",
+
+    location:
+        "Barra da Tijuca - RJ",
+
+    date:
+        "Amanhã",
+
+    category:
+        "Instalação",
+
+    description:
+        "Preciso de ajudante com experiência básica para acompanhar três instalações durante o dia.",
+
+    price:
+        180,
+
+    priceSuffix:
+        "/ diária",
+
+    author:
+        "RJ Climatização",
+
+    initials:
+        "RJ",
+
+    rating:
+        9.3,
+
+    jobs:
+        31,
+
+    time:
+        "há 21 min",
+
+    urgent:false
+
+},
+
+
+{
+
+    id:4,
+
+    type:"available",
+
+    title:
+        "Técnico disponível hoje",
+
+    location:
+        "Campo Grande - RJ",
+
+    date:
+        "Hoje",
+
+    category:
+        "Refrigeração",
+
+    description:
+        "Disponível para manutenção de split, geladeira, freezer e refrigeração comercial.",
+
+    price:null,
+
+    author:
+        "Marcos Técnico",
+
+    initials:
+        "MT",
+
+    rating:
+        9.5,
+
+    jobs:
+        56,
+
+    time:
+        "há 34 min",
+
+    urgent:false
+
+}
+
+];
+
+
+/* =========================================================
+   CARREGAR LOCAL STORAGE
+========================================================= */
+
+let posts;
+
+try{
+
+    posts =
+        JSON.parse(
+            localStorage.getItem(
+                "boratec_posts_dark"
+            )
+        );
+
+}catch(error){
+
+    posts = null;
+
+}
+
+
+if(
+    !Array.isArray(posts)
+    ||
+    posts.length === 0
+){
+
+    posts =
+        [...initialPosts];
+
+}
+
+
+let currentFilter =
+    "all";
+
+
+/* =========================================================
+   SALVAR
+========================================================= */
+
+function savePosts(){
+
+    localStorage.setItem(
+        "boratec_posts_dark",
+        JSON.stringify(posts)
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function safe(value){
+
+    const element =
+        document.createElement("div");
+
+    element.textContent =
+        value ?? "";
+
+    return element.innerHTML;
+
+}
+
+
+/* =========================================================
+   DINHEIRO
+========================================================= */
+
+function money(value){
+
+    if(
+        value === null
+        ||
+        value === undefined
+        ||
+        value === ""
+    ){
+
+        return "";
+
+    }
+
+    return Number(value)
+        .toLocaleString(
+            "pt-BR",
+            {
+                style:"currency",
+                currency:"BRL"
+            }
+        );
+
+}
+
+
+/* =========================================================
+   CARD HTML
+========================================================= */
+
+function cardHTML(post){
+
+    let typeText;
+    let typeClass;
+    let typeIcon;
+    let button;
+    let buttonClass;
+
+
+    if(post.type === "service"){
+
+        typeText =
+            post.urgent
+            ?
+            "SERVIÇO URGENTE"
+            :
+            "SERVIÇO";
+
+        typeClass =
+            "";
+
+        typeIcon =
+            "🔥";
+
+        button =
+            "Quero fazer";
+
+        buttonClass =
+            "action-btn";
+
+    }
+
+
+    if(post.type === "helper"){
+
+        typeText =
+            "PRECISO DE AJUDANTE";
+
+        typeClass =
+            "helper";
+
+        typeIcon =
+            "👷";
+
+        button =
+            "Tenho interesse";
+
+        buttonClass =
+            "action-btn";
+
+    }
+
+
+    if(post.type === "available"){
+
+        typeText =
+            "PROFISSIONAL DISPONÍVEL";
+
+        typeClass =
+            "available";
+
+        typeIcon =
+            "●";
+
+        button =
+            "Chamar";
+
+        buttonClass =
+            "action-btn orange";
+
+    }
+
+
+    const price =
+        post.price
+        ?
+        `
+
+        <div class="price">
+
+            <small>
+                Valor informado
+            </small>
+
+            <strong>
+                ${money(post.price)}
+            </strong>
+
+            ${
+                post.priceSuffix
+                ?
+                `<span>
+                    ${safe(post.priceSuffix)}
+                </span>`
+                :
+                ""
+            }
+
+        </div>
+
+        `
+        :
+        `
+
+        <div class="price">
+
+            <small>
+                Valor
+            </small>
+
+            <strong style="
+                font-size:12px;
+                color:#9bb0c4;
+            ">
+                A combinar
+            </strong>
+
+        </div>
+
+        `;
+
+
+    return `
+
+    <article
+        class="
+            job-card
+            ${post.urgent ? "urgent" : ""}
+        "
+    >
+
+        <div class="card-top">
+
+            <div class="
+                type
+                ${typeClass}
+            ">
+
+                <span>
+                    ${typeIcon}
+                </span>
+
+                ${typeText}
+
+            </div>
+
+            <div class="time">
+                ${safe(post.time)}
+            </div>
+
+        </div>
+
+
+        <div class="job-title">
+            ${safe(post.title)}
+        </div>
+
+
+        <div class="job-info">
+
+            <span>
+                📍 ${safe(post.location)}
+            </span>
+
+            <span>
+                📅 ${safe(post.date)}
+            </span>
+
+            <span>
+                ❄ ${safe(post.category)}
+            </span>
+
+        </div>
+
+
+        <div class="job-description">
+            ${safe(post.description)}
+        </div>
+
+
+        <div class="professional">
+
+            <div class="prof-avatar">
+                ${safe(post.initials)}
+            </div>
+
+            <div class="prof-data">
+
+                <div class="prof-name">
+                    ${safe(post.author)}
+                </div>
+
+                <div class="prof-rating">
+
+                    <span class="star">
+                        ★
+                    </span>
+
+                    ${safe(post.rating)}
+
+                    &nbsp;•&nbsp;
+
+                    ${safe(post.jobs)}
+                    serviços realizados
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="job-action">
+
+            ${price}
+
+            <button
+                class="${buttonClass}"
+                onclick="interest(${post.id})"
+            >
+                ${button}
+            </button>
+
+        </div>
+
+    </article>
+
+    `;
+
+}
+
+
+/* =========================================================
+   RENDER FEED
+========================================================= */
+
+function renderFeed(){
+
+    const feed =
+        document.getElementById(
+            "feed"
+        );
+
+    const search =
+        document
+        .getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    let filtered =
+        posts.filter(
+            post =>
+            currentFilter === "all"
+            ||
+            post.type === currentFilter
+        );
+
+
+    if(search){
+
+        filtered =
+            filtered.filter(
+                post =>
+
+                post.title
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                post.location
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                post.category
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                post.description
+                    .toLowerCase()
+                    .includes(search)
+
+            );
+
+    }
+
+
+    document
+        .getElementById(
+            "feedCount"
+        )
+        .textContent =
+        filtered.length +
+        (
+            filtered.length === 1
+            ?
+            " oportunidade"
+            :
+            " oportunidades"
+        );
+
+
+    if(
+        filtered.length === 0
+    ){
+
+        feed.innerHTML = `
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                🔎
+            </div>
+
+            <strong>
+                Nenhuma oportunidade encontrada
+            </strong>
+
+            <p>
+                Tente outro filtro ou região.
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    feed.innerHTML =
+        filtered
+        .map(cardHTML)
+        .join("");
+
+}
+
+
+/* =========================================================
+   FILTRO
+========================================================= */
+
+function changeFilter(
+    filter,
+    button
+){
+
+    currentFilter =
+        filter;
+
+
+    document
+        .querySelectorAll(
+            ".tab"
+        )
+        .forEach(
+            tab =>
+            tab.classList.remove(
+                "active"
+            )
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    renderFeed();
+
+}
+
+
+/* =========================================================
+   DISPONIBILIDADE
+========================================================= */
+
+function toggleAvailability(){
+
+    const button =
+        document.getElementById(
+            "availability"
+        );
+
+    const text =
+        document.getElementById(
+            "availabilityText"
+        );
+
+
+    button
+        .classList
+        .toggle(
+            "active"
+        );
+
+
+    if(
+        button
+        .classList
+        .contains(
+            "active"
+        )
+    ){
+
+        text.textContent =
+            "Disponível hoje";
+
+        showToast(
+            "Você está disponível para serviços"
+        );
+
+    }else{
+
+        text.textContent =
+            "Disponível";
+
+        showToast(
+            "Disponibilidade desativada"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PUBLICAR
+========================================================= */
+
+function openPublishMenu(){
+
+    document
+        .getElementById(
+            "publishOptions"
+        )
+        .style
+        .display =
+        "flex";
+
+
+    document
+        .getElementById(
+            "publishForm"
+        )
+        .classList
+        .remove(
+            "show"
+        );
+
+
+    document
+        .getElementById(
+            "sheetSmall"
+        )
+        .textContent =
+        "PUBLICAR";
+
+
+    document
+        .getElementById(
+            "sheetTitle"
+        )
+        .textContent =
+        "O que você precisa?";
+
+
+    document
+        .getElementById(
+            "publishOverlay"
+        )
+        .classList
+        .add(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================================
+   ESCOLHER TIPO
+========================================================= */
+
+function selectPublishType(type){
+
+    document
+        .getElementById(
+            "postType"
+        )
+        .value =
+        type;
+
+
+    document
+        .getElementById(
+            "publishOptions"
+        )
+        .style
+        .display =
+        "none";
+
+
+    document
+        .getElementById(
+            "publishForm"
+        )
+        .classList
+        .add(
+            "show"
+        );
+
+
+    let small;
+    let title;
+
+
+    if(type === "service"){
+
+        small =
+            "REPASSAR SERVIÇO";
+
+        title =
+            "Publique uma oportunidade";
+
+    }
+
+
+    if(type === "helper"){
+
+        small =
+            "PRECISO DE AJUDANTE";
+
+        title =
+            "Encontre um profissional";
+
+    }
+
+
+    if(type === "available"){
+
+        small =
+            "ESTOU DISPONÍVEL";
+
+        title =
+            "Avise a rede";
+
+    }
+
+
+    document
+        .getElementById(
+            "sheetSmall"
+        )
+        .textContent =
+        small;
+
+
+    document
+        .getElementById(
+            "sheetTitle"
+        )
+        .textContent =
+        title;
+
+}
+
+
+/* =========================================================
+   FECHAR PUBLICAÇÃO
+========================================================= */
+
+function closePublish(){
+
+    document
+        .getElementById(
+            "publishOverlay"
+        )
+        .classList
+        .remove(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================================
+   PUBLICAR POST
+========================================================= */
+
+function publishPost(event){
+
+    event.preventDefault();
+
+
+    const type =
+        document
+        .getElementById(
+            "postType"
+        )
+        .value;
+
+
+    const title =
+        document
+        .getElementById(
+            "postTitle"
+        )
+        .value
+        .trim();
+
+
+    const location =
+        document
+        .getElementById(
+            "postLocation"
+        )
+        .value
+        .trim();
+
+
+    const date =
+        document
+        .getElementById(
+            "postDate"
+        )
+        .value;
+
+
+    const category =
+        document
+        .getElementById(
+            "postCategory"
+        )
+        .value;
+
+
+    const priceValue =
+        document
+        .getElementById(
+            "postPrice"
+        )
+        .value
+        .replace(",",".")
+        .trim();
+
+
+    const description =
+        document
+        .getElementById(
+            "postDescription"
+        )
+        .value
+        .trim();
+
+
+    /* BLOQUEIO SIMPLES DE TELEFONE */
+
+    const phoneRegex =
+        /(?:\(?\d{2}\)?[\s-]?)?(?:9[\s-]?)?\d{4}[\s-]?\d{4}/;
+
+
+    if(
+        phoneRegex.test(
+            description
+        )
+    ){
+
+        showToast(
+            "Não coloque telefone na publicação"
+        );
+
+        return;
+
+    }
+
+
+    const post = {
+
+        id:
+            Date.now(),
+
+        type:type,
+
+        title:title,
+
+        location:location,
+
+        date:date,
+
+        category:category,
+
+        description:description,
+
+        price:
+            priceValue
+            ?
+            Number(priceValue)
+            :
+            null,
+
+        author:
+            "Tiago Rocha",
+
+        initials:
+            "TR",
+
+        rating:
+            9.6,
+
+        jobs:
+            24,
+
+        time:
+            "agora",
+
+        urgent:
+            type === "service"
+            &&
+            date === "Agora"
+
+    };
+
+
+    posts.unshift(
+        post
+    );
+
+
+    savePosts();
+
+
+    document
+        .getElementById(
+            "publishForm"
+        )
+        .reset();
+
+
+    closePublish();
+
+
+    currentFilter =
+        "all";
+
+
+    document
+        .querySelectorAll(
+            ".tab"
+        )
+        .forEach(
+            tab =>
+            tab.classList.remove(
+                "active"
+            )
+        );
+
+
+    document
+        .querySelector(
+            '[data-filter="all"]'
+        )
+        .classList
+        .add(
+            "active"
+        );
+
+
+    renderFeed();
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+
+    showToast(
+        "Oportunidade publicada!"
+    );
+
+}
+
+
+/* =========================================================
+   INTERESSE
+========================================================= */
+
+function interest(id){
+
+    const post =
+        posts.find(
+            item =>
+            item.id === id
+        );
+
+
+    if(!post){
+        return;
+    }
+
+
+    document
+        .getElementById(
+            "interestText"
+        )
+        .innerHTML =
+
+        `Seu interesse em
+        <strong style="color:white">
+            ${safe(post.title)}
+        </strong>
+        foi registrado.
+        O profissional será avisado.`;
+
+
+    document
+        .getElementById(
+            "interestOverlay"
+        )
+        .classList
+        .add(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================================
+   CHAT DEMO
+========================================================= */
+
+function openChatDemo(){
+
+    document
+        .getElementById(
+            "interestOverlay"
+        )
+        .classList
+        .remove(
+            "show"
+        );
+
+
+    document.body.style.overflow =
+        "";
+
+
+    showToast(
+        "Próxima tela: chat entre os profissionais"
+    );
+
+}
+
+
+/* =========================================================
+   FECHAR OVERLAY
+========================================================= */
+
+function closeOnOverlay(
+    event,
+    id
+){
+
+    if(
+        event.target.id === id
+    ){
+
+        document
+            .getElementById(id)
+            .classList
+            .remove(
+                "show"
+            );
+
+
+        document.body.style.overflow =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
+
+function selectNav(
+    button,
+    page
+){
+
+    if(
+        page === "Início"
+    ){
+
+        document
+            .querySelectorAll(
+                ".nav-button"
+            )
+            .forEach(
+                item =>
+                item.classList.remove(
+                    "active"
+                )
+            );
+
+
+        button
+            .classList
+            .add(
+                "active"
+            );
+
+        return;
+
+    }
+
+
+    showToast(
+        page +
+        " será a próxima tela"
+    );
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast
+        .classList
+        .add(
+            "show"
+        );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast
+                    .classList
+                    .remove(
+                        "show"
+                    );
+
+            },
+            2400
+        );
+
+}
+
+
+/* =========================================================
+   ESC FECHA MODAIS
+========================================================= */
+
+document
+.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            document
+                .querySelectorAll(
+                    ".overlay"
+                )
+                .forEach(
+                    overlay =>
+                    overlay
+                    .classList
+                    .remove(
+                        "show"
+                    )
+                );
+
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+renderFeed();
+
+</script>
 
 </body>
 </html>
