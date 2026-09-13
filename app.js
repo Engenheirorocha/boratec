@@ -1,11 +1,11 @@
 /* =========================================================
    BORATEC
    APP.JS
-   V0.5.1
+   V0.6
 
    FUNCIONANDO:
    - Login / sessão
-   - Perfil real
+   - Perafil real
    - Feed Supabase
    - Publicação real
    - Interesse
@@ -1606,6 +1606,8 @@ async function(opportunityId){
     }
 
 };
+
+
 /* =========================================================
    CRIAR INTERFACE CHAT
 ========================================================= */
@@ -2656,6 +2658,10 @@ async function updateChatAction(){
         "assigned";
 
 
+    /*
+       SERVIÇO JÁ FECHADO
+    */
+
     if(
         accepted
         &&
@@ -2689,6 +2695,10 @@ async function updateChatAction(){
     }
 
 
+    /*
+       INTERESSE REJEITADO
+    */
+
     if(
         currentConversationData
         .interestStatus
@@ -2709,6 +2719,11 @@ async function updateChatAction(){
 
     }
 
+
+    /*
+       SOMENTE QUEM PUBLICOU
+       VÊ O BOTÃO
+    */
 
     if(
         isPublisher
@@ -2938,7 +2953,19 @@ async function assignProfessional(){
         closeAssignConfirmation();
 
 
+        /*
+           Atualiza dados da conversa
+        */
+
         await loadConversationContext();
+
+
+        /*
+           Atualiza feed.
+
+           Como agora status = assigned,
+           a oportunidade some do feed.
+        */
 
         await loadOpportunities();
 
@@ -2947,6 +2974,11 @@ async function assignProfessional(){
             "🤝 Profissional escolhido!"
         );
 
+
+        /*
+           Mensagem automática dentro
+           do chat para registrar o fechamento.
+        */
 
         await sendSystemLikeMessage(
             "🤝 Serviço fechado. Profissional selecionado para esta oportunidade."
@@ -4151,10 +4183,8 @@ document.addEventListener(
 
     }
 );
-
-
 /* =========================================================
-   BORATEC V0.5.1
+   BORATEC V0.5
    MEUS SERVIÇOS
 ========================================================= */
 
@@ -5248,7 +5278,7 @@ function(
 
 
 /* =========================================================
-   GLOBAL V0.5.1
+   GLOBAL V0.6
 ========================================================= */
 
 window.selectNav =
@@ -5274,7 +5304,9 @@ window.confirmBoraTecJob =
 
 
 /* =========================================================
-   INICIAR INTERFACE V0.5.1
+   INICIAR INTERFACE V0.6
+   O startBoraTec original roda no DOMContentLoaded.
+   Esta interface é criada logo depois.
 ========================================================= */
 
 document.addEventListener(
@@ -5285,3 +5317,988 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   BORATEC V0.6
+   AVALIAÇÃO E REPUTAÇÃO
+========================================================= */
+
+let currentRatingJob = null;
+
+
+/* =========================================================
+   COMPLEMENTAR DETALHES DO JOB COM AVALIAÇÃO
+========================================================= */
+
+const boraTecGetMyJobDetailsV05 =
+    getMyJobDetails;
+
+getMyJobDetails =
+async function(job){
+
+    const details =
+        await boraTecGetMyJobDetailsV05(job);
+
+    let myRating = null;
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from("ratings")
+        .select(`
+            id,
+            job_id,
+            reviewer_id,
+            reviewed_id,
+            technical_score,
+            agreement_score,
+            customer_care_score,
+            financial_score,
+            would_recommend,
+            comment
+        `)
+        .eq(
+            "job_id",
+            job.id
+        )
+        .eq(
+            "reviewer_id",
+            boraUser.id
+        )
+        .maybeSingle();
+
+        if(!error){
+            myRating = data;
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro ao verificar avaliação:",
+            error
+        );
+
+    }
+
+    return {
+        ...details,
+        myRating
+    };
+};
+
+
+/* =========================================================
+   AÇÃO DO JOB COM AVALIAÇÃO
+========================================================= */
+
+const boraTecGetJobActionHTMLV05 =
+    getJobActionHTML;
+
+getJobActionHTML =
+function(job){
+
+    if(job.status === "completed"){
+
+        if(job.myRating){
+
+            return `
+                <div class="bt-job-waiting">
+                    ✅ Serviço concluído no BoraTec.<br>
+                    ⭐ Sua avaliação já foi enviada.
+                </div>
+            `;
+
+        }
+
+        return `
+            <button
+                class="bt-job-action-button"
+                onclick="openRatingModal('${job.id}')"
+            >
+                ⭐ Avaliar
+            </button>
+        `;
+    }
+
+    return boraTecGetJobActionHTMLV05(
+        job
+    );
+};
+
+
+/* =========================================================
+   CRIAR MODAL DE AVALIAÇÃO
+========================================================= */
+
+function createRatingInterface(){
+
+    if(
+        document.getElementById(
+            "boratecRatingOverlay"
+        )
+    ){
+        return;
+    }
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.textContent = `
+
+    #boratecRatingOverlay{
+        position:fixed;
+        inset:0;
+        z-index:6000;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:18px;
+        background:rgba(0,8,17,.90);
+    }
+
+    #boratecRatingOverlay.show{
+        display:flex;
+    }
+
+    .bt-rating-box{
+        width:100%;
+        max-width:430px;
+        max-height:92vh;
+        overflow-y:auto;
+        border-radius:20px;
+        background:#102d4a;
+        border:1px solid rgba(255,255,255,.08);
+        color:white;
+        padding:20px;
+        box-shadow:0 20px 55px rgba(0,0,0,.35);
+    }
+
+    .bt-rating-head{
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:14px;
+        margin-bottom:16px;
+    }
+
+    .bt-rating-head small{
+        display:block;
+        color:#ff8a1d;
+        font-size:9px;
+        font-weight:900;
+        letter-spacing:.8px;
+        margin-bottom:4px;
+    }
+
+    .bt-rating-head h3{
+        margin:0;
+        font-size:18px;
+    }
+
+    .bt-rating-close{
+        width:38px;
+        height:38px;
+        flex-shrink:0;
+        border:none;
+        border-radius:11px;
+        background:rgba(255,255,255,.07);
+        color:white;
+        font-size:18px;
+        cursor:pointer;
+    }
+
+    .bt-rating-person{
+        padding:12px;
+        border-radius:13px;
+        background:rgba(255,255,255,.045);
+        color:#a8bdd0;
+        font-size:11px;
+        line-height:1.5;
+        margin-bottom:14px;
+    }
+
+    .bt-rating-field{
+        margin-bottom:13px;
+    }
+
+    .bt-rating-field label{
+        display:block;
+        font-size:10px;
+        font-weight:900;
+        margin-bottom:7px;
+    }
+
+    .bt-rating-field select,
+    .bt-rating-field textarea{
+        width:100%;
+        border:1px solid rgba(255,255,255,.08);
+        border-radius:11px;
+        outline:none;
+        background:#0a2239;
+        color:white;
+        font-family:inherit;
+        font-size:12px;
+    }
+
+    .bt-rating-field select{
+        height:43px;
+        padding:0 11px;
+    }
+
+    .bt-rating-field textarea{
+        min-height:85px;
+        resize:vertical;
+        padding:11px;
+    }
+
+    .bt-rating-recommend{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        margin-top:7px;
+    }
+
+    .bt-rating-choice{
+        position:relative;
+    }
+
+    .bt-rating-choice input{
+        position:absolute;
+        opacity:0;
+        pointer-events:none;
+    }
+
+    .bt-rating-choice label{
+        min-height:42px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:11px;
+        background:rgba(255,255,255,.06);
+        border:1px solid rgba(255,255,255,.08);
+        font-size:11px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    .bt-rating-choice input:checked + label{
+        background:rgba(20,126,232,.20);
+        border-color:#147ee8;
+        color:#77baff;
+    }
+
+    .bt-rating-submit{
+        width:100%;
+        min-height:47px;
+        margin-top:15px;
+        border:none;
+        border-radius:12px;
+        background:linear-gradient(135deg,#ff7900,#ff982f);
+        color:white;
+        font-weight:900;
+        font-size:11px;
+        cursor:pointer;
+    }
+
+    .bt-rating-submit:disabled{
+        opacity:.6;
+        cursor:not-allowed;
+    }
+
+    `;
+
+    document.head
+    .appendChild(style);
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.id =
+        "boratecRatingOverlay";
+
+    overlay.innerHTML = `
+
+        <div class="bt-rating-box">
+
+            <div class="bt-rating-head">
+
+                <div>
+                    <small>BORATEC</small>
+                    <h3>Avaliar serviço</h3>
+                </div>
+
+                <button
+                    class="bt-rating-close"
+                    onclick="closeRatingModal()"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div
+                id="boratecRatingPerson"
+                class="bt-rating-person"
+            >
+                Carregando...
+            </div>
+
+            <form
+                id="boratecRatingForm"
+                onsubmit="submitBoraTecRating(event)"
+            >
+
+                <div class="bt-rating-field">
+
+                    <label id="btRatingTechnicalLabel">
+                        Qualidade técnica
+                    </label>
+
+                    <select
+                        id="btRatingTechnical"
+                        required
+                    >
+                        ${ratingOptionsHTML()}
+                    </select>
+
+                </div>
+
+
+                <div class="bt-rating-field">
+
+                    <label id="btRatingAgreementLabel">
+                        Cumprimento do combinado
+                    </label>
+
+                    <select
+                        id="btRatingAgreement"
+                        required
+                    >
+                        ${ratingOptionsHTML()}
+                    </select>
+
+                </div>
+
+
+                <div class="bt-rating-field">
+
+                    <label id="btRatingCareLabel">
+                        Atendimento / postura
+                    </label>
+
+                    <select
+                        id="btRatingCare"
+                        required
+                    >
+                        ${ratingOptionsHTML()}
+                    </select>
+
+                </div>
+
+
+                <div class="bt-rating-field">
+
+                    <label id="btRatingFinancialLabel">
+                        Financeiro / pagamento
+                    </label>
+
+                    <select
+                        id="btRatingFinancial"
+                        required
+                    >
+                        ${ratingOptionsHTML()}
+                    </select>
+
+                </div>
+
+
+                <div class="bt-rating-field">
+
+                    <label>
+                        Você recomendaria?
+                    </label>
+
+                    <div class="bt-rating-recommend">
+
+                        <div class="bt-rating-choice">
+
+                            <input
+                                id="btRecommendYes"
+                                type="radio"
+                                name="btRecommend"
+                                value="yes"
+                                checked
+                            >
+
+                            <label for="btRecommendYes">
+                                👍 Sim
+                            </label>
+
+                        </div>
+
+
+                        <div class="bt-rating-choice">
+
+                            <input
+                                id="btRecommendNo"
+                                type="radio"
+                                name="btRecommend"
+                                value="no"
+                            >
+
+                            <label for="btRecommendNo">
+                                👎 Não
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="bt-rating-field">
+
+                    <label>
+                        Comentário (opcional)
+                    </label>
+
+                    <textarea
+                        id="btRatingComment"
+                        maxlength="500"
+                        placeholder="Conte como foi a experiência..."
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    id="btRatingSubmit"
+                    class="bt-rating-submit"
+                    type="submit"
+                >
+                    ⭐ Enviar avaliação
+                </button>
+
+            </form>
+
+        </div>
+
+    `;
+
+    document.body
+    .appendChild(
+        overlay
+    );
+}
+
+
+/* =========================================================
+   OPÇÕES 0 A 10
+========================================================= */
+
+function ratingOptionsHTML(){
+
+    let html =
+        '<option value="">Selecione uma nota</option>';
+
+    for(
+        let score = 10;
+        score >= 0;
+        score--
+    ){
+
+        html +=
+            `<option value="${score}">${score}</option>`;
+
+    }
+
+    return html;
+}
+
+
+/* =========================================================
+   ABRIR AVALIAÇÃO
+========================================================= */
+
+async function openRatingModal(jobId){
+
+    if(!jobId){
+        return;
+    }
+
+    currentRatingJob =
+        null;
+
+    try{
+
+        const {
+            data:job,
+            error
+        } =
+        await boraSupabase
+        .from("jobs")
+        .select(`
+            id,
+            opportunity_id,
+            publisher_id,
+            professional_id,
+            status
+        `)
+        .eq(
+            "id",
+            jobId
+        )
+        .single();
+
+        if(error){
+            throw error;
+        }
+
+        if(job.status !== "completed"){
+
+            showToast(
+                "Este serviço ainda não foi concluído"
+            );
+
+            return;
+        }
+
+        const isPublisher =
+            job.publisher_id ===
+            boraUser.id;
+
+        const reviewedId =
+            isPublisher
+            ?
+            job.professional_id
+            :
+            job.publisher_id;
+
+        const {
+            data:profile
+        } =
+        await boraSupabase
+        .from("profiles")
+        .select(`
+            id,
+            name,
+            professional_name
+        `)
+        .eq(
+            "id",
+            reviewedId
+        )
+        .maybeSingle();
+
+
+        currentRatingJob = {
+            ...job,
+            isPublisher,
+            reviewedId,
+            reviewedName:
+                profile?.professional_name
+                ||
+                profile?.name
+                ||
+                "Profissional BoraTec"
+        };
+
+
+        document
+        .getElementById(
+            "boratecRatingPerson"
+        )
+        .textContent =
+            `Você está avaliando: ${currentRatingJob.reviewedName}`;
+
+
+        if(isPublisher){
+
+            document
+            .getElementById(
+                "btRatingTechnicalLabel"
+            )
+            .textContent =
+                "Qualidade técnica";
+
+            document
+            .getElementById(
+                "btRatingAgreementLabel"
+            )
+            .textContent =
+                "Cumprimento do combinado";
+
+            document
+            .getElementById(
+                "btRatingCareLabel"
+            )
+            .textContent =
+                "Atendimento / postura";
+
+            document
+            .getElementById(
+                "btRatingFinancialLabel"
+            )
+            .textContent =
+                "Financeiro / negociação";
+
+        }
+        else{
+
+            document
+            .getElementById(
+                "btRatingTechnicalLabel"
+            )
+            .textContent =
+                "Organização do serviço";
+
+            document
+            .getElementById(
+                "btRatingAgreementLabel"
+            )
+            .textContent =
+                "Cumprimento do combinado";
+
+            document
+            .getElementById(
+                "btRatingCareLabel"
+            )
+            .textContent =
+                "Comunicação / postura";
+
+            document
+            .getElementById(
+                "btRatingFinancialLabel"
+            )
+            .textContent =
+                "Financeiro / pagamento";
+
+        }
+
+
+        document
+        .getElementById(
+            "boratecRatingForm"
+        )
+        .reset();
+
+
+        document
+        .getElementById(
+            "btRecommendYes"
+        )
+        .checked =
+            true;
+
+
+        document
+        .getElementById(
+            "boratecRatingOverlay"
+        )
+        .classList
+        .add(
+            "show"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro abrir avaliação:",
+            error
+        );
+
+        showToast(
+            "Não foi possível abrir a avaliação"
+        );
+
+    }
+}
+
+
+/* =========================================================
+   FECHAR AVALIAÇÃO
+========================================================= */
+
+function closeRatingModal(){
+
+    document
+    .getElementById(
+        "boratecRatingOverlay"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+    currentRatingJob =
+        null;
+}
+
+
+/* =========================================================
+   ENVIAR AVALIAÇÃO
+========================================================= */
+
+async function submitBoraTecRating(event){
+
+    event.preventDefault();
+
+
+    if(!currentRatingJob){
+
+        showToast(
+            "Serviço não carregado"
+        );
+
+        return;
+
+    }
+
+
+    const technical =
+        Number(
+            document
+            .getElementById(
+                "btRatingTechnical"
+            )
+            .value
+        );
+
+
+    const agreement =
+        Number(
+            document
+            .getElementById(
+                "btRatingAgreement"
+            )
+            .value
+        );
+
+
+    const care =
+        Number(
+            document
+            .getElementById(
+                "btRatingCare"
+            )
+            .value
+        );
+
+
+    const financial =
+        Number(
+            document
+            .getElementById(
+                "btRatingFinancial"
+            )
+            .value
+        );
+
+
+    const validScores =
+        [
+            technical,
+            agreement,
+            care,
+            financial
+        ]
+        .every(
+            score =>
+                Number.isInteger(score)
+                &&
+                score >= 0
+                &&
+                score <= 10
+        );
+
+
+    if(!validScores){
+
+        showToast(
+            "Selecione todas as notas"
+        );
+
+        return;
+
+    }
+
+
+    const recommend =
+        document
+        .querySelector(
+            'input[name="btRecommend"]:checked'
+        )
+        ?.value
+        ===
+        "yes";
+
+
+    const comment =
+        document
+        .getElementById(
+            "btRatingComment"
+        )
+        .value
+        .trim();
+
+
+    const button =
+        document
+        .getElementById(
+            "btRatingSubmit"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Enviando...";
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "rate_job",
+            {
+
+                p_job_id:
+                    currentRatingJob.id,
+
+                p_technical_score:
+                    technical,
+
+                p_agreement_score:
+                    agreement,
+
+                p_customer_care_score:
+                    care,
+
+                p_financial_score:
+                    financial,
+
+                p_would_recommend:
+                    recommend,
+
+                p_comment:
+                    comment
+                    ||
+                    null
+
+            }
+        );
+
+
+        if(error){
+            throw error;
+        }
+
+
+        console.log(
+            "⭐ Avaliação registrada:",
+            data
+        );
+
+
+        closeRatingModal();
+
+
+        showToast(
+            "⭐ Avaliação enviada!"
+        );
+
+
+        await loadMyJobs();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro enviar avaliação:",
+            error
+        );
+
+
+        let message =
+            "Não foi possível enviar a avaliação";
+
+
+        if(
+            String(
+                error?.message
+                ||
+                ""
+            )
+            .toLowerCase()
+            .includes(
+                "já avaliou"
+            )
+        ){
+
+            message =
+                "Você já avaliou este serviço";
+
+        }
+
+
+        showToast(
+            message
+        );
+
+
+    }finally{
+
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "⭐ Enviar avaliação";
+
+    }
+}
+
+
+/* =========================================================
+   GLOBAL V0.6
+========================================================= */
+
+window.openRatingModal =
+    openRatingModal;
+
+window.closeRatingModal =
+    closeRatingModal;
+
+window.submitBoraTecRating =
+    submitBoraTecRating;
+
+
+/* =========================================================
+   INICIAR INTERFACE DE AVALIAÇÃO
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        createRatingInterface();
+
+    }
+);
+
