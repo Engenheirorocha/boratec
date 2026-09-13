@@ -6303,7 +6303,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.0.1
+   BORATEC V1.0.2
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -6398,6 +6398,19 @@ function createBoraTecV1Interface(){
 
     .bt-v1-overlay.show{
         display:flex;
+    }
+
+    #btProfileOverlay{
+        z-index:7200;
+    }
+
+    #btInterestedOverlay{
+        z-index:7100;
+    }
+
+    #btNotificationsOverlay,
+    #btFilterOverlay{
+        z-index:7000;
     }
 
     .bt-v1-panel{
@@ -7433,6 +7446,12 @@ async function openPublicProfile(profileId){
 
     btCurrentProfileId = profileId;
 
+    // No celular alguns navegadores mantêm o modal anterior
+    // na pilha visual por um instante. Fechamos explicitamente.
+    document
+    .getElementById("btInterestedOverlay")
+    ?.classList.remove("show");
+
     // Perfil aberto fora da lista de interessados:
     // não herda conversa contextual antiga.
     if(!window.__btOpeningInterestedProfile){
@@ -8159,9 +8178,6 @@ function openInterestedProfile(
     interestId
 ){
 
-    // Fecha a janela de interessados antes de abrir o perfil.
-    closeInterestedProfessionals();
-
     btProfileConversationInterestId =
         interestId
         ||
@@ -8170,8 +8186,28 @@ function openInterestedProfile(
     window.__btOpeningInterestedProfile =
         true;
 
-    openPublicProfile(
-        profileId
+    const interestedOverlay =
+        document.getElementById(
+            "btInterestedOverlay"
+        );
+
+    if(interestedOverlay){
+        interestedOverlay.classList.remove("show");
+        interestedOverlay.style.display = "none";
+    }
+
+    // Garante uma troca limpa de tela também em navegadores móveis.
+    requestAnimationFrame(
+        () => {
+
+            if(interestedOverlay){
+                interestedOverlay.style.display = "";
+            }
+
+            openPublicProfile(
+                profileId
+            );
+        }
     );
 }
 
