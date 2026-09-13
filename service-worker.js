@@ -1,4 +1,4 @@
-const CACHE_NAME = "boratec-v17";
+const CACHE_NAME = "boratec-v171";
 
 const APP_SHELL = [
     "./",
@@ -7,14 +7,15 @@ const APP_SHELL = [
     "./app.js",
     "./manifest.json",
     "./icons/icon-192.png",
-    "./icons/icon-512.png"
+    "./icons/icon-512.png",
+    "./icons/icon-maskable-512.png",
+    "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", event => {
 
     event.waitUntil(
-        caches
-            .open(CACHE_NAME)
+        caches.open(CACHE_NAME)
             .then(cache => cache.addAll(APP_SHELL))
     );
 
@@ -25,8 +26,7 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
 
     event.waitUntil(
-        caches
-            .keys()
+        caches.keys()
             .then(keys =>
                 Promise.all(
                     keys
@@ -55,6 +55,8 @@ self.addEventListener("fetch", event => {
     }
 
 
+    // HTML / navegação:
+    // tenta buscar a versão mais nova primeiro.
     if (request.mode === "navigate") {
 
         event.respondWith(
@@ -63,8 +65,42 @@ self.addEventListener("fetch", event => {
 
                     const copy = response.clone();
 
-                    caches
-                        .open(CACHE_NAME)
+                    caches.open(CACHE_NAME)
+                        .then(cache =>
+                            cache.put(request, copy)
+                        );
+
+                    return response;
+                })
+                .catch(async () => {
+
+                    const cached =
+                        await caches.match(request);
+
+                    return cached ||
+                        caches.match("./index.html");
+                })
+        );
+
+        return;
+    }
+
+
+    // Arquivos principais:
+    // evita ficar preso em versão antiga.
+    if (
+        url.pathname.endsWith("/app.js") ||
+        url.pathname.endsWith("/manifest.json") ||
+        url.pathname.endsWith("/service-worker.js")
+    ) {
+
+        event.respondWith(
+            fetch(request)
+                .then(response => {
+
+                    const copy = response.clone();
+
+                    caches.open(CACHE_NAME)
                         .then(cache =>
                             cache.put(request, copy)
                         );
@@ -72,7 +108,7 @@ self.addEventListener("fetch", event => {
                     return response;
                 })
                 .catch(() =>
-                    caches.match("./index.html")
+                    caches.match(request)
                 )
         );
 
@@ -80,26 +116,29 @@ self.addEventListener("fetch", event => {
     }
 
 
+    // Imagens e outros arquivos estáticos:
+    // usa cache quando já estiver disponível.
     event.respondWith(
-        caches
-            .match(request)
-            .then(cached =>
+        caches.match(request)
+            .then(cached => {
 
-                cached ||
+                if (cached) {
+                    return cached;
+                }
 
-                fetch(request)
+                return fetch(request)
                     .then(response => {
 
-                        const copy = response.clone();
+                        const copy =
+                            response.clone();
 
-                        caches
-                            .open(CACHE_NAME)
+                        caches.open(CACHE_NAME)
                             .then(cache =>
                                 cache.put(request, copy)
                             );
 
                         return response;
-                    })
-            )
+                    });
+            })
     );
 });
