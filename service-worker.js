@@ -1,9 +1,6 @@
-const CACHE_NAME = "boratec-v185";
+const CACHE_NAME = "boratec-static-v200";
 
-const APP_SHELL = [
-    "./",
-    "./index.html",
-    "./login.html",
+const STATIC_ASSETS = [
     "./manifest.json",
     "./icons/icon-192.png",
     "./icons/icon-512.png",
@@ -12,18 +9,14 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", event => {
-
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(APP_SHELL))
+            .then(cache => cache.addAll(STATIC_ASSETS))
     );
-
     self.skipWaiting();
 });
 
-
 self.addEventListener("activate", event => {
-
     event.waitUntil(
         caches.keys()
             .then(keys =>
@@ -37,101 +30,49 @@ self.addEventListener("activate", event => {
     );
 });
 
-
 self.addEventListener("fetch", event => {
-
     const request = event.request;
 
-    if (request.method !== "GET") {
+    if(request.method !== "GET"){
         return;
     }
 
     const url = new URL(request.url);
 
-    if (url.origin !== self.location.origin) {
+    if(url.origin !== self.location.origin){
         return;
     }
 
-
-    // Sempre buscar HTML mais recente.
-    if (request.mode === "navigate") {
-
+    if(
+        request.mode === "navigate"
+        ||
+        url.pathname.endsWith(".html")
+        ||
+        url.pathname.endsWith(".js")
+    ){
         event.respondWith(
-            fetch(request, { cache: "no-store" })
-                .then(response => {
-
-                    const copy = response.clone();
-
-                    caches.open(CACHE_NAME)
-                        .then(cache =>
-                            cache.put(request, copy)
-                        );
-
-                    return response;
-                })
-                .catch(async () => {
-
-                    const cached =
-                        await caches.match(request);
-
-                    return cached ||
-                        caches.match("./index.html");
-                })
+            fetch(request,{cache:"no-store"})
         );
-
         return;
     }
 
-
-    // app.js, manifest e service-worker:
-    // nunca deixar o PWA preso em versão antiga.
-    if (
-        url.pathname.endsWith("/app.js") ||
-        url.pathname.endsWith("/manifest.json") ||
-        url.pathname.endsWith("/service-worker.js")
-    ) {
-
-        event.respondWith(
-            fetch(request, { cache: "no-store" })
-                .then(response => {
-
-                    const copy = response.clone();
-
-                    caches.open(CACHE_NAME)
-                        .then(cache =>
-                            cache.put(request, copy)
-                        );
-
-                    return response;
-                })
-                .catch(() =>
-                    caches.match(request)
-                )
-        );
-
-        return;
-    }
-
-
-    // Ícones e arquivos estáticos podem usar cache.
     event.respondWith(
         caches.match(request)
             .then(cached => {
-
-                if (cached) {
+                if(cached){
                     return cached;
                 }
 
                 return fetch(request)
                     .then(response => {
+                        if(!response || response.status !== 200){
+                            return response;
+                        }
 
-                        const copy =
-                            response.clone();
+                        const copy = response.clone();
 
                         caches.open(CACHE_NAME)
-                            .then(cache =>
-                                cache.put(request, copy)
-                            );
+                            .then(cache => cache.put(request,copy));
 
                         return response;
                     });
