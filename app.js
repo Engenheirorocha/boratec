@@ -539,6 +539,10 @@ async function loadOpportunities(){
             "status",
             "open"
         )
+        .in(
+            "type",
+            ["service","helper"]
+        )
         .order(
             "created_at",
             {
@@ -6303,7 +6307,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.2
+   BORATEC V1.2.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -8617,10 +8621,12 @@ function listenNotificationsRealtime(){
 
 
 /* =========================================================
-   DIRETÓRIO DE PROFISSIONAIS / AJUDANTES
+   DIRETÓRIO DE DISPONÍVEIS
+   - mostra profissionais e ajudantes juntos
+   - só entra quem estiver is_available = true
 ========================================================= */
 
-function btSetFeedHeaderForDirectory(mode){
+function btSetFeedHeaderForDirectory(){
 
     const title =
         document.querySelector(".feed-header h2");
@@ -8630,16 +8636,12 @@ function btSetFeedHeaderForDirectory(mode){
 
     if(title){
         title.textContent =
-            mode === "helper"
-            ? "Ajudantes disponíveis"
-            : "Profissionais disponíveis";
+            "Disponíveis agora";
     }
 
     if(subtitle){
         subtitle.textContent =
-            mode === "helper"
-            ? "Ajudantes disponíveis para novas oportunidades"
-            : "Profissionais disponíveis para novas oportunidades";
+            "Profissionais e ajudantes disponíveis para novas oportunidades";
     }
 }
 
@@ -8681,17 +8683,45 @@ function btSetDirectoryTabActive(filter){
 }
 
 
-async function openPeopleDirectory(mode){
+function btPersonRolesLabel(roles){
 
-    btDirectoryMode = mode;
+    const list =
+        Array.isArray(roles)
+        ? roles
+        : [];
+
+    const isProfessional =
+        list.includes("professional");
+
+    const isHelper =
+        list.includes("helper");
+
+    if(
+        isProfessional
+        &&
+        isHelper
+    ){
+        return "👨‍🔧 Profissional • 👷 Ajudante";
+    }
+
+    if(isHelper){
+        return "👷 Ajudante";
+    }
+
+    return "👨‍🔧 Profissional";
+}
+
+
+async function openPeopleDirectory(){
+
+    btDirectoryMode =
+        "available";
 
     btSetDirectoryTabActive(
-        mode === "helper"
-        ? "helpers_directory"
-        : "professionals_directory"
+        "available_directory"
     );
 
-    btSetFeedHeaderForDirectory(mode);
+    btSetFeedHeaderForDirectory();
 
     const feed =
         document.getElementById("feed");
@@ -8704,7 +8734,7 @@ async function openPeopleDirectory(mode){
     }
 
     feed.innerHTML =
-        `<div class="bt-directory-empty">Carregando...</div>`;
+        `<div class="bt-directory-empty">Carregando disponíveis...</div>`;
 
     if(count){
         count.textContent = "carregando";
@@ -8712,21 +8742,13 @@ async function openPeopleDirectory(mode){
 
     try{
 
-        const role =
-            mode === "helper"
-            ? "helper"
-            : "professional";
-
         const {
             data,
             error
         } =
         await boraSupabase
         .rpc(
-            "get_available_people",
-            {
-                p_role:role
-            }
+            "get_available_people"
         );
 
         if(error){
@@ -8741,9 +8763,9 @@ async function openPeopleDirectory(mode){
         if(count){
             count.textContent =
                 `${people.length} ${
-                    mode === "helper"
-                    ? (people.length === 1 ? "ajudante" : "ajudantes")
-                    : (people.length === 1 ? "profissional" : "profissionais")
+                    people.length === 1
+                    ? "disponível"
+                    : "disponíveis"
                 }`;
         }
 
@@ -8751,11 +8773,7 @@ async function openPeopleDirectory(mode){
 
             feed.innerHTML =
                 `<div class="bt-directory-empty">
-                    ${
-                        mode === "helper"
-                        ? "Nenhum ajudante disponível agora."
-                        : "Nenhum profissional disponível agora."
-                    }
+                    Nenhum profissional ou ajudante disponível agora.
                 </div>`;
 
             return;
@@ -8820,6 +8838,11 @@ async function openPeopleDirectory(mode){
                     :
                     "Especialidades não informadas";
 
+                const rolesLabel =
+                    btPersonRolesLabel(
+                        person.roles
+                    );
+
                 return `
                     <div class="bt-directory-card">
 
@@ -8835,6 +8858,7 @@ async function openPeopleDirectory(mode){
                                 </div>
 
                                 <div class="bt-directory-meta">
+                                    ${escapeHtml(rolesLabel)}<br>
                                     🟢 Disponível agora<br>
                                     ${escapeHtml(reputation)}
                                     • ${completed} serviços
@@ -8868,13 +8892,13 @@ async function openPeopleDirectory(mode){
     }catch(error){
 
         console.error(
-            "Erro ao carregar diretório:",
+            "Erro ao carregar disponíveis:",
             error
         );
 
         feed.innerHTML =
             `<div class="bt-directory-empty">
-                Não foi possível carregar agora.
+                Não foi possível carregar os disponíveis agora.
             </div>`;
 
         if(count){
@@ -8903,20 +8927,9 @@ changeFilter =
 function(filter,button){
 
     if(
-        filter === "professionals_directory"
+        filter === "available_directory"
     ){
-        openPeopleDirectory(
-            "professional"
-        );
-        return;
-    }
-
-    if(
-        filter === "helpers_directory"
-    ){
-        openPeopleDirectory(
-            "helper"
-        );
+        openPeopleDirectory();
         return;
     }
 
@@ -8935,6 +8948,7 @@ window.changeFilter =
 
 window.openPeopleDirectory =
     openPeopleDirectory;
+
 
 /* =========================================================
    MENU V1.0
