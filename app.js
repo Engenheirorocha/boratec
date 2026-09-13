@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.9.1
+   BORATEC V1.9.2
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12608,6 +12608,8 @@ function createBoraTecHome(){
             margin:0 -18px;
             padding:20px 0 12px;
             min-height:250px;
+            perspective:900px;
+            transform-style:preserve-3d;
         }
 
         .bt-v182-action{
@@ -12636,43 +12638,66 @@ function createBoraTecHome(){
         }
 
         .bt-v182-action.is-active{
-            transform:translateX(-50%) scale(1);
+            transform:
+                translateX(-50%)
+                translateZ(0)
+                rotateY(0deg)
+                scale(1);
             opacity:1;
-            z-index:5;
+            z-index:6;
             filter:none;
             border-color:rgba(53,184,255,.42);
         }
 
         .bt-v182-action.is-prev{
-            transform:translateX(-112%) scale(.82);
-            opacity:.34;
-            z-index:3;
-            filter:brightness(.55);
+            transform:
+                translateX(-108%)
+                translateZ(-70px)
+                rotateY(18deg)
+                scale(.82);
+            opacity:.42;
+            z-index:4;
+            filter:brightness(.58);
         }
 
         .bt-v182-action.is-next{
-            transform:translateX(12%) scale(.82);
-            opacity:.34;
-            z-index:3;
-            filter:brightness(.55);
+            transform:
+                translateX(8%)
+                translateZ(-70px)
+                rotateY(-18deg)
+                scale(.82);
+            opacity:.42;
+            z-index:4;
+            filter:brightness(.58);
         }
 
         .bt-v182-action.is-far-prev{
-            transform:translateX(-165%) scale(.68);
-            opacity:.10;
-            z-index:1;
-            filter:brightness(.35);
+            transform:
+                translateX(-150%)
+                translateZ(-140px)
+                rotateY(28deg)
+                scale(.66);
+            opacity:.12;
+            z-index:2;
+            filter:brightness(.36);
         }
 
         .bt-v182-action.is-far-next{
-            transform:translateX(65%) scale(.68);
-            opacity:.10;
-            z-index:1;
-            filter:brightness(.35);
+            transform:
+                translateX(50%)
+                translateZ(-140px)
+                rotateY(-28deg)
+                scale(.66);
+            opacity:.12;
+            z-index:2;
+            filter:brightness(.36);
         }
 
         .bt-v182-action.is-hidden{
-            transform:translateX(-50%) scale(.5);
+            transform:
+                translateX(-50%)
+                translateZ(-220px)
+                scale(.48);
             opacity:0;
             pointer-events:none;
             z-index:0;
@@ -13040,6 +13065,10 @@ function setupBoraTecHomeCarousel(){
     let currentIndex = 0;
     let touchStartX = 0;
     let touchEndX = 0;
+    let isAnimating = false;
+
+    const total =
+        cards.length;
 
     dotsWrap.innerHTML =
         cards
@@ -13055,6 +13084,28 @@ function setupBoraTecHomeCarousel(){
                 ".bt-v19-dot"
             )
         ];
+
+
+    const circularDistance =
+        (index,active) => {
+
+            let diff =
+                index - active;
+
+            const half =
+                total / 2;
+
+            if(diff > half){
+                diff -= total;
+            }
+
+            if(diff < -half){
+                diff += total;
+            }
+
+            return diff;
+        };
+
 
     const update =
         () => {
@@ -13072,25 +13123,40 @@ function setupBoraTecHomeCarousel(){
                     );
 
                     const diff =
-                        index - currentIndex;
+                        circularDistance(
+                            index,
+                            currentIndex
+                        );
 
                     if(diff === 0){
-                        card.classList.add("is-active");
+                        card.classList.add(
+                            "is-active"
+                        );
                     }
                     else if(diff === -1){
-                        card.classList.add("is-prev");
+                        card.classList.add(
+                            "is-prev"
+                        );
                     }
                     else if(diff === 1){
-                        card.classList.add("is-next");
+                        card.classList.add(
+                            "is-next"
+                        );
                     }
                     else if(diff === -2){
-                        card.classList.add("is-far-prev");
+                        card.classList.add(
+                            "is-far-prev"
+                        );
                     }
                     else if(diff === 2){
-                        card.classList.add("is-far-next");
+                        card.classList.add(
+                            "is-far-next"
+                        );
                     }
                     else{
-                        card.classList.add("is-hidden");
+                        card.classList.add(
+                            "is-hidden"
+                        );
                     }
                 }
             );
@@ -13104,22 +13170,44 @@ function setupBoraTecHomeCarousel(){
             );
         };
 
+
+    const normalizeIndex =
+        index =>
+            (
+                (
+                    index %
+                    total
+                ) +
+                total
+            ) %
+            total;
+
+
     const goTo =
         index => {
 
-            if(index < 0){
-                currentIndex =
-                    cards.length - 1;
-            }
-            else if(index >= cards.length){
-                currentIndex = 0;
-            }
-            else{
-                currentIndex = index;
+            if(isAnimating){
+                return;
             }
 
+            isAnimating =
+                true;
+
+            currentIndex =
+                normalizeIndex(
+                    index
+                );
+
             update();
+
+            window.setTimeout(
+                () => {
+                    isAnimating = false;
+                },
+                340
+            );
         };
+
 
     prevButton?.addEventListener(
         "click",
@@ -13137,6 +13225,7 @@ function setupBoraTecHomeCarousel(){
             )
     );
 
+
     rail.addEventListener(
         "touchstart",
         event => {
@@ -13149,6 +13238,7 @@ function setupBoraTecHomeCarousel(){
         }
     );
 
+
     rail.addEventListener(
         "touchend",
         event => {
@@ -13157,10 +13247,12 @@ function setupBoraTecHomeCarousel(){
                 event.changedTouches[0].screenX;
 
             const delta =
-                touchEndX - touchStartX;
+                touchEndX -
+                touchStartX;
 
             if(
-                Math.abs(delta) < 45
+                Math.abs(delta) <
+                40
             ){
                 return;
             }
@@ -13181,6 +13273,7 @@ function setupBoraTecHomeCarousel(){
         }
     );
 
+
     cards.forEach(
         (card,index) => {
 
@@ -13189,18 +13282,37 @@ function setupBoraTecHomeCarousel(){
                 event => {
 
                     if(
-                        index !== currentIndex
+                        index ===
+                        currentIndex
                     ){
-                        event.preventDefault();
-                        event.stopPropagation();
+                        return;
+                    }
 
-                        goTo(index);
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const diff =
+                        circularDistance(
+                            index,
+                            currentIndex
+                        );
+
+                    if(diff < 0){
+                        goTo(
+                            currentIndex - 1
+                        );
+                    }
+                    else{
+                        goTo(
+                            currentIndex + 1
+                        );
                     }
                 },
                 true
             );
         }
     );
+
 
     update();
 }
