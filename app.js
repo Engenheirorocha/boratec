@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.9
+   BORATEC V2.0 STABLE
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12600,81 +12600,151 @@ function createBoraTecHome(){
         }
 
         .bt-v182-actions{
-            display:flex;
-            gap:12px;
-            overflow-x:auto;
-            overflow-y:hidden;
-            scroll-snap-type:x mandatory;
-            -webkit-overflow-scrolling:touch;
-            scrollbar-width:none;
-            margin:0 -18px 12px;
-            padding:0 18px 6px;
-        }
-
-        .bt-v182-actions::-webkit-scrollbar{
-            display:none;
+            position:relative;
+            height:246px;
+            margin:0 -18px 8px;
+            overflow:hidden;
+            touch-action:pan-y;
+            user-select:none;
         }
 
         .bt-v182-action{
-            flex:0 0 82%;
-            min-height:132px;
-            scroll-snap-align:start;
-            scroll-snap-stop:always;
+            position:absolute;
+            top:10px;
+            left:50%;
+            width:min(72vw,250px);
+            min-height:220px;
             border:1px solid rgba(119,151,178,.18);
-            border-radius:20px;
-            padding:16px;
-            text-align:left;
+            border-radius:22px;
+            padding:22px 18px;
+            text-align:center;
             color:#fff;
-            background:linear-gradient(145deg,rgba(15,45,70,.96),rgba(9,35,58,.96));
-            box-shadow:0 12px 28px rgba(0,0,0,.16);
+            background:linear-gradient(145deg,rgba(15,45,70,.98),rgba(9,35,58,.98));
+            box-shadow:0 16px 38px rgba(0,0,0,.22);
             cursor:pointer;
-            transition:
-                transform .18s ease,
-                opacity .18s ease,
-                border-color .18s ease;
-        }
-
-        .bt-v182-action.is-active{
-            transform:scale(1);
-            opacity:1;
-        }
-
-        .bt-v182-action:not(.is-active){
-            transform:scale(.965);
-            opacity:.86;
+            box-sizing:border-box;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            opacity:0;
+            pointer-events:none;
+            transform:translateX(-50%) scale(.72);
+            transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .32s ease,filter .32s ease;
+            will-change:transform,opacity;
         }
 
         .bt-v182-action.primary{
             border-color:rgba(255,132,0,.34);
-            background:linear-gradient(145deg,rgba(255,132,0,.13),rgba(11,38,62,.96));
+            background:linear-gradient(145deg,rgba(255,132,0,.13),rgba(11,38,62,.98));
         }
 
-        .bt-v182-action:active{ transform:scale(.985); }
+        .bt-v182-action.bt-carousel-active{
+            z-index:5;
+            opacity:1;
+            pointer-events:auto;
+            filter:none;
+            transform:translateX(-50%) scale(1);
+        }
+
+        .bt-v182-action.bt-carousel-prev{
+            z-index:3;
+            opacity:.38;
+            filter:brightness(.62);
+            transform:translateX(-112%) scale(.80) rotateY(10deg);
+        }
+
+        .bt-v182-action.bt-carousel-next{
+            z-index:3;
+            opacity:.38;
+            filter:brightness(.62);
+            transform:translateX(12%) scale(.80) rotateY(-10deg);
+        }
+
+        .bt-v182-action.bt-carousel-hidden{
+            z-index:1;
+            opacity:0;
+            pointer-events:none;
+            transform:translateX(-50%) scale(.64);
+        }
+
+        .bt-v182-action.bt-carousel-active:active{
+            transform:translateX(-50%) scale(.985);
+        }
 
         .bt-v182-action-icon{
-            width:38px;
-            height:38px;
-            border-radius:12px;
+            width:68px;
+            height:68px;
+            border-radius:18px;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:20px;
-            background:rgba(255,255,255,.06);
-            margin-bottom:13px;
+            font-size:34px;
+            background:rgba(255,255,255,.055);
+            margin-bottom:18px;
         }
 
         .bt-v182-action strong{
             display:block;
-            font-size:14px;
-            font-weight:900;
-            margin-bottom:5px;
+            font-size:19px;
+            line-height:1.08;
+            font-weight:950;
+            margin-bottom:9px;
         }
 
         .bt-v182-action small{
             display:block;
+            max-width:190px;
             color:#8098ad;
-            font-size:10.5px;
-            line-height:1.35;
+            font-size:11px;
+            line-height:1.42;
+        }
+
+        .bt-home-carousel-controls{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:12px;
+            margin:3px 0 24px;
+        }
+
+        .bt-home-carousel-arrow{
+            width:42px;
+            height:42px;
+            border-radius:13px;
+            border:1px solid rgba(119,151,178,.20);
+            background:#0b243b;
+            color:#fff;
+            font-size:24px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+        }
+
+        .bt-home-carousel-arrow:active{
+            transform:scale(.96);
+        }
+
+        .bt-home-carousel-dots{
+            min-width:104px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:6px;
+        }
+
+        .bt-home-carousel-dot{
+            width:6px;
+            height:6px;
+            border-radius:99px;
+            background:rgba(128,151,172,.30);
+            transition:width .2s ease,background .2s ease;
+        }
+
+        .bt-home-carousel-dot.active{
+            width:18px;
+            background:#ff8500;
         }
 
         .bt-v182-recent-head{
@@ -12715,32 +12785,18 @@ function createBoraTecHome(){
             display:none !important;
         }
 
-        .bt-v19-dots{
-            display:flex;
-            justify-content:center;
-            gap:6px;
-            margin:4px 0 24px;
-        }
-
-        .bt-v19-dot{
-            width:6px;
-            height:6px;
-            border-radius:999px;
-            background:rgba(126,151,173,.35);
-            transition:all .18s ease;
-        }
-
-        .bt-v19-dot.active{
-            width:18px;
-            background:#ff8500;
-        }
-
         @media (min-width:760px){
             .bt-home-shell{ padding-top:28px; }
 
+            .bt-v182-actions{
+                height:268px;
+                margin-left:-34px;
+                margin-right:-34px;
+            }
+
             .bt-v182-action{
-                flex-basis:42%;
-                min-height:145px;
+                width:260px;
+                min-height:236px;
             }
         }
     `;
@@ -12843,11 +12899,27 @@ function createBoraTecHome(){
 
             </div>
 
-            <div
-                id="btHomeQuickDots"
-                class="bt-v19-dots"
-                aria-hidden="true"
-            ></div>
+            <div class="bt-home-carousel-controls">
+                <button
+                    id="btHomeCarouselPrev"
+                    class="bt-home-carousel-arrow"
+                    type="button"
+                    aria-label="Anterior"
+                >‹</button>
+
+                <div
+                    id="btHomeCarouselDots"
+                    class="bt-home-carousel-dots"
+                    aria-hidden="true"
+                ></div>
+
+                <button
+                    id="btHomeCarouselNext"
+                    class="bt-home-carousel-arrow"
+                    type="button"
+                    aria-label="Próximo"
+                >›</button>
+            </div>
 
             <div class="bt-v182-recent-head">
                 <div class="bt-v182-section-title" style="margin:0">
@@ -12904,135 +12976,211 @@ function createBoraTecHome(){
 
 function setupBoraTecHomeCarousel(){
 
-    const rail =
-        document.querySelector(
-            "#btHomeScreen .bt-v182-actions"
-        );
-
-    const dotsWrap =
+    const home =
         document.getElementById(
-            "btHomeQuickDots"
+            "btHomeScreen"
         );
 
-    if(!rail || !dotsWrap){
+    if(!home){
+        return;
+    }
+
+    const rail =
+        home.querySelector(
+            ".bt-v182-actions"
+        );
+
+    const dotsBox =
+        document.getElementById(
+            "btHomeCarouselDots"
+        );
+
+    const prev =
+        document.getElementById(
+            "btHomeCarouselPrev"
+        );
+
+    const next =
+        document.getElementById(
+            "btHomeCarouselNext"
+        );
+
+    if(!rail || !dotsBox || !prev || !next){
         return;
     }
 
     const cards =
-        [
-            ...rail.querySelectorAll(
+        Array.from(
+            rail.querySelectorAll(
                 ".bt-v182-action"
             )
-        ];
+        );
 
-    if(!cards.length){
+    if(cards.length < 2){
         return;
     }
 
-    dotsWrap.innerHTML =
+    let current = 0;
+    let pointerStartX = null;
+    let dragged = false;
+
+    dotsBox.innerHTML =
         cards
         .map(
             (_,index) =>
-                `<span class="bt-v19-dot${index === 0 ? " active" : ""}"></span>`
+                `<span class="bt-home-carousel-dot${index === 0 ? " active" : ""}"></span>`
         )
         .join("");
 
     const dots =
-        [
-            ...dotsWrap.querySelectorAll(
-                ".bt-v19-dot"
+        Array.from(
+            dotsBox.querySelectorAll(
+                ".bt-home-carousel-dot"
             )
-        ];
+        );
 
-    const setActive =
-        index => {
+    function normalize(index){
+        return ((index % cards.length) + cards.length) % cards.length;
+    }
 
-            cards.forEach(
-                (card,i) =>
-                    card.classList.toggle(
-                        "is-active",
-                        i === index
-                    )
-            );
+    function render(){
 
-            dots.forEach(
-                (dot,i) =>
-                    dot.classList.toggle(
-                        "active",
-                        i === index
-                    )
-            );
-        };
+        const previous = normalize(current - 1);
+        const following = normalize(current + 1);
 
-    setActive(0);
+        cards.forEach(
+            (card,index) => {
 
-    let ticking = false;
+                card.classList.remove(
+                    "bt-carousel-active",
+                    "bt-carousel-prev",
+                    "bt-carousel-next",
+                    "bt-carousel-hidden"
+                );
+
+                if(index === current){
+                    card.classList.add("bt-carousel-active");
+                }
+                else if(index === previous){
+                    card.classList.add("bt-carousel-prev");
+                }
+                else if(index === following){
+                    card.classList.add("bt-carousel-next");
+                }
+                else{
+                    card.classList.add("bt-carousel-hidden");
+                }
+            }
+        );
+
+        dots.forEach(
+            (dot,index) =>
+                dot.classList.toggle(
+                    "active",
+                    index === current
+                )
+        );
+    }
+
+    function move(direction){
+        current = normalize(current + direction);
+        render();
+    }
+
+    prev.onclick = () => move(-1);
+    next.onclick = () => move(1);
 
     rail.addEventListener(
-        "scroll",
-        () => {
+        "pointerdown",
+        event => {
 
-            if(ticking){
+            if(
+                event.pointerType === "mouse"
+                &&
+                event.button !== 0
+            ){
                 return;
             }
 
-            ticking = true;
-
-            requestAnimationFrame(
-                () => {
-
-                    const railRect =
-                        rail.getBoundingClientRect();
-
-                    const railCenter =
-                        railRect.left +
-                        railRect.width / 2;
-
-                    let bestIndex = 0;
-                    let bestDistance = Infinity;
-
-                    cards.forEach(
-                        (card,index) => {
-
-                            const rect =
-                                card.getBoundingClientRect();
-
-                            const center =
-                                rect.left +
-                                rect.width / 2;
-
-                            const distance =
-                                Math.abs(
-                                    center - railCenter
-                                );
-
-                            if(
-                                distance <
-                                bestDistance
-                            ){
-                                bestDistance =
-                                    distance;
-
-                                bestIndex =
-                                    index;
-                            }
-                        }
-                    );
-
-                    setActive(
-                        bestIndex
-                    );
-
-                    ticking = false;
-                }
-            );
-        },
-        {
-            passive:true
+            pointerStartX = event.clientX;
+            dragged = false;
         }
     );
-}
 
+    rail.addEventListener(
+        "pointermove",
+        event => {
+
+            if(pointerStartX === null){
+                return;
+            }
+
+            if(
+                Math.abs(
+                    event.clientX - pointerStartX
+                ) > 10
+            ){
+                dragged = true;
+            }
+        }
+    );
+
+    rail.addEventListener(
+        "pointerup",
+        event => {
+
+            if(pointerStartX === null){
+                return;
+            }
+
+            const delta =
+                event.clientX - pointerStartX;
+
+            pointerStartX = null;
+
+            if(Math.abs(delta) >= 42){
+
+                if(delta < 0){
+                    move(1);
+                }
+                else{
+                    move(-1);
+                }
+            }
+
+            window.setTimeout(
+                () => {
+                    dragged = false;
+                },
+                0
+            );
+        }
+    );
+
+    rail.addEventListener(
+        "pointercancel",
+        () => {
+            pointerStartX = null;
+            dragged = false;
+        }
+    );
+
+    rail.addEventListener(
+        "click",
+        event => {
+
+            if(!dragged){
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        },
+        true
+    );
+
+    render();
+}
 
 
 async function loadBoraTecHome(){
@@ -14066,3 +14214,4 @@ window.openBoraTecFeedTab = function(tabName){
 };
 
 window.openBoraTecHome = openBoraTecHome;
+
