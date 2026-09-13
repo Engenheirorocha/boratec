@@ -682,6 +682,16 @@ function convertDatabaseOpportunity(item){
             "Local não informado",
 
         date:
+            (
+                item.type === "technician_available"
+                ||
+                item.type === "helper_available"
+            )
+            ?
+            formatAvailabilityDate(
+                item.service_date
+            )
+            :
             formatServiceDate(
                 item.service_date
             ),
@@ -784,6 +794,52 @@ function formatServiceDate(serviceDate){
         "pt-BR"
     );
 
+}
+
+
+function formatAvailabilityDate(
+    serviceDate
+){
+
+    if(!serviceDate){
+        return "Horário a combinar";
+    }
+
+    const date =
+        new Date(
+            serviceDate
+        );
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return "Horário a combinar";
+    }
+
+    const day =
+        date
+        .toLocaleDateString(
+            "pt-BR",
+            {
+                weekday:"short",
+                day:"2-digit",
+                month:"2-digit"
+            }
+        );
+
+    const time =
+        date
+        .toLocaleTimeString(
+            "pt-BR",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    return `${day} às ${time}`;
 }
 
 
@@ -6307,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.3
+   BORATEC V1.4
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -7107,11 +7163,27 @@ function(post){
     }
 
     if(post.type === "available"){
-        typeText = "PROFISSIONAL DISPONÍVEL";
+
+        const isHelperAvailable =
+            post.databaseType ===
+            "helper_available";
+
+        typeText =
+            isHelperAvailable
+            ? "AJUDANTE DISPONÍVEL"
+            : "PROFISSIONAL DISPONÍVEL";
+
         typeClass = "available";
-        typeIcon = "●";
-        button = "Chamar";
-        buttonClass = "action-btn orange";
+
+        typeIcon =
+            isHelperAvailable
+            ? "👷"
+            : "👨‍🔧";
+
+        button = "Conversar";
+
+        buttonClass =
+            "action-btn orange";
     }
 
     const priceHTML =
@@ -7383,13 +7455,16 @@ function applyCurrentFeedFilters(){
         : null;
 
     posts =
-        btAllPosts
+        btApplyMainTabFilter(
+            btAllPosts
+        )
         .filter(post => {
 
             if(
                 btFeedFilters.type
                 &&
-                post.type !== btFeedFilters.type
+                post.type !==
+                btFeedFilters.type
             ){
                 return false;
             }
@@ -7397,9 +7472,13 @@ function applyCurrentFeedFilters(){
             if(
                 btFeedFilters.city
                 &&
-                !normalize(post.location)
+                !normalize(
+                    post.location
+                )
                 .includes(
-                    normalize(btFeedFilters.city)
+                    normalize(
+                        btFeedFilters.city
+                    )
                 )
             ){
                 return false;
@@ -7408,9 +7487,13 @@ function applyCurrentFeedFilters(){
             if(
                 btFeedFilters.category
                 &&
-                !normalize(post.category)
+                !normalize(
+                    post.category
+                )
                 .includes(
-                    normalize(btFeedFilters.category)
+                    normalize(
+                        btFeedFilters.category
+                    )
                 )
             ){
                 return false;
@@ -7419,14 +7502,18 @@ function applyCurrentFeedFilters(){
             if(
                 minValue !== null
                 &&
-                Number.isFinite(minValue)
+                Number.isFinite(
+                    minValue
+                )
             ){
                 if(
                     post.price === null
                     ||
                     post.price === undefined
                     ||
-                    Number(post.price) < minValue
+                    Number(post.price)
+                    <
+                    minValue
                 ){
                     return false;
                 }
@@ -7435,11 +7522,24 @@ function applyCurrentFeedFilters(){
             return true;
         });
 
+    if(
+        typeof currentFilter
+        !==
+        "undefined"
+    ){
+        currentFilter =
+            "all";
+    }
+
     renderFeed();
+
+    btUpdateFeedHeaderForMainTab();
 
     const button =
         document
-        .getElementById("btFilterButton");
+        .getElementById(
+            "btFilterButton"
+        );
 
     const activeCount =
         [
@@ -8744,13 +8844,8 @@ function setupHelperAvailabilityPublishOption(){
             )
         );
 
-    const availableButton =
+    const oldAvailableButton =
         buttons.find(button => {
-
-            const marker =
-                button.getAttribute(
-                    "data-bt-helper-toggle"
-                );
 
             const onclick =
                 button.getAttribute(
@@ -8759,84 +8854,109 @@ function setupHelperAvailabilityPublishOption(){
                 ||
                 "";
 
-            return marker === "true"
-                ||
-                onclick.includes("available")
-                ||
-                onclick.includes("HelperAvailability");
+            return onclick.includes(
+                "available"
+            )
+            ||
+            button.getAttribute(
+                "data-bt-helper-toggle"
+            )
+            ===
+            "true";
         })
         ||
         buttons[2];
 
-    if(!availableButton){
+    if(!oldAvailableButton){
         return;
     }
 
-    availableButton.setAttribute(
-        "data-bt-helper-toggle",
-        "true"
+    oldAvailableButton.removeAttribute(
+        "data-bt-helper-toggle"
     );
 
-    const roles =
-        Array.isArray(
-            boraProfile?.roles
-        )
-        ?
-        boraProfile.roles
-        :
-        [];
-
-    const helperActive =
-        roles.includes("helper")
-        &&
-        boraProfile?.is_available === true;
-
-    availableButton.setAttribute(
+    oldAvailableButton.setAttribute(
         "onclick",
-        helperActive
-        ?
-        "deactivateHelperAvailability()"
-        :
-        "activateHelperAvailability()"
+        "selectPublishType('technician_available')"
     );
 
     const icon =
-        availableButton
+        oldAvailableButton
         .querySelector(
             ".option-icon"
         );
 
     const strong =
-        availableButton
+        oldAvailableButton
         .querySelector(
             "strong"
         );
 
     const span =
-        availableButton
+        oldAvailableButton
         .querySelector(
             "span"
         );
 
     if(icon){
         icon.textContent =
-            helperActive
-            ? "⚪"
-            : "🟢";
+            "👨‍🔧";
     }
 
     if(strong){
         strong.textContent =
-            helperActive
-            ? "Parar de aparecer como disponível"
-            : "Sou ajudante / Estou disponível";
+            "Sou profissional / Estou disponível";
     }
 
     if(span){
         span.textContent =
-            helperActive
-            ? "Você deixará de aparecer na aba Disponíveis"
-            : "Apareça para profissionais que estão procurando ajuda";
+            "Publique onde e quando você está disponível para trabalhar";
+    }
+
+    if(
+        !document.getElementById(
+            "btHelperAvailablePublishOption"
+        )
+    ){
+
+        const helperButton =
+            document.createElement(
+                "button"
+            );
+
+        helperButton.type =
+            "button";
+
+        helperButton.id =
+            "btHelperAvailablePublishOption";
+
+        helperButton.className =
+            "publish-option";
+
+        helperButton.setAttribute(
+            "onclick",
+            "selectPublishType('helper_available')"
+        );
+
+        helperButton.innerHTML = `
+            <div class="option-icon">
+                👷
+            </div>
+
+            <div>
+                <strong>
+                    Sou ajudante / Estou disponível
+                </strong>
+
+                <span>
+                    Publique onde e quando você pode trabalhar como ajudante
+                </span>
+            </div>
+        `;
+
+        options.appendChild(
+            helperButton
+        );
     }
 }
 
@@ -9004,6 +9124,714 @@ window.deactivateHelperAvailability =
 
 
 
+
+
+/* =========================================================
+   BORATEC V1.4
+   ABAS:
+   TODOS | SERVIÇOS | PROFISSIONAIS
+========================================================= */
+
+let btMainTab =
+    "all";
+
+
+function setupV14MainTabs(){
+
+    const tabs =
+        document.querySelector(
+            ".tabs"
+        );
+
+    if(!tabs){
+        return;
+    }
+
+    tabs.innerHTML = `
+        <button
+            class="tab active"
+            data-filter="all"
+            onclick="changeFilter('all',this)"
+        >
+            Todos
+        </button>
+
+        <button
+            class="tab"
+            data-filter="services"
+            onclick="changeFilter('services',this)"
+        >
+            Serviços
+        </button>
+
+        <button
+            class="tab"
+            data-filter="professionals"
+            onclick="changeFilter('professionals',this)"
+        >
+            Profissionais
+        </button>
+    `;
+}
+
+
+function btApplyMainTabFilter(
+    list
+){
+
+    const source =
+        Array.isArray(list)
+        ? list
+        : [];
+
+    if(
+        btMainTab ===
+        "services"
+    ){
+        return source.filter(
+            post =>
+                post.databaseType ===
+                "service"
+                ||
+                post.databaseType ===
+                "helper"
+        );
+    }
+
+    if(
+        btMainTab ===
+        "professionals"
+    ){
+        return source.filter(
+            post =>
+                post.databaseType ===
+                "technician_available"
+                ||
+                post.databaseType ===
+                "helper_available"
+        );
+    }
+
+    return source;
+}
+
+
+function btUpdateFeedHeaderForMainTab(){
+
+    const title =
+        document.querySelector(
+            ".feed-header h2"
+        );
+
+    const subtitle =
+        document.querySelector(
+            ".feed-header p"
+        );
+
+    if(btMainTab === "services"){
+
+        if(title){
+            title.textContent =
+                "Serviços disponíveis";
+        }
+
+        if(subtitle){
+            subtitle.textContent =
+                "Serviços e pedidos de ajudante publicados na rede";
+        }
+
+        return;
+    }
+
+    if(
+        btMainTab ===
+        "professionals"
+    ){
+
+        if(title){
+            title.textContent =
+                "Profissionais disponíveis";
+        }
+
+        if(subtitle){
+            subtitle.textContent =
+                "Técnicos e ajudantes que publicaram disponibilidade";
+        }
+
+        return;
+    }
+
+    if(title){
+        title.textContent =
+            "Oportunidades agora";
+    }
+
+    if(subtitle){
+        subtitle.textContent =
+            "Todas as publicações recentes da rede";
+    }
+}
+
+
+/* =========================================================
+   DATA / HORA DA DISPONIBILIDADE
+========================================================= */
+
+function setupAvailabilityDateTimeField(){
+
+    if(
+        document.getElementById(
+            "btAvailabilityDateTimeField"
+        )
+    ){
+        return;
+    }
+
+    const dateSelect =
+        document.getElementById(
+            "postDate"
+        );
+
+    if(!dateSelect){
+        return;
+    }
+
+    const originalField =
+        dateSelect.closest(
+            ".field"
+        );
+
+    if(!originalField){
+        return;
+    }
+
+    const field =
+        document.createElement(
+            "div"
+        );
+
+    field.id =
+        "btAvailabilityDateTimeField";
+
+    field.className =
+        "field";
+
+    field.style.display =
+        "none";
+
+    field.innerHTML = `
+        <label>
+            DIA E HORÁRIO DISPONÍVEL
+        </label>
+
+        <input
+            id="btAvailabilityDateTime"
+            class="input"
+            type="datetime-local"
+        >
+    `;
+
+    originalField.insertAdjacentElement(
+        "afterend",
+        field
+    );
+}
+
+
+function btIsAvailabilityType(
+    type
+){
+
+    return (
+        type ===
+        "technician_available"
+        ||
+        type ===
+        "helper_available"
+        ||
+        type ===
+        "available"
+    );
+}
+
+
+const btOriginalSelectPublishType =
+    window.selectPublishType;
+
+
+window.selectPublishType =
+function(type){
+
+    const normalizedType =
+        type === "available"
+        ? "technician_available"
+        : type;
+
+    if(
+        typeof btOriginalSelectPublishType
+        ===
+        "function"
+    ){
+        btOriginalSelectPublishType(
+            normalizedType
+        );
+    }
+
+    const hiddenType =
+        document.getElementById(
+            "postType"
+        );
+
+    if(hiddenType){
+        hiddenType.value =
+            normalizedType;
+    }
+
+    setupAvailabilityDateTimeField();
+
+    const isAvailability =
+        btIsAvailabilityType(
+            normalizedType
+        );
+
+    const normalDate =
+        document
+        .getElementById(
+            "postDate"
+        )
+        ?.closest(
+            ".field"
+        );
+
+    const availabilityField =
+        document.getElementById(
+            "btAvailabilityDateTimeField"
+        );
+
+    if(normalDate){
+        normalDate.style.display =
+            isAvailability
+            ? "none"
+            : "";
+    }
+
+    if(availabilityField){
+        availabilityField.style.display =
+            isAvailability
+            ? ""
+            : "none";
+    }
+
+    const titleInput =
+        document.getElementById(
+            "postTitle"
+        );
+
+    const description =
+        document.getElementById(
+            "postDescription"
+        );
+
+    const sheetSmall =
+        document.getElementById(
+            "sheetSmall"
+        );
+
+    const sheetTitle =
+        document.getElementById(
+            "sheetTitle"
+        );
+
+    if(
+        normalizedType ===
+        "helper_available"
+    ){
+
+        if(sheetSmall){
+            sheetSmall.textContent =
+                "SOU AJUDANTE";
+        }
+
+        if(sheetTitle){
+            sheetTitle.textContent =
+                "Publique sua disponibilidade";
+        }
+
+        if(titleInput){
+            titleInput.placeholder =
+                "Ex.: Ajudante de refrigeração disponível";
+        }
+
+        if(description){
+            description.placeholder =
+                "Ex.: Posso ajudar em instalação, manutenção e limpeza.";
+        }
+
+        return;
+    }
+
+    if(
+        normalizedType ===
+        "technician_available"
+    ){
+
+        if(sheetSmall){
+            sheetSmall.textContent =
+                "SOU PROFISSIONAL";
+        }
+
+        if(sheetTitle){
+            sheetTitle.textContent =
+                "Publique sua disponibilidade";
+        }
+
+        if(titleInput){
+            titleInput.placeholder =
+                "Ex.: Técnico de refrigeração disponível";
+        }
+
+        if(description){
+            description.placeholder =
+                "Ex.: Disponível para instalações e manutenção.";
+        }
+
+        return;
+    }
+
+    if(titleInput){
+        titleInput.placeholder =
+            "Ex.: Instalação de split 12.000 BTUs";
+    }
+};
+
+
+/* =========================================================
+   PUBLICAÇÃO V1.4
+   disponibilidade agora é uma publicação real
+========================================================= */
+
+publishPost =
+async function(event){
+
+    event.preventDefault();
+
+    if(!boraUser){
+        showToast(
+            "Usuário não carregado"
+        );
+        return;
+    }
+
+    const button =
+        event.target
+        .querySelector(
+            ".submit"
+        );
+
+    const oldText =
+        button?.textContent
+        ||
+        "Publicar";
+
+    if(button){
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Publicando...";
+    }
+
+    try{
+
+        const uiType =
+            document
+            .getElementById(
+                "postType"
+            )
+            .value;
+
+        const title =
+            document
+            .getElementById(
+                "postTitle"
+            )
+            .value
+            .trim();
+
+        const location =
+            document
+            .getElementById(
+                "postLocation"
+            )
+            .value
+            .trim();
+
+        const category =
+            document
+            .getElementById(
+                "postCategory"
+            )
+            .value;
+
+        const description =
+            document
+            .getElementById(
+                "postDescription"
+            )
+            .value
+            .trim();
+
+        const priceText =
+            document
+            .getElementById(
+                "postPrice"
+            )
+            .value
+            .replace(
+                ",",
+                "."
+            )
+            .trim();
+
+        if(
+            !title
+            ||
+            !location
+            ||
+            !description
+        ){
+            showToast(
+                "Preencha os campos"
+            );
+            return;
+        }
+
+        const phoneRegex =
+            /(?:\(?\d{2}\)?[\s-]?)?(?:9[\s-]?)?\d{4}[\s-]?\d{4}/;
+
+        if(
+            phoneRegex.test(
+                description
+            )
+        ){
+            showToast(
+                "Não coloque telefone na publicação"
+            );
+            return;
+        }
+
+        const isAvailability =
+            btIsAvailabilityType(
+                uiType
+            );
+
+        let serviceDate =
+            null;
+
+        let urgency =
+            false;
+
+        if(isAvailability){
+
+            const dateTimeValue =
+                document
+                .getElementById(
+                    "btAvailabilityDateTime"
+                )
+                ?.value
+                ||
+                "";
+
+            if(!dateTimeValue){
+
+                showToast(
+                    "Informe o dia e horário em que estará disponível"
+                );
+
+                return;
+            }
+
+            const parsed =
+                new Date(
+                    dateTimeValue
+                );
+
+            if(
+                Number.isNaN(
+                    parsed.getTime()
+                )
+            ){
+                showToast(
+                    "Data ou horário inválido"
+                );
+
+                return;
+            }
+
+            serviceDate =
+                parsed.toISOString();
+
+        }else{
+
+            const dateOption =
+                document
+                .getElementById(
+                    "postDate"
+                )
+                .value;
+
+            serviceDate =
+                convertDateOption(
+                    dateOption
+                );
+
+            urgency =
+                dateOption ===
+                "Agora";
+        }
+
+        let value =
+            null;
+
+        if(priceText){
+
+            const parsedValue =
+                Number(
+                    priceText
+                );
+
+            if(
+                !Number.isNaN(
+                    parsedValue
+                )
+            ){
+                value =
+                    parsedValue;
+            }
+        }
+
+        const databaseType =
+            uiType === "available"
+            ? "technician_available"
+            : uiType;
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("opportunities")
+        .insert({
+
+            author_id:
+                boraUser.id,
+
+            type:
+                databaseType,
+
+            title,
+
+            description,
+
+            category,
+
+            state:
+                boraProfile?.state
+                ||
+                "RJ",
+
+            city:
+                location,
+
+            neighborhood:
+                null,
+
+            service_date:
+                serviceDate,
+
+            value,
+
+            value_negotiable:
+                value === null,
+
+            urgency,
+
+            status:
+                "open"
+        });
+
+        if(error){
+            throw error;
+        }
+
+        document
+        .getElementById(
+            "publishForm"
+        )
+        .reset();
+
+        closePublish();
+
+        btMainTab =
+            databaseType ===
+            "technician_available"
+            ||
+            databaseType ===
+            "helper_available"
+            ? "professionals"
+            : "all";
+
+        setupV14MainTabs();
+
+        document
+        .querySelectorAll(
+            ".tab"
+        )
+        .forEach(
+            tab =>
+                tab.classList.toggle(
+                    "active",
+                    tab.dataset.filter
+                    ===
+                    btMainTab
+                )
+        );
+
+        btUpdateFeedHeaderForMainTab();
+
+        await loadOpportunities();
+
+        showToast(
+            isAvailability
+            ? "✅ Disponibilidade publicada"
+            : "✅ Publicação criada"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro ao publicar:",
+            error
+        );
+
+        showToast(
+            "Erro ao publicar"
+        );
+
+    }finally{
+
+        if(button){
+            button.disabled =
+                false;
+
+            button.textContent =
+                oldText;
+        }
+    }
+};
+
+
+window.publishPost =
+    publishPost;
 
 
 /* =========================================================
@@ -9334,6 +10162,90 @@ window.changeFilter =
 
 window.openPeopleDirectory =
     openPeopleDirectory;
+
+
+/* =========================================================
+   NAVEGAÇÃO DAS 3 ABAS V1.4
+========================================================= */
+
+changeFilter =
+function(filter,button){
+
+    const normalized =
+        String(filter || "")
+        .trim()
+        .toLowerCase();
+
+    if(
+        normalized ===
+        "services"
+        ||
+        normalized ===
+        "service"
+    ){
+        btMainTab =
+            "services";
+    }
+    else if(
+        normalized ===
+        "professionals"
+        ||
+        normalized ===
+        "available"
+        ||
+        normalized ===
+        "available_directory"
+    ){
+        btMainTab =
+            "professionals";
+    }
+    else{
+        btMainTab =
+            "all";
+    }
+
+    document
+    .querySelectorAll(
+        ".tab"
+    )
+    .forEach(
+        tab =>
+            tab.classList.remove(
+                "active"
+            )
+    );
+
+    if(button){
+        button.classList.add(
+            "active"
+        );
+    }
+    else{
+        document
+        .querySelector(
+            `[data-filter="${btMainTab}"]`
+        )
+        ?.classList
+        .add(
+            "active"
+        );
+    }
+
+    if(
+        typeof currentFilter
+        !==
+        "undefined"
+    ){
+        currentFilter =
+            "all";
+    }
+
+    applyCurrentFeedFilters();
+};
+
+
+window.changeFilter =
+    changeFilter;
 
 
 /* =========================================================
@@ -9715,6 +10627,10 @@ async function initializeBoraTecV1(){
     createBoraTecV1Interface();
 
     setupBoraTecDeleteStyles();
+
+    setupV14MainTabs();
+
+    setupAvailabilityDateTimeField();
 
     setupHelperAvailabilityPublishOption();
 
