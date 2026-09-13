@@ -13043,22 +13043,6 @@ function createBoraTecHome(){
                 >›</button>
             </div>
 
-            <div class="bt-v182-recent-head">
-                <div class="bt-v182-section-title" style="margin:0">
-                    Oportunidades recentes
-                </div>
-
-                <button
-                    class="bt-v182-feed-link"
-                    type="button"
-                    onclick="openBoraTecFeedTab('Todos')"
-                >
-                    Ver feed →
-                </button>
-            </div>
-
-            <div id="btHomeRecentList"></div>
-
             <button id="btInstallAppButton" type="button">
                 📲 Instalar BoraTec
             </button>
