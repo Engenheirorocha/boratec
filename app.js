@@ -6307,7 +6307,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.2.2
+   BORATEC V1.3
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -7146,12 +7146,32 @@ function(post){
         isOwnPost
         ?
         `
-        <button
-            class="action-btn orange"
-            onclick="openInterestedProfessionals('${post.id}')"
-        >
-            👥 Interessados
-        </button>
+        <div style="display:flex;gap:7px;width:100%;">
+
+            <button
+                class="action-btn orange"
+                style="flex:1;"
+                onclick="openInterestedProfessionals('${post.id}')"
+            >
+                👥 Interessados
+            </button>
+
+            <button
+                class="action-btn"
+                style="
+                    flex:0 0 auto;
+                    background:rgba(255,76,91,.13);
+                    color:#ff7b86;
+                    box-shadow:none;
+                    border:1px solid rgba(255,76,91,.22);
+                "
+                onclick="cancelOpportunity('${post.id}')"
+                title="Cancelar publicação"
+            >
+                🗑
+            </button>
+
+        </div>
         `
         :
         `
@@ -8621,6 +8641,88 @@ function listenNotificationsRealtime(){
 
 
 /* =========================================================
+   CANCELAR / REMOVER PUBLICAÇÃO
+   Não apaga o histórico do banco: muda para "cancelled".
+========================================================= */
+
+async function cancelOpportunity(
+    opportunityId
+){
+
+    if(
+        !opportunityId
+        ||
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Cancelar esta publicação? Ela vai sair do feed."
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("opportunities")
+        .update({
+            status:"cancelled",
+            updated_at:
+                new Date()
+                .toISOString()
+        })
+        .eq(
+            "id",
+            opportunityId
+        )
+        .eq(
+            "author_id",
+            boraUser.id
+        )
+        .in(
+            "status",
+            ["open","negotiating"]
+        );
+
+        if(error){
+            throw error;
+        }
+
+        showToast(
+            "🗑 Publicação cancelada"
+        );
+
+        await loadOpportunities();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao cancelar publicação:",
+            error
+        );
+
+        showToast(
+            "Não foi possível cancelar a publicação"
+        );
+    }
+}
+
+
+window.cancelOpportunity =
+    cancelOpportunity;
+
+
+/* =========================================================
    ATALHO: SOU AJUDANTE / ESTOU DISPONÍVEL
 ========================================================= */
 
@@ -8645,6 +8747,11 @@ function setupHelperAvailabilityPublishOption(){
     const availableButton =
         buttons.find(button => {
 
+            const marker =
+                button.getAttribute(
+                    "data-bt-helper-toggle"
+                );
+
             const onclick =
                 button.getAttribute(
                     "onclick"
@@ -8652,9 +8759,11 @@ function setupHelperAvailabilityPublishOption(){
                 ||
                 "";
 
-            return onclick.includes(
-                "available"
-            );
+            return marker === "true"
+                ||
+                onclick.includes("available")
+                ||
+                onclick.includes("HelperAvailability");
         })
         ||
         buttons[2];
@@ -8664,7 +8773,30 @@ function setupHelperAvailabilityPublishOption(){
     }
 
     availableButton.setAttribute(
+        "data-bt-helper-toggle",
+        "true"
+    );
+
+    const roles =
+        Array.isArray(
+            boraProfile?.roles
+        )
+        ?
+        boraProfile.roles
+        :
+        [];
+
+    const helperActive =
+        roles.includes("helper")
+        &&
+        boraProfile?.is_available === true;
+
+    availableButton.setAttribute(
         "onclick",
+        helperActive
+        ?
+        "deactivateHelperAvailability()"
+        :
         "activateHelperAvailability()"
     );
 
@@ -8688,17 +8820,23 @@ function setupHelperAvailabilityPublishOption(){
 
     if(icon){
         icon.textContent =
-            "🟢";
+            helperActive
+            ? "⚪"
+            : "🟢";
     }
 
     if(strong){
         strong.textContent =
-            "Sou ajudante / Estou disponível";
+            helperActive
+            ? "Parar de aparecer como disponível"
+            : "Sou ajudante / Estou disponível";
     }
 
     if(span){
         span.textContent =
-            "Apareça para profissionais que estão procurando ajuda";
+            helperActive
+            ? "Você deixará de aparecer na aba Disponíveis"
+            : "Apareça para profissionais que estão procurando ajuda";
     }
 }
 
@@ -8764,6 +8902,8 @@ async function activateHelperAvailability(){
 
         updateBoraTecUserInterface();
 
+        setupHelperAvailabilityPublishOption();
+
         closePublish();
 
         showToast(
@@ -8788,6 +8928,82 @@ async function activateHelperAvailability(){
 
 window.activateHelperAvailability =
     activateHelperAvailability;
+
+
+async function deactivateHelperAvailability(){
+
+    if(
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Parar de aparecer como disponível?"
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("profiles")
+        .update({
+            is_available:false,
+            updated_at:
+                new Date()
+                .toISOString()
+        })
+        .eq(
+            "id",
+            boraUser.id
+        );
+
+        if(error){
+            throw error;
+        }
+
+        await loadBoraTecProfile();
+
+        updateBoraTecUserInterface();
+
+        setupHelperAvailabilityPublishOption();
+
+        closePublish();
+
+        showToast(
+            "⚪ Você saiu dos disponíveis"
+        );
+
+        await loadOpportunities();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao desativar disponibilidade:",
+            error
+        );
+
+        showToast(
+            "Não foi possível alterar sua disponibilidade"
+        );
+    }
+}
+
+
+window.deactivateHelperAvailability =
+    deactivateHelperAvailability;
+
+
+
 
 
 /* =========================================================
@@ -9121,6 +9337,329 @@ window.openPeopleDirectory =
 
 
 /* =========================================================
+   EXCLUIR CONVERSA PARA MIM
+========================================================= */
+
+function setupBoraTecDeleteStyles(){
+
+    if(
+        document.getElementById(
+            "btDeleteActionsStyle"
+        )
+    ){
+        return;
+    }
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "btDeleteActionsStyle";
+
+    style.textContent = `
+        .bt-conv-row{
+            display:flex;
+            align-items:stretch;
+            gap:7px;
+            margin-bottom:8px;
+        }
+
+        .bt-conv-row .bt-conv-card{
+            flex:1;
+            margin:0;
+        }
+
+        .bt-conv-delete{
+            width:46px;
+            flex:0 0 46px;
+            border-radius:13px;
+            border:1px solid rgba(255,76,91,.20);
+            background:rgba(255,76,91,.10);
+            color:#ff7b86;
+            cursor:pointer;
+            font-size:16px;
+        }
+    `;
+
+    document.head.appendChild(
+        style
+    );
+}
+
+
+async function hideConversationForMe(
+    conversationId
+){
+
+    if(
+        !conversationId
+        ||
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Excluir esta conversa da sua lista? A outra pessoa continuará com o histórico dela."
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("conversation_members")
+        .update({
+            hidden_at:
+                new Date()
+                .toISOString()
+        })
+        .eq(
+            "conversation_id",
+            conversationId
+        )
+        .eq(
+            "user_id",
+            boraUser.id
+        );
+
+        if(error){
+            throw error;
+        }
+
+        if(
+            currentConversationId
+            ===
+            conversationId
+        ){
+            closeChat();
+        }
+
+        showToast(
+            "🗑 Conversa removida"
+        );
+
+        await loadConversations();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao excluir conversa:",
+            error
+        );
+
+        showToast(
+            "Não foi possível excluir a conversa"
+        );
+    }
+}
+
+
+loadConversations =
+async function(){
+
+    const list =
+        document.getElementById(
+            "boratecConversationList"
+        );
+
+    if(!list){
+        return;
+    }
+
+    list.innerHTML = `
+        <div class="bt-conv-empty">
+            Carregando mensagens...
+        </div>
+    `;
+
+    try{
+
+        const {
+            data:memberships,
+            error:membershipsError
+        } =
+        await boraSupabase
+        .from("conversation_members")
+        .select(`
+            conversation_id,
+            hidden_at
+        `)
+        .eq(
+            "user_id",
+            boraUser.id
+        )
+        .is(
+            "hidden_at",
+            null
+        );
+
+        if(membershipsError){
+            throw membershipsError;
+        }
+
+        const ids =
+            (memberships || [])
+            .map(
+                item =>
+                    item.conversation_id
+            );
+
+        if(ids.length === 0){
+
+            list.innerHTML = `
+                <div class="bt-conv-empty">
+                    💬<br><br>
+                    Você ainda não possui
+                    conversas no BoraTec.
+                </div>
+            `;
+
+            return;
+        }
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from("conversations")
+        .select(`
+            id,
+            opportunity_id,
+            interest_id,
+            created_at
+        `)
+        .in(
+            "id",
+            ids
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+        if(error){
+            throw error;
+        }
+
+        const conversations = [];
+
+        for(
+            const conversation
+            of (data || [])
+        ){
+
+            const details =
+                await getConversationDetails(
+                    conversation
+                );
+
+            conversations.push(
+                details
+            );
+        }
+
+        if(
+            conversations.length === 0
+        ){
+
+            list.innerHTML = `
+                <div class="bt-conv-empty">
+                    💬<br><br>
+                    Você ainda não possui
+                    conversas no BoraTec.
+                </div>
+            `;
+
+            return;
+        }
+
+        list.innerHTML =
+            conversations
+            .map(
+                conversation => `
+
+                <div class="bt-conv-row">
+
+                    <button
+                        class="bt-conv-card"
+                        onclick="
+                            openChat(
+                                '${conversation.id}',
+                                '${escapeJs(
+                                    conversation.title
+                                )}'
+                            )
+                        "
+                    >
+
+                        <strong>
+                            ${escapeHtml(
+                                conversation.title
+                            )}
+                        </strong>
+
+                        <small>
+                            ${escapeHtml(
+                                conversation.otherProfessional
+                            )}
+                        </small>
+
+                    </button>
+
+                    <button
+                        class="bt-conv-delete"
+                        type="button"
+                        onclick="
+                            hideConversationForMe(
+                                '${conversation.id}'
+                            )
+                        "
+                        title="Excluir conversa"
+                    >
+                        🗑
+                    </button>
+
+                </div>
+                `
+            )
+            .join("");
+
+    }catch(error){
+
+        console.error(
+            "Erro conversas:",
+            error
+        );
+
+        list.innerHTML = `
+            <div class="bt-conv-empty">
+                Não foi possível carregar
+                suas conversas.
+            </div>
+        `;
+    }
+};
+
+
+window.hideConversationForMe =
+    hideConversationForMe;
+
+
+/* =========================================================
    MENU V1.0
 ========================================================= */
 
@@ -9174,6 +9713,8 @@ function(
 async function initializeBoraTecV1(){
 
     createBoraTecV1Interface();
+
+    setupBoraTecDeleteStyles();
 
     setupHelperAvailabilityPublishOption();
 
