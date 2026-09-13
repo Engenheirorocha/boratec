@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.6
+   BORATEC V1.7.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12136,6 +12136,8 @@ function listenCommunityRealtime(){
 
 async function openCommunity(){
 
+    closeBoraTecHome();
+
     createCommunityInterface();
 
     setupCommunityNav();
@@ -12287,6 +12289,1197 @@ window.goToCommunityMessage =
 window.toggleCommunityUseful =
     toggleCommunityUseful;
 
+
+/* =========================================================
+   BORATEC V1.7 — MODO APP / PWA + TELA INICIAL
+========================================================= */
+
+let btHomeOpened = false;
+
+
+function setupBoraTecPWA(){
+
+    try{
+
+        const head =
+            document.head;
+
+        const ensureLink =
+            (
+                rel,
+                href,
+                extra = {}
+            ) => {
+
+                let link =
+                    document.querySelector(
+                        `link[rel="${rel}"]`
+                    );
+
+                if(!link){
+                    link =
+                        document.createElement(
+                            "link"
+                        );
+
+                    link.rel =
+                        rel;
+
+                    head.appendChild(
+                        link
+                    );
+                }
+
+                link.href =
+                    href;
+
+                Object.entries(
+                    extra
+                )
+                .forEach(
+                    ([key,value]) => {
+
+                        link.setAttribute(
+                            key,
+                            value
+                        );
+                    }
+                );
+            };
+
+
+        const ensureMeta =
+            (
+                name,
+                content
+            ) => {
+
+                let meta =
+                    document.querySelector(
+                        `meta[name="${name}"]`
+                    );
+
+                if(!meta){
+                    meta =
+                        document.createElement(
+                            "meta"
+                        );
+
+                    meta.name =
+                        name;
+
+                    head.appendChild(
+                        meta
+                    );
+                }
+
+                meta.content =
+                    content;
+            };
+
+
+        ensureLink(
+            "manifest",
+            "./manifest.json"
+        );
+
+        ensureLink(
+            "icon",
+            "./icons/icon-192.png",
+            {
+                type:"image/png",
+                sizes:"192x192"
+            }
+        );
+
+        ensureLink(
+            "apple-touch-icon",
+            "./icons/apple-touch-icon.png",
+            {
+                sizes:"180x180"
+            }
+        );
+
+        ensureMeta(
+            "theme-color",
+            "#06182b"
+        );
+
+        ensureMeta(
+            "mobile-web-app-capable",
+            "yes"
+        );
+
+        ensureMeta(
+            "apple-mobile-web-app-capable",
+            "yes"
+        );
+
+        ensureMeta(
+            "apple-mobile-web-app-status-bar-style",
+            "black-translucent"
+        );
+
+        ensureMeta(
+            "apple-mobile-web-app-title",
+            "BoraTec"
+        );
+
+        ensureMeta(
+            "application-name",
+            "BoraTec"
+        );
+
+
+        if(
+            "serviceWorker"
+            in
+            navigator
+        ){
+
+            window.addEventListener(
+                "load",
+                async () => {
+
+                    try{
+
+                        const registration =
+                            await navigator
+                            .serviceWorker
+                            .register(
+                                "./service-worker.js",
+                                {
+                                    scope:"./",
+                                    updateViaCache:"none"
+                                }
+                            );
+
+                        await registration.update();
+
+                    }catch(error){
+
+                        console.error(
+                            "Erro Service Worker:",
+                            error
+                        );
+                    }
+                }
+            );
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro PWA:",
+            error
+        );
+    }
+}
+
+function createBoraTecHome(){
+
+    if(
+        document.getElementById(
+            "btHomeScreen"
+        )
+    ){
+        return;
+    }
+
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "btHomeStyle";
+
+    style.textContent = `
+        html,
+        body{
+            overscroll-behavior:none;
+        }
+
+        body{
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        #btHomeScreen{
+            position:fixed;
+            inset:0;
+            z-index:6400;
+            display:none;
+            overflow:auto;
+            padding:
+                calc(18px + env(safe-area-inset-top))
+                14px
+                calc(90px + env(safe-area-inset-bottom));
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(255,121,0,.10),
+                    transparent 34%
+                ),
+                #06182b;
+            color:#fff;
+        }
+
+        #btHomeScreen.show{
+            display:block;
+        }
+
+        .bt-home-wrap{
+            width:min(100%,560px);
+            margin:0 auto;
+        }
+
+        .bt-home-top{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:22px;
+        }
+
+        .bt-home-brand{
+            font-size:12px;
+            color:#ff8614;
+            font-weight:900;
+            letter-spacing:1.4px;
+        }
+
+        .bt-home-avatar{
+            width:44px;
+            height:44px;
+            border-radius:50%;
+            border:1px solid rgba(255,255,255,.10);
+            background:#10385b;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            color:#fff;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .bt-home-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .bt-home-greeting{
+            margin-bottom:4px;
+            color:#91a9bc;
+            font-size:12px;
+            font-weight:700;
+        }
+
+        .bt-home-name{
+            font-size:25px;
+            line-height:1.05;
+            font-weight:950;
+            margin-bottom:22px;
+        }
+
+        .bt-home-question{
+            font-size:14px;
+            font-weight:900;
+            color:#dce8f2;
+            margin-bottom:10px;
+        }
+
+        .bt-home-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-bottom:22px;
+        }
+
+        .bt-home-card{
+            min-height:112px;
+            border:1px solid rgba(255,255,255,.075);
+            border-radius:18px;
+            background:#0b2239;
+            padding:14px;
+            text-align:left;
+            color:#fff;
+            cursor:pointer;
+            box-shadow:0 8px 30px rgba(0,0,0,.10);
+        }
+
+        .bt-home-card:active{
+            transform:scale(.985);
+        }
+
+        .bt-home-card-icon{
+            display:block;
+            font-size:23px;
+            margin-bottom:12px;
+        }
+
+        .bt-home-card strong{
+            display:block;
+            font-size:13px;
+            line-height:1.25;
+            margin-bottom:5px;
+        }
+
+        .bt-home-card small{
+            display:block;
+            color:#8299ad;
+            font-size:9px;
+            line-height:1.35;
+        }
+
+        .bt-home-card.featured{
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,121,0,.17),
+                    rgba(255,121,0,.035)
+                ),
+                #0b2239;
+            border-color:rgba(255,121,0,.18);
+        }
+
+        .bt-home-section-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin:4px 0 10px;
+        }
+
+        .bt-home-section-title strong{
+            font-size:13px;
+        }
+
+        .bt-home-section-title button{
+            border:0;
+            background:transparent;
+            color:#ff8614;
+            font-family:inherit;
+            font-size:10px;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .bt-home-feed-card{
+            display:flex;
+            gap:10px;
+            align-items:center;
+            border:1px solid rgba(255,255,255,.07);
+            border-radius:15px;
+            background:#091f35;
+            padding:12px;
+            margin-bottom:9px;
+            cursor:pointer;
+        }
+
+        .bt-home-feed-icon{
+            width:38px;
+            height:38px;
+            flex:0 0 38px;
+            border-radius:12px;
+            background:#103658;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:18px;
+        }
+
+        .bt-home-feed-text{
+            min-width:0;
+            flex:1;
+        }
+
+        .bt-home-feed-text strong{
+            display:block;
+            font-size:11px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .bt-home-feed-text span{
+            display:block;
+            color:#8199ad;
+            font-size:9px;
+            margin-top:3px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .bt-home-install{
+            display:none;
+            width:100%;
+            margin-top:16px;
+            border:1px solid rgba(255,121,0,.25);
+            border-radius:14px;
+            background:rgba(255,121,0,.08);
+            color:#fff;
+            padding:12px;
+            font-family:inherit;
+            font-size:11px;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .bt-home-install.show{
+            display:block;
+        }
+
+        @media (display-mode: standalone){
+            .bt-home-install{
+                display:none !important;
+            }
+        }
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+
+    const screen =
+        document.createElement(
+            "section"
+        );
+
+    screen.id =
+        "btHomeScreen";
+
+    screen.innerHTML = `
+        <div class="bt-home-wrap">
+
+            <div class="bt-home-top">
+                <div class="bt-home-brand">
+                    BORATEC
+                </div>
+
+                <button
+                    class="bt-home-avatar"
+                    id="btHomeAvatar"
+                    type="button"
+                    onclick="openMyBoraTecProfileFromHome()"
+                >
+                    BT
+                </button>
+            </div>
+
+
+            <div
+                class="bt-home-greeting"
+                id="btHomeGreeting"
+            >
+                Olá
+            </div>
+
+            <div
+                class="bt-home-name"
+                id="btHomeName"
+            >
+                Profissional
+            </div>
+
+
+            <div class="bt-home-question">
+                O que você precisa hoje?
+            </div>
+
+
+            <div class="bt-home-grid">
+
+                <button
+                    class="bt-home-card featured"
+                    type="button"
+                    onclick="btHomeOpenPublish('service')"
+                >
+                    <span class="bt-home-card-icon">🔥</span>
+                    <strong>Repassar serviço</strong>
+                    <small>
+                        Publique um atendimento que você não consegue realizar.
+                    </small>
+                </button>
+
+                <button
+                    class="bt-home-card"
+                    type="button"
+                    onclick="btHomeOpenPublish('helper')"
+                >
+                    <span class="bt-home-card-icon">👷</span>
+                    <strong>Preciso de ajudante</strong>
+                    <small>
+                        Encontre apoio para instalação, manutenção ou obra.
+                    </small>
+                </button>
+
+                <button
+                    class="bt-home-card"
+                    type="button"
+                    onclick="btHomeOpenProfessionals()"
+                >
+                    <span class="bt-home-card-icon">👨‍🔧</span>
+                    <strong>Encontrar profissional</strong>
+                    <small>
+                        Veja técnicos e ajudantes disponíveis.
+                    </small>
+                </button>
+
+                <button
+                    class="bt-home-card"
+                    type="button"
+                    onclick="openCommunityFromHome()"
+                >
+                    <span class="bt-home-card-icon">💬</span>
+                    <strong>Comunidade</strong>
+                    <small>
+                        Troque dúvidas, dicas e informações com a rede.
+                    </small>
+                </button>
+
+            </div>
+
+
+            <div class="bt-home-section-title">
+                <strong>Oportunidades recentes</strong>
+
+                <button
+                    type="button"
+                    onclick="closeBoraTecHome()"
+                >
+                    Ver feed →
+                </button>
+            </div>
+
+            <div id="btHomeRecentList">
+                <div class="bt-community-empty">
+                    Carregando...
+                </div>
+            </div>
+
+
+            <button
+                id="btInstallAppButton"
+                class="bt-home-install"
+                type="button"
+            >
+                📲 Instalar BoraTec no celular
+            </button>
+
+        </div>
+    `;
+
+    document.body.appendChild(
+        screen
+    );
+}
+
+
+function btHomeGreetingText(){
+
+    const hour =
+        new Date()
+        .getHours();
+
+    if(hour < 12){
+        return "Bom dia";
+    }
+
+    if(hour < 18){
+        return "Boa tarde";
+    }
+
+    return "Boa noite";
+}
+
+
+async function loadBoraTecHome(){
+
+    if(
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    try{
+
+        const {
+            data:profile
+        } =
+        await boraSupabase
+        .from(
+            "profiles"
+        )
+        .select(`
+            name,
+            professional_name,
+            photo_url
+        `)
+        .eq(
+            "id",
+            boraUser.id
+        )
+        .maybeSingle();
+
+
+        const displayName =
+            profile?.professional_name
+            ||
+            profile?.name
+            ||
+            "Profissional";
+
+        const greeting =
+            document.getElementById(
+                "btHomeGreeting"
+            );
+
+        const name =
+            document.getElementById(
+                "btHomeName"
+            );
+
+        const avatar =
+            document.getElementById(
+                "btHomeAvatar"
+            );
+
+        if(greeting){
+            greeting.textContent =
+                btHomeGreetingText();
+        }
+
+        if(name){
+            name.textContent =
+                displayName;
+        }
+
+        if(avatar){
+
+            if(profile?.photo_url){
+                avatar.innerHTML = `
+                    <img
+                        src="${escapeHtml(profile.photo_url)}"
+                        alt=""
+                    >
+                `;
+            }
+            else{
+                avatar.textContent =
+                    btCommunityInitials(
+                        displayName
+                    );
+            }
+        }
+
+
+        const {
+            data:recent,
+            error
+        } =
+        await boraSupabase
+        .from(
+            "opportunities"
+        )
+        .select(`
+            id,
+            type,
+            title,
+            city,
+            neighborhood,
+            service_date,
+            created_at
+        `)
+        .eq(
+            "status",
+            "open"
+        )
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        )
+        .limit(
+            4
+        );
+
+        if(error){
+            throw error;
+        }
+
+
+        const list =
+            document.getElementById(
+                "btHomeRecentList"
+            );
+
+        if(!list){
+            return;
+        }
+
+        if(
+            !recent
+            ||
+            recent.length === 0
+        ){
+            list.innerHTML = `
+                <div class="bt-community-empty">
+                    Nenhuma oportunidade aberta no momento.
+                </div>
+            `;
+
+            return;
+        }
+
+        list.innerHTML =
+            recent
+            .map(
+                item => {
+
+                    const icon =
+                        item.type
+                        ===
+                        "helper"
+                        ?
+                        "👷"
+                        :
+                        (
+                            item.type
+                            ===
+                            "technician_available"
+                            ||
+                            item.type
+                            ===
+                            "helper_available"
+                            ?
+                            "👨‍🔧"
+                            :
+                            "🔥"
+                        );
+
+                    const place =
+                        [
+                            item.city,
+                            item.neighborhood
+                        ]
+                        .filter(Boolean)
+                        .join(" • ");
+
+                    return `
+                        <button
+                            class="bt-home-feed-card"
+                            type="button"
+                            onclick="closeBoraTecHome()"
+                        >
+                            <span class="bt-home-feed-icon">
+                                ${icon}
+                            </span>
+
+                            <span class="bt-home-feed-text">
+                                <strong>${escapeHtml(item.title || "Oportunidade")}</strong>
+                                <span>${escapeHtml(place || "BoraTec")}</span>
+                            </span>
+                        </button>
+                    `;
+                }
+            )
+            .join("");
+
+    }catch(error){
+
+        console.error(
+            "Erro Home BoraTec:",
+            error
+        );
+    }
+}
+
+
+function openBoraTecHome(){
+
+    createBoraTecHome();
+
+    btHomeOpened =
+        true;
+
+    document
+    .getElementById(
+        "btHomeScreen"
+    )
+    ?.classList
+    .add(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+    loadBoraTecHome();
+}
+
+
+function closeBoraTecHome(){
+
+    btHomeOpened =
+        false;
+
+    document
+    .getElementById(
+        "btHomeScreen"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "";
+}
+
+
+function btHomeOpenPublish(
+    type
+){
+
+    closeBoraTecHome();
+
+    if(
+        typeof window.selectPublishType
+        ===
+        "function"
+    ){
+        window.selectPublishType(
+            type
+        );
+    }
+}
+
+
+function btHomeOpenProfessionals(){
+
+    closeBoraTecHome();
+
+    if(
+        typeof window.changeFilter
+        ===
+        "function"
+    ){
+        window.changeFilter(
+            null,
+            "professionals"
+        );
+    }
+}
+
+
+function openCommunityFromHome(){
+
+    closeBoraTecHome();
+
+    openCommunity();
+}
+
+
+function openMyBoraTecProfileFromHome(){
+
+    if(boraUser?.id){
+
+        closeBoraTecHome();
+
+        openPublicProfile(
+            boraUser.id
+        );
+    }
+}
+
+
+/* =========================================================
+   INSTALAÇÃO DO APP
+========================================================= */
+
+let btInstallPrompt = null;
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    event => {
+
+        event.preventDefault();
+
+        btInstallPrompt =
+            event;
+
+        document
+        .getElementById(
+            "btInstallAppButton"
+        )
+        ?.classList
+        .add(
+            "show"
+        );
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    async event => {
+
+        if(
+            event.target?.id
+            !==
+            "btInstallAppButton"
+        ){
+            return;
+        }
+
+        if(!btInstallPrompt){
+
+            showToast(
+                "No Chrome: toque em ⋮ e escolha Instalar app / Adicionar à tela inicial"
+            );
+
+            return;
+        }
+
+        btInstallPrompt.prompt();
+
+        await btInstallPrompt.userChoice;
+
+        btInstallPrompt =
+            null;
+
+        document
+        .getElementById(
+            "btInstallAppButton"
+        )
+        ?.classList
+        .remove(
+            "show"
+        );
+    }
+);
+
+
+
+function isBoraTecStandalone(){
+
+    return (
+        window.matchMedia(
+            "(display-mode: standalone)"
+        )
+        .matches
+        ||
+        window.navigator.standalone
+        ===
+        true
+    );
+}
+
+
+function createBoraTecSplash(){
+
+    if(
+        document.getElementById(
+            "btAppSplash"
+        )
+    ){
+        return;
+    }
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "btAppSplashStyle";
+
+    style.textContent = `
+        #btAppSplash{
+            position:fixed;
+            inset:0;
+            z-index:99999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:#06182b;
+            opacity:1;
+            transition:opacity .28s ease;
+        }
+
+        #btAppSplash.hide{
+            opacity:0;
+            pointer-events:none;
+        }
+
+        .bt-splash-inner{
+            text-align:center;
+            color:#fff;
+        }
+
+        .bt-splash-logo{
+            width:112px;
+            height:112px;
+            margin:0 auto 16px;
+            border-radius:26px;
+            overflow:hidden;
+            box-shadow:0 16px 45px rgba(0,0,0,.28);
+        }
+
+        .bt-splash-logo img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .bt-splash-name{
+            font-size:24px;
+            font-weight:950;
+            letter-spacing:.2px;
+        }
+
+        .bt-splash-tag{
+            margin-top:5px;
+            color:#8ea5b8;
+            font-size:10px;
+            letter-spacing:.9px;
+            text-transform:uppercase;
+        }
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+    const splash =
+        document.createElement(
+            "div"
+        );
+
+    splash.id =
+        "btAppSplash";
+
+    splash.innerHTML = `
+        <div class="bt-splash-inner">
+            <div class="bt-splash-logo">
+                <img
+                    src="./icons/icon-512.png"
+                    alt="BoraTec"
+                >
+            </div>
+
+            <div class="bt-splash-name">
+                BoraTec
+            </div>
+
+            <div class="bt-splash-tag">
+                Profissionais conectando profissionais
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(
+        splash
+    );
+
+    setTimeout(
+        () => {
+
+            splash.classList.add(
+                "hide"
+            );
+
+            setTimeout(
+                () =>
+                    splash.remove(),
+                320
+            );
+        },
+        900
+    );
+}
+
+
+function showInstallHelpIfNeeded(){
+
+    if(
+        isBoraTecStandalone()
+    ){
+        return;
+    }
+
+    const btn =
+        document.getElementById(
+            "btInstallAppButton"
+        );
+
+    if(btn){
+        btn.classList.add(
+            "show"
+        );
+
+        if(!btInstallPrompt){
+            btn.textContent =
+                "📲 Instalar / adicionar BoraTec à tela inicial";
+        }
+    }
+}
+
+function setupStandaloneBehavior(){
+
+    if(
+        isBoraTecStandalone()
+    ){
+
+        document.documentElement
+        .classList
+        .add(
+            "bt-standalone"
+        );
+
+        document.body
+        ?.classList
+        .add(
+            "bt-standalone"
+        );
+    }
+    else{
+
+        document.documentElement
+        .classList
+        .add(
+            "bt-browser-mode"
+        );
+    }
+}
+
+window.openBoraTecHome =
+    openBoraTecHome;
+
+window.closeBoraTecHome =
+    closeBoraTecHome;
+
+window.btHomeOpenPublish =
+    btHomeOpenPublish;
+
+window.btHomeOpenProfessionals =
+    btHomeOpenProfessionals;
+
+window.openCommunityFromHome =
+    openCommunityFromHome;
+
+window.openMyBoraTecProfileFromHome =
+    openMyBoraTecProfileFromHome;
 /* =========================================================
    MENU V1.0
 ========================================================= */
@@ -12308,11 +13501,25 @@ function(
         .toLowerCase();
 
     if(
+        normalized === "início"
+        ||
+        normalized === "inicio"
+        ||
+        normalized === "home"
+    ){
+
+        openBoraTecHome();
+        return;
+    }
+
+
+    if(
         normalized === "comunidade"
         ||
         normalized === "community"
     ){
 
+        closeBoraTecHome();
         openCommunity();
         return;
     }
@@ -12351,9 +13558,17 @@ function(
 
 async function initializeBoraTecV1(){
 
+    setupBoraTecPWA();
+
+    setupStandaloneBehavior();
+
+    createBoraTecSplash();
+
     createBoraTecV1Interface();
 
     createCommunityInterface();
+
+    createBoraTecHome();
 
     setupCommunityNav();
 
@@ -12392,6 +13607,12 @@ async function initializeBoraTecV1(){
                     setupCommunityNav();
 
                     setupHelperAvailabilityPublishOption();
+
+                    await loadBoraTecHome();
+
+                    openBoraTecHome();
+
+                    showInstallHelpIfNeeded();
 
                     return;
                 }
