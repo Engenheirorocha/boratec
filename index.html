@@ -1764,26 +1764,16 @@ textarea.input{
 
 
 <!-- ======================================================
-     PESQUISA
+     PESQUISA REMOVIDA DA INTERFACE
+     Mantemos o input oculto para preservar compatibilidade
+     com o renderFeed legado e evitar quebrar a R10.
 ====================================================== -->
 
-<section class="search-area">
-
-    <div class="search-box">
-
-        <span>
-            🔎
-        </span>
-
-        <input
-            id="searchInput"
-            placeholder="Buscar bairro, cidade ou serviço..."
-            oninput="renderFeed()"
-        >
-
-    </div>
-
-</section>
+<input
+    id="searchInput"
+    type="hidden"
+    value=""
+>
 
 
 <!-- ======================================================
