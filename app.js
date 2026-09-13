@@ -1,7 +1,7 @@
 /* =========================================================
    BORATEC
    APP.JS
-   V0.4
+   V0.5
 
    FUNCIONANDO:
    - Login / sessão
@@ -13,6 +13,10 @@
    - Chat realtime
    - Lista de mensagens
    - Fechar com profissional
+   - Meus Serviços
+   - Iniciar serviço
+   - Marcar serviço como realizado
+   - Confirmar conclusão
 ========================================================= */
 
 
@@ -1601,10 +1605,7 @@ async function(opportunityId){
 
     }
 
-};
-
-
-/* =========================================================
+};/* =========================================================
    CRIAR INTERFACE CHAT
 ========================================================= */
 
@@ -2654,10 +2655,6 @@ async function updateChatAction(){
         "assigned";
 
 
-    /*
-       SERVIÇO JÁ FECHADO
-    */
-
     if(
         accepted
         &&
@@ -2691,10 +2688,6 @@ async function updateChatAction(){
     }
 
 
-    /*
-       INTERESSE REJEITADO
-    */
-
     if(
         currentConversationData
         .interestStatus
@@ -2715,11 +2708,6 @@ async function updateChatAction(){
 
     }
 
-
-    /*
-       SOMENTE QUEM PUBLICOU
-       VÊ O BOTÃO
-    */
 
     if(
         isPublisher
@@ -2949,19 +2937,7 @@ async function assignProfessional(){
         closeAssignConfirmation();
 
 
-        /*
-           Atualiza dados da conversa
-        */
-
         await loadConversationContext();
-
-
-        /*
-           Atualiza feed.
-
-           Como agora status = assigned,
-           a oportunidade some do feed.
-        */
 
         await loadOpportunities();
 
@@ -2970,11 +2946,6 @@ async function assignProfessional(){
             "🤝 Profissional escolhido!"
         );
 
-
-        /*
-           Mensagem automática dentro
-           do chat para registrar o fechamento.
-        */
 
         await sendSystemLikeMessage(
             "🤝 Serviço fechado. Profissional selecionado para esta oportunidade."
@@ -4176,6 +4147,1141 @@ document.addEventListener(
     async function(){
 
         await startBoraTec();
+
+    }
+);
+
+
+/* =========================================================
+   BORATEC V0.5
+   MEUS SERVIÇOS
+========================================================= */
+
+let jobsChannel = null;
+
+
+/* =========================================================
+   CRIAR INTERFACE MEUS SERVIÇOS
+========================================================= */
+
+function createMyJobsInterface(){
+
+    if(document.getElementById("boratecMyJobs")){
+        return;
+    }
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+
+    #boratecMyJobs{
+        position:fixed;
+        inset:0;
+        z-index:2850;
+        background:#06182b;
+        display:none;
+        overflow-y:auto;
+        color:white;
+    }
+
+    #boratecMyJobs.show{
+        display:block;
+    }
+
+    .bt-jobs-header{
+        min-height:68px;
+        padding:0 16px;
+        display:flex;
+        align-items:center;
+        gap:12px;
+        background:#081e34;
+        border-bottom:1px solid rgba(255,255,255,.08);
+        position:sticky;
+        top:0;
+        z-index:2;
+    }
+
+    .bt-jobs-header-title{
+        flex:1;
+    }
+
+    .bt-jobs-header-title small{
+        display:block;
+        color:#ff8a1d;
+        font-size:9px;
+        font-weight:900;
+        letter-spacing:.8px;
+        margin-bottom:3px;
+    }
+
+    .bt-jobs-header-title strong{
+        font-size:15px;
+    }
+
+    .bt-jobs-list{
+        padding:14px 14px 110px;
+        max-width:760px;
+        margin:0 auto;
+    }
+
+    .bt-job-item{
+        background:#102d4a;
+        border:1px solid rgba(255,255,255,.07);
+        border-radius:18px;
+        padding:16px;
+        margin-bottom:12px;
+        box-shadow:0 10px 25px rgba(0,0,0,.12);
+    }
+
+    .bt-job-item-top{
+        display:flex;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:11px;
+    }
+
+    .bt-job-item-title{
+        font-size:14px;
+        font-weight:900;
+        line-height:1.3;
+    }
+
+    .bt-job-role{
+        margin-top:4px;
+        color:#8fa8bf;
+        font-size:9px;
+        font-weight:800;
+    }
+
+    .bt-job-badge{
+        flex-shrink:0;
+        padding:7px 9px;
+        border-radius:9px;
+        font-size:8px;
+        font-weight:900;
+        letter-spacing:.3px;
+        text-align:center;
+    }
+
+    .bt-job-badge.assigned{
+        background:rgba(255,138,29,.13);
+        color:#ff9c43;
+    }
+
+    .bt-job-badge.in_progress{
+        background:rgba(20,126,232,.15);
+        color:#55a8ff;
+    }
+
+    .bt-job-badge.awaiting_confirmation{
+        background:rgba(255,200,40,.13);
+        color:#ffd05a;
+    }
+
+    .bt-job-badge.completed{
+        background:rgba(25,200,117,.13);
+        color:#50df96;
+    }
+
+    .bt-job-details{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        margin:12px 0;
+    }
+
+    .bt-job-detail{
+        background:rgba(255,255,255,.045);
+        border-radius:11px;
+        padding:10px;
+    }
+
+    .bt-job-detail small{
+        display:block;
+        color:#8199af;
+        font-size:8px;
+        margin-bottom:4px;
+    }
+
+    .bt-job-detail strong{
+        display:block;
+        font-size:11px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    .bt-job-action-button{
+        width:100%;
+        min-height:45px;
+        border:none;
+        border-radius:12px;
+        margin-top:5px;
+        background:linear-gradient(135deg,#ff7900,#ff982f);
+        color:white;
+        font-size:11px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    .bt-job-action-button.blue{
+        background:linear-gradient(135deg,#126dcc,#1789f4);
+    }
+
+    .bt-job-action-button.green{
+        background:linear-gradient(135deg,#16a866,#22c77c);
+    }
+
+    .bt-job-waiting{
+        margin-top:8px;
+        padding:11px;
+        border-radius:11px;
+        background:rgba(255,255,255,.045);
+        color:#9eb2c5;
+        font-size:10px;
+        line-height:1.45;
+        text-align:center;
+    }
+
+    .bt-jobs-empty{
+        padding:80px 20px;
+        color:#7f98af;
+        text-align:center;
+        line-height:1.6;
+        font-size:12px;
+    }
+
+    .bt-my-jobs-shortcut{
+        position:fixed;
+        right:14px;
+        bottom:82px;
+        z-index:1800;
+        border:none;
+        border-radius:999px;
+        padding:11px 14px;
+        background:#102d4a;
+        border:1px solid rgba(255,255,255,.10);
+        color:white;
+        box-shadow:0 8px 25px rgba(0,0,0,.25);
+        font-size:10px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    @media(min-width:800px){
+        #boratecMyJobs{
+            width:760px;
+            left:50%;
+            right:auto;
+            transform:translateX(-50%);
+        }
+
+        .bt-my-jobs-shortcut{
+            right:calc(50% - 365px);
+        }
+    }
+
+    `;
+
+    document.head.appendChild(style);
+
+    const overlay = document.createElement("div");
+    overlay.id = "boratecMyJobs";
+
+    overlay.innerHTML = `
+        <div class="bt-jobs-header">
+            <button
+                class="bt-chat-back"
+                onclick="closeMyJobs()"
+            >
+                ←
+            </button>
+
+            <div class="bt-jobs-header-title">
+                <small>BORATEC</small>
+                <strong>Meus Serviços</strong>
+            </div>
+
+            <button
+                class="bt-chat-back"
+                onclick="loadMyJobs()"
+                title="Atualizar"
+                style="font-size:16px;"
+            >
+                ↻
+            </button>
+        </div>
+
+        <div
+            id="boratecMyJobsList"
+            class="bt-jobs-list"
+        ></div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const shortcut = document.createElement("button");
+    shortcut.id = "boratecMyJobsShortcut";
+    shortcut.className = "bt-my-jobs-shortcut";
+    shortcut.innerHTML = "🧰 Meus Serviços";
+    shortcut.onclick = openMyJobs;
+
+    document.body.appendChild(shortcut);
+}
+
+
+/* =========================================================
+   ABRIR / FECHAR MEUS SERVIÇOS
+========================================================= */
+
+async function openMyJobs(){
+
+    const overlay = document.getElementById("boratecMyJobs");
+
+    if(!overlay){
+        return;
+    }
+
+    document.getElementById("boratecConversations")
+        ?.classList.remove("show");
+
+    document.getElementById("boratecChatOverlay")
+        ?.classList.remove("show");
+
+    overlay.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+
+    await loadMyJobs();
+
+    listenMyJobsRealtime();
+}
+
+
+function closeMyJobs(){
+
+    document.getElementById("boratecMyJobs")
+        ?.classList.remove("show");
+
+    document.body.style.overflow = "";
+
+    stopMyJobsRealtime();
+}
+
+
+/* =========================================================
+   CARREGAR MEUS SERVIÇOS
+========================================================= */
+
+async function loadMyJobs(){
+
+    const list = document.getElementById("boratecMyJobsList");
+
+    if(!list || !boraUser){
+        return;
+    }
+
+    list.innerHTML = `
+        <div class="bt-jobs-empty">
+            Carregando seus serviços...
+        </div>
+    `;
+
+    try{
+
+        const { data:jobs, error } =
+            await boraSupabase
+            .from("jobs")
+            .select(`
+                id,
+                opportunity_id,
+                publisher_id,
+                professional_id,
+                agreed_value,
+                status,
+                created_at,
+                updated_at
+            `)
+            .or(
+                `publisher_id.eq.${boraUser.id},professional_id.eq.${boraUser.id}`
+            )
+            .order("created_at", {
+                ascending:false
+            });
+
+        if(error){
+            throw error;
+        }
+
+        if(!jobs || jobs.length === 0){
+
+            list.innerHTML = `
+                <div class="bt-jobs-empty">
+                    🧰<br><br>
+                    Você ainda não possui serviços fechados no BoraTec.
+                    <br><br>
+                    Quando uma oportunidade for fechada com um profissional,
+                    ela aparecerá aqui.
+                </div>
+            `;
+
+            return;
+        }
+
+        const cards = [];
+
+        for(const job of jobs){
+
+            const details =
+                await getMyJobDetails(job);
+
+            cards.push(
+                myJobCardHTML(details)
+            );
+        }
+
+        list.innerHTML =
+            cards.join("");
+
+    }catch(error){
+
+        console.error(
+            "Erro Meus Serviços:",
+            error
+        );
+
+        list.innerHTML = `
+            <div class="bt-jobs-empty">
+                Não foi possível carregar seus serviços.
+            </div>
+        `;
+
+        showToast(
+            "Erro ao carregar Meus Serviços"
+        );
+    }
+}
+
+
+/* =========================================================
+   DETALHES DO SERVIÇO
+========================================================= */
+
+async function getMyJobDetails(job){
+
+    let opportunity = null;
+
+    const {
+        data:opportunityData,
+        error:opportunityError
+    } =
+    await boraSupabase
+    .from("opportunities")
+    .select(`
+        id,
+        title,
+        description,
+        category,
+        state,
+        city,
+        neighborhood,
+        service_date,
+        value,
+        status
+    `)
+    .eq(
+        "id",
+        job.opportunity_id
+    )
+    .maybeSingle();
+
+    if(!opportunityError){
+        opportunity = opportunityData;
+    }
+
+    const isPublisher =
+        job.publisher_id === boraUser.id;
+
+    const otherUserId =
+        isPublisher
+        ?
+        job.professional_id
+        :
+        job.publisher_id;
+
+    let otherProfile = null;
+
+    if(otherUserId){
+
+        const {
+            data:profileData
+        } =
+        await boraSupabase
+        .from("profiles")
+        .select(`
+            id,
+            name,
+            professional_name,
+            photo_url
+        `)
+        .eq(
+            "id",
+            otherUserId
+        )
+        .maybeSingle();
+
+        otherProfile =
+            profileData;
+    }
+
+    return {
+        ...job,
+        opportunity,
+        isPublisher,
+        otherProfile
+    };
+}
+
+
+/* =========================================================
+   CARD MEUS SERVIÇOS
+========================================================= */
+
+function myJobCardHTML(job){
+
+    const opportunity =
+        job.opportunity || {};
+
+    const title =
+        opportunity.title
+        ||
+        "Serviço BoraTec";
+
+    const otherName =
+        job.otherProfile?.professional_name
+        ||
+        job.otherProfile?.name
+        ||
+        "Profissional BoraTec";
+
+    const value =
+        job.agreed_value !== null
+        &&
+        job.agreed_value !== undefined
+        ?
+        money(job.agreed_value)
+        :
+        "A combinar";
+
+    let location = "";
+
+    if(opportunity.neighborhood){
+        location += opportunity.neighborhood;
+    }
+
+    if(opportunity.city){
+
+        if(location){
+            location += " • ";
+        }
+
+        location += opportunity.city;
+    }
+
+    if(opportunity.state){
+
+        if(location){
+            location += " - ";
+        }
+
+        location += opportunity.state;
+    }
+
+    if(!location){
+        location = "Local não informado";
+    }
+
+    const role =
+        job.isPublisher
+        ?
+        `Profissional escolhido: ${otherName}`
+        :
+        `Serviço indicado por: ${otherName}`;
+
+    const statusText =
+        getJobStatusText(
+            job.status
+        );
+
+    const action =
+        getJobActionHTML(
+            job
+        );
+
+    return `
+        <article class="bt-job-item">
+
+            <div class="bt-job-item-top">
+
+                <div>
+                    <div class="bt-job-item-title">
+                        ${escapeHtml(title)}
+                    </div>
+
+                    <div class="bt-job-role">
+                        ${escapeHtml(role)}
+                    </div>
+                </div>
+
+                <div
+                    class="bt-job-badge ${escapeHtml(job.status)}"
+                >
+                    ${escapeHtml(statusText)}
+                </div>
+
+            </div>
+
+            <div class="bt-job-details">
+
+                <div class="bt-job-detail">
+                    <small>VALOR</small>
+                    <strong>${escapeHtml(value)}</strong>
+                </div>
+
+                <div class="bt-job-detail">
+                    <small>LOCAL</small>
+                    <strong>${escapeHtml(location)}</strong>
+                </div>
+
+                <div class="bt-job-detail">
+                    <small>CATEGORIA</small>
+                    <strong>
+                        ${escapeHtml(
+                            opportunity.category
+                            ||
+                            "Serviço técnico"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="bt-job-detail">
+                    <small>DATA</small>
+                    <strong>
+                        ${escapeHtml(
+                            formatServiceDate(
+                                opportunity.service_date
+                            )
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+
+            ${action}
+
+        </article>
+    `;
+}
+
+
+/* =========================================================
+   TEXTO DO STATUS
+========================================================= */
+
+function getJobStatusText(status){
+
+    switch(status){
+
+        case "assigned":
+            return "AGUARDANDO INÍCIO";
+
+        case "in_progress":
+            return "EM ANDAMENTO";
+
+        case "awaiting_confirmation":
+            return "AGUARDANDO CONFIRMAÇÃO";
+
+        case "completed":
+            return "CONCLUÍDO ✓";
+
+        case "cancelled":
+            return "CANCELADO";
+
+        case "disputed":
+            return "EM ANÁLISE";
+
+        default:
+            return String(status || "")
+                .toUpperCase();
+    }
+}
+
+
+/* =========================================================
+   AÇÃO POR STATUS / PAPEL
+========================================================= */
+
+function getJobActionHTML(job){
+
+    const isProfessional =
+        job.professional_id === boraUser.id;
+
+    const isPublisher =
+        job.publisher_id === boraUser.id;
+
+
+    if(job.status === "assigned"){
+
+        if(isProfessional){
+
+            return `
+                <button
+                    class="bt-job-action-button blue"
+                    onclick="startBoraTecJob('${job.id}', this)"
+                >
+                    ▶ Iniciar serviço
+                </button>
+            `;
+        }
+
+        return `
+            <div class="bt-job-waiting">
+                ⏳ Aguardando o profissional iniciar o serviço.
+            </div>
+        `;
+    }
+
+
+    if(job.status === "in_progress"){
+
+        if(isProfessional){
+
+            return `
+                <button
+                    class="bt-job-action-button"
+                    onclick="finishBoraTecJob('${job.id}', this)"
+                >
+                    ✓ Serviço realizado
+                </button>
+            `;
+        }
+
+        return `
+            <div class="bt-job-waiting">
+                🔧 O profissional informou que o serviço está em andamento.
+            </div>
+        `;
+    }
+
+
+    if(job.status === "awaiting_confirmation"){
+
+        if(isPublisher){
+
+            return `
+                <button
+                    class="bt-job-action-button green"
+                    onclick="confirmBoraTecJob('${job.id}', this)"
+                >
+                    ✓ Confirmar conclusão
+                </button>
+            `;
+        }
+
+        return `
+            <div class="bt-job-waiting">
+                ⏳ Serviço marcado como realizado.<br>
+                Aguardando confirmação de quem publicou.
+            </div>
+        `;
+    }
+
+
+    if(job.status === "completed"){
+
+        return `
+            <div class="bt-job-waiting">
+                ✅ Serviço concluído no BoraTec.<br>
+                A avaliação será liberada na próxima etapa.
+            </div>
+        `;
+    }
+
+
+    return `
+        <div class="bt-job-waiting">
+            ${escapeHtml(
+                getJobStatusText(
+                    job.status
+                )
+            )}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   INICIAR SERVIÇO
+========================================================= */
+
+async function startBoraTecJob(
+    jobId,
+    button
+){
+
+    if(!jobId){
+        return;
+    }
+
+    const oldText =
+        button?.textContent
+        ||
+        "▶ Iniciar serviço";
+
+    if(button){
+        button.disabled = true;
+        button.textContent = "Iniciando...";
+    }
+
+    try{
+
+        const { error } =
+            await boraSupabase
+            .rpc(
+                "start_job",
+                {
+                    p_job_id:jobId
+                }
+            );
+
+        if(error){
+            throw error;
+        }
+
+        showToast(
+            "🔧 Serviço iniciado!"
+        );
+
+        await loadMyJobs();
+
+    }catch(error){
+
+        console.error(
+            "Erro iniciar serviço:",
+            error
+        );
+
+        showToast(
+            "Não foi possível iniciar o serviço"
+        );
+
+        if(button){
+            button.disabled = false;
+            button.textContent = oldText;
+        }
+    }
+}
+
+
+/* =========================================================
+   SERVIÇO REALIZADO
+========================================================= */
+
+async function finishBoraTecJob(
+    jobId,
+    button
+){
+
+    if(!jobId){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Confirmar que o serviço foi realizado?\n\n" +
+            "Depois disso, quem publicou precisará confirmar a conclusão."
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    const oldText =
+        button?.textContent
+        ||
+        "✓ Serviço realizado";
+
+    if(button){
+        button.disabled = true;
+        button.textContent = "Enviando...";
+    }
+
+    try{
+
+        const { error } =
+            await boraSupabase
+            .rpc(
+                "finish_job_execution",
+                {
+                    p_job_id:jobId
+                }
+            );
+
+        if(error){
+            throw error;
+        }
+
+        showToast(
+            "✓ Aguardando confirmação"
+        );
+
+        await loadMyJobs();
+
+    }catch(error){
+
+        console.error(
+            "Erro finalizar execução:",
+            error
+        );
+
+        showToast(
+            "Não foi possível atualizar o serviço"
+        );
+
+        if(button){
+            button.disabled = false;
+            button.textContent = oldText;
+        }
+    }
+}
+
+
+/* =========================================================
+   CONFIRMAR CONCLUSÃO
+========================================================= */
+
+async function confirmBoraTecJob(
+    jobId,
+    button
+){
+
+    if(!jobId){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Confirmar que o serviço foi concluído?\n\n" +
+            "Essa confirmação encerrará o serviço no BoraTec."
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    const oldText =
+        button?.textContent
+        ||
+        "✓ Confirmar conclusão";
+
+    if(button){
+        button.disabled = true;
+        button.textContent = "Confirmando...";
+    }
+
+    try{
+
+        const { error } =
+            await boraSupabase
+            .rpc(
+                "confirm_job_completion",
+                {
+                    p_job_id:jobId
+                }
+            );
+
+        if(error){
+            throw error;
+        }
+
+        showToast(
+            "✅ Serviço concluído!"
+        );
+
+        await loadMyJobs();
+
+        await loadOpportunities();
+
+    }catch(error){
+
+        console.error(
+            "Erro confirmar conclusão:",
+            error
+        );
+
+        showToast(
+            "Não foi possível concluir o serviço"
+        );
+
+        if(button){
+            button.disabled = false;
+            button.textContent = oldText;
+        }
+    }
+}
+
+
+/* =========================================================
+   REALTIME DOS SERVIÇOS
+========================================================= */
+
+function listenMyJobsRealtime(){
+
+    stopMyJobsRealtime();
+
+    jobsChannel =
+        boraSupabase
+        .channel(
+            `boratec-jobs-${boraUser.id}`
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"jobs"
+            },
+            async payload => {
+
+                const job =
+                    payload.new
+                    ||
+                    payload.old;
+
+                if(!job){
+                    return;
+                }
+
+                const belongsToMe =
+                    job.publisher_id === boraUser.id
+                    ||
+                    job.professional_id === boraUser.id;
+
+                if(!belongsToMe){
+                    return;
+                }
+
+                const overlay =
+                    document.getElementById(
+                        "boratecMyJobs"
+                    );
+
+                if(
+                    overlay
+                    ?.classList
+                    .contains("show")
+                ){
+                    await loadMyJobs();
+                }
+            }
+        )
+        .subscribe();
+}
+
+
+function stopMyJobsRealtime(){
+
+    if(
+        jobsChannel
+        &&
+        boraSupabase
+    ){
+
+        boraSupabase
+        .removeChannel(
+            jobsChannel
+        );
+    }
+
+    jobsChannel = null;
+}
+
+
+/* =========================================================
+   INTEGRAR COM MENU EXISTENTE
+========================================================= */
+
+const boraTecSelectNavV04 =
+    window.selectNav
+    ||
+    selectNav;
+
+selectNav =
+function(
+    button,
+    page
+){
+
+    const normalized =
+        String(page || "")
+        .trim()
+        .toLowerCase();
+
+    if(
+        normalized === "serviços"
+        ||
+        normalized === "servicos"
+        ||
+        normalized === "meus serviços"
+        ||
+        normalized === "meus servicos"
+    ){
+        openMyJobs();
+        return;
+    }
+
+    return boraTecSelectNavV04(
+        button,
+        page
+    );
+};
+
+
+/* =========================================================
+   GLOBAL V0.5
+========================================================= */
+
+window.selectNav =
+    selectNav;
+
+window.openMyJobs =
+    openMyJobs;
+
+window.closeMyJobs =
+    closeMyJobs;
+
+window.loadMyJobs =
+    loadMyJobs;
+
+window.startBoraTecJob =
+    startBoraTecJob;
+
+window.finishBoraTecJob =
+    finishBoraTecJob;
+
+window.confirmBoraTecJob =
+    confirmBoraTecJob;
+
+
+/* =========================================================
+   INICIAR INTERFACE V0.5
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        createMyJobsInterface();
 
     }
 );
