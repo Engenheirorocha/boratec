@@ -2098,6 +2098,97 @@ body{
     }
 }
 
+
+
+/* =========================================================
+   BORATEC R10 INDUSTRIAL — FUNDO MANIFOLD IA
+   Somente visual. Imagem suave + gradiente sobre a Home.
+========================================================= */
+
+#btHomeScreen{
+    position:relative;
+    isolation:isolate;
+    background:#090d10 !important;
+}
+
+#btHomeScreen::before{
+    content:"";
+    position:absolute;
+    z-index:-2;
+    inset:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(
+            180deg,
+            rgba(7,11,14,.83) 0%,
+            rgba(8,13,16,.87) 24%,
+            rgba(8,13,16,.93) 52%,
+            rgba(8,12,15,.985) 82%,
+            #080c0f 100%
+        ),
+        url("./images/boratec-manifold-ai.png");
+
+    background-size:
+        cover,
+        min(1050px, 155vw) auto;
+
+    background-position:
+        center top,
+        center 15px;
+
+    background-repeat:no-repeat;
+
+    opacity:1;
+}
+
+#btHomeScreen::after{
+    content:"";
+    position:absolute;
+    z-index:-1;
+    top:0;
+    left:0;
+    right:0;
+    height:540px;
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle at 50% 15%,
+            rgba(8,186,240,.06),
+            transparent 48%
+        );
+}
+
+#btHomeScreen .bt-home-shell{
+    position:relative;
+    z-index:1;
+}
+
+/* No celular, reduz ainda mais a presença visual da foto. */
+@media(max-width:520px){
+    #btHomeScreen::before{
+        background-image:
+            linear-gradient(
+                180deg,
+                rgba(7,11,14,.86) 0%,
+                rgba(8,13,16,.90) 25%,
+                rgba(8,13,16,.95) 54%,
+                rgba(8,12,15,.99) 82%,
+                #080c0f 100%
+            ),
+            url("./images/boratec-manifold-ai.png");
+
+        background-size:
+            cover,
+            auto 570px;
+
+        background-position:
+            center top,
+            center 18px;
+    }
+}
+
 </style>
 </head>
 
@@ -4048,7 +4139,7 @@ renderFeed();
      BORATEC - SUPABASE + APP.JS
 ========================================================= -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./app.js?v=2100"></script>
+<script src="./app.js?v=2200"></script>
 
 
 </body>
