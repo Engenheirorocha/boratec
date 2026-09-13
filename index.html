@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#081a2f" />
+  <meta name="description" content="BoraTec — rede profissional de climatização e refrigeração." />
+  <title>BoraTec — Cenário 01</title>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <div class="app">
+
+    <header class="topbar">
+
+      <div class="brand-wrap">
+
+        <div class="logo">
+          BT
+        </div>
+
+        <div>
+
+          <div class="brand">
+            BoraTec
+            <span>BETA</span>
+          </div>
+
+          <div class="subtitle">
+            Rede profissional de climatização
+          </div>
+
+        </div>
+
+      </div>
+
+      <button class="icon-btn" aria-label="Notificações">
+        🔔
+      </button>
+
+    </header>
+
+
+    <main>
+
+      <!-- BOAS VINDAS -->
+
+      <section class="welcome">
+
+        <div>
+
+          <div class="eyebrow">
+            BOM DIA, TIAGO
+          </div>
+
+          <h1>
+            O que você precisa hoje?
+          </h1>
+
+        </div>
+
+        <button
+          class="availability"
+          id="availabilityBtn"
+        >
+          <i></i>
+          Estou disponível
+        </button>
+
+      </section>
+
+
+      <!-- AÇÕES PRINCIPAIS -->
+
+      <section
+        class="actions"
+        aria-label="Ações rápidas"
+      >
+
+        <button
+          class="action-card primary"
+          data-compose="servico"
+        >
+
+          <div class="action-icon">
+            🔥
+          </div>
+
+          <strong>
+            Tenho serviço
+          </strong>
+
+          <small>
+            Repasse para um parceiro
+          </small>
+
+        </button>
+
+
+        <button
+          class="action-card"
+          data-compose="ajudante"
+        >
+
+          <div class="action-icon">
+            👷
+          </div>
+
+          <strong>
+            Preciso de ajudante
+          </strong>
+
+          <small>
+            Encontre mão de obra
+          </small>
+
+        </button>
+
+
+        <button
+          class="action-card"
+          data-compose="disponivel"
+        >
+
+          <div class="action-icon">
+            🟢
+          </div>
+
+          <strong>
+            Quero trabalhar
+          </strong>
+
+          <small>
+            Avise que está disponível
+          </small>
+
+        </button>
+
+      </section>
+
+
+      <!-- CENÁRIO DE EXEMPLO -->
+
+      <section class="scenario-banner">
+
+        <div class="scenario-icon">
+          📍
+        </div>
+
+        <div>
+
+          <b>
+            Cenário real
+          </b>
+
+          <p>
+            Você está em Copacabana e surgiu um cliente urgente
+            em Niterói. Publique o serviço e encontre alguém da região.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- CABEÇALHO DO FEED -->
+
+      <section class="feed-head">
+
+        <div>
+
+          <h2>
+            Oportunidades agora
+          </h2>
+
+          <p>
+            Publicações recentes da rede
+          </p>
+
+        </div>
+
+        <button class="filter-btn">
+          ⚙️ Filtros
+        </button>
+
+      </section>
+
+
+      <!-- FILTROS -->
+
+      <section class="chips">
+
+        <button
+          class="chip active"
+          data-filter="todos"
+        >
+          Tudo
+        </button>
+
+        <button
+          class="chip"
+          data-filter="servico"
+        >
+          Serviços
+        </button>
+
+        <button
+          class="chip"
+          data-filter="ajudante"
+        >
+          Ajudantes
+        </button>
+
+        <button
+          class="chip"
+          data-filter="disponivel"
+        >
+          Disponíveis
+        </button>
+
+      </section>
+
+
+      <!-- POSTS -->
+
+      <section
+        class="posts"
+        id="posts"
+      ></section>
+
+    </main>
+
+
+    <!-- MENU INFERIOR -->
+
+    <nav class="bottom-nav">
+
+      <button class="active">
+        <span>⌂</span>
+        Início
+      </button>
+
+      <button>
+        <span>💬</span>
+        Conversas
+      </button>
+
+      <button>
+        <span>👥</span>
+        Rede
+      </button>
+
+      <button>
+        <span>⭐</span>
+        Perfil
+      </button>
+
+    </nav>
+
+  </div>
+
+
+  <!-- TELA PARA PUBLICAR SERVIÇO -->
+
+  <div
+    class="sheet-backdrop hidden"
+    id="sheetBackdrop"
+  >
+
+    <section class="sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-head">
+
+        <div>
+
+          <div class="eyebrow orange">
+            REPASSAR SERVIÇO
+          </div>
+
+          <h2>
+            Publique para a rede
+          </h2>
+
+        </div>
+
+        <button
+          class="close"
+          id="closeSheet"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <form id="serviceForm">
+
+        <label>
+
+          Onde é o serviço?
+
+          <input
+            id="region"
+            required
+            placeholder="Ex.: Niterói - Icaraí"
+            value="Niterói - Icaraí"
+          />
+
+        </label>
+
+
+        <div class="two-cols">
+
+          <label>
+
+            Tipo
+
+            <select id="serviceType">
+
+              <option>
+                Manutenção
+              </option>
+
+              <option>
+                Instalação
+              </option>
+
+              <option>
+                Limpeza
+              </option>
+
+              <option>
+                Refrigeração
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label>
+
+            Quando?
+
+            <select id="urgency">
+
+              <option>
+                Agora / urgente
+              </option>
+
+              <option>
+                Hoje
+              </option>
+
+              <option>
+                Amanhã
+              </option>
+
+              <option>
+                Esta semana
+              </option>
+
+            </select>
+
+          </label>
+
+        </div>
+
+
+        <label>
+
+          O que aconteceu?
+
+          <textarea
+            id="description"
+            required
+          >
+Cliente com split que parou de gelar.
+Precisa de atendimento hoje.
+Estou trabalhando em Copacabana
+e não consigo me deslocar até Niterói.
+          </textarea>
+
+        </label>
+
+
+        <div class="privacy-note">
+
+          🔒 Telefone e WhatsApp não aparecem na publicação.
+          O contato acontece pelo chat privado.
+
+        </div>
+
+
+        <button
+          class="publish"
+          type="submit"
+        >
+
+          Publicar oportunidade
+
+        </button>
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <!-- AVISOS -->
+
+  <div
+    class="toast hidden"
+    id="toast"
+  ></div>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script src="app.js"></script>
+
+</body>
+</html>
