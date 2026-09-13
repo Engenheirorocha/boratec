@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.9
+   BORATEC V1.9.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12600,48 +12600,82 @@ function createBoraTecHome(){
         }
 
         .bt-v182-actions{
+            position:relative;
             display:flex;
-            gap:12px;
-            overflow-x:auto;
-            overflow-y:hidden;
-            scroll-snap-type:x mandatory;
-            -webkit-overflow-scrolling:touch;
-            scrollbar-width:none;
-            margin:0 -18px 12px;
-            padding:0 18px 6px;
-        }
-
-        .bt-v182-actions::-webkit-scrollbar{
-            display:none;
+            align-items:center;
+            gap:0;
+            overflow:hidden;
+            margin:0 -18px;
+            padding:20px 0 12px;
+            min-height:250px;
         }
 
         .bt-v182-action{
-            flex:0 0 82%;
-            min-height:132px;
-            scroll-snap-align:start;
-            scroll-snap-stop:always;
-            border:1px solid rgba(119,151,178,.18);
-            border-radius:20px;
-            padding:16px;
-            text-align:left;
+            position:absolute;
+            left:50%;
+            width:210px;
+            min-height:230px;
+            border:1px solid rgba(52,165,230,.26);
+            border-radius:24px;
+            padding:22px 18px;
+            text-align:center;
             color:#fff;
-            background:linear-gradient(145deg,rgba(15,45,70,.96),rgba(9,35,58,.96));
-            box-shadow:0 12px 28px rgba(0,0,0,.16);
+            background:linear-gradient(180deg,#0a1626 0%,#091422 100%);
+            box-shadow:0 18px 45px rgba(0,0,0,.28);
             cursor:pointer;
             transition:
-                transform .18s ease,
-                opacity .18s ease,
-                border-color .18s ease;
+                transform .34s cubic-bezier(.22,.61,.36,1),
+                opacity .34s ease,
+                filter .34s ease,
+                border-color .34s ease;
+            transform-origin:center;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
         }
 
         .bt-v182-action.is-active{
-            transform:scale(1);
+            transform:translateX(-50%) scale(1);
             opacity:1;
+            z-index:5;
+            filter:none;
+            border-color:rgba(53,184,255,.42);
         }
 
-        .bt-v182-action:not(.is-active){
-            transform:scale(.965);
-            opacity:.86;
+        .bt-v182-action.is-prev{
+            transform:translateX(-112%) scale(.82);
+            opacity:.34;
+            z-index:3;
+            filter:brightness(.55);
+        }
+
+        .bt-v182-action.is-next{
+            transform:translateX(12%) scale(.82);
+            opacity:.34;
+            z-index:3;
+            filter:brightness(.55);
+        }
+
+        .bt-v182-action.is-far-prev{
+            transform:translateX(-165%) scale(.68);
+            opacity:.10;
+            z-index:1;
+            filter:brightness(.35);
+        }
+
+        .bt-v182-action.is-far-next{
+            transform:translateX(65%) scale(.68);
+            opacity:.10;
+            z-index:1;
+            filter:brightness(.35);
+        }
+
+        .bt-v182-action.is-hidden{
+            transform:translateX(-50%) scale(.5);
+            opacity:0;
+            pointer-events:none;
+            z-index:0;
         }
 
         .bt-v182-action.primary{
@@ -12652,29 +12686,31 @@ function createBoraTecHome(){
         .bt-v182-action:active{ transform:scale(.985); }
 
         .bt-v182-action-icon{
-            width:38px;
-            height:38px;
-            border-radius:12px;
+            width:72px;
+            height:72px;
+            border-radius:18px;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:20px;
-            background:rgba(255,255,255,.06);
-            margin-bottom:13px;
+            font-size:38px;
+            background:rgba(255,255,255,.035);
+            margin-bottom:18px;
         }
 
         .bt-v182-action strong{
             display:block;
-            font-size:14px;
-            font-weight:900;
-            margin-bottom:5px;
+            font-size:20px;
+            line-height:1.05;
+            font-weight:950;
+            margin-bottom:10px;
         }
 
         .bt-v182-action small{
             display:block;
-            color:#8098ad;
-            font-size:10.5px;
-            line-height:1.35;
+            color:#7890a6;
+            font-size:11px;
+            line-height:1.4;
+            max-width:170px;
         }
 
         .bt-v182-recent-head{
@@ -12719,14 +12755,14 @@ function createBoraTecHome(){
             display:flex;
             justify-content:center;
             gap:6px;
-            margin:4px 0 24px;
+            margin:2px 0 10px;
         }
 
         .bt-v19-dot{
             width:6px;
             height:6px;
             border-radius:999px;
-            background:rgba(126,151,173,.35);
+            background:rgba(126,151,173,.28);
             transition:all .18s ease;
         }
 
@@ -12735,12 +12771,58 @@ function createBoraTecHome(){
             background:#ff8500;
         }
 
+        .bt-v191-controls{
+            display:flex;
+            justify-content:center;
+            gap:14px;
+            margin:10px 0 26px;
+        }
+
+        .bt-v191-arrow{
+            width:44px;
+            height:44px;
+            border-radius:14px;
+            border:1px solid rgba(120,153,180,.22);
+            background:#0b1c30;
+            color:#fff;
+            font-size:26px;
+            line-height:1;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            box-shadow:0 8px 20px rgba(0,0,0,.15);
+        }
+
+        .bt-v191-arrow:active{
+            transform:scale(.96);
+        }
+
+        @media (max-width:430px){
+            .bt-v182-action{
+                width:190px;
+                min-height:220px;
+            }
+
+            .bt-v182-action.is-prev{
+                transform:translateX(-111%) scale(.78);
+            }
+
+            .bt-v182-action.is-next{
+                transform:translateX(11%) scale(.78);
+            }
+        }
+
         @media (min-width:760px){
             .bt-home-shell{ padding-top:28px; }
 
+            .bt-v182-actions{
+                min-height:280px;
+            }
+
             .bt-v182-action{
-                flex-basis:42%;
-                min-height:145px;
+                width:250px;
+                min-height:250px;
             }
         }
     `;
@@ -12849,6 +12931,22 @@ function createBoraTecHome(){
                 aria-hidden="true"
             ></div>
 
+            <div class="bt-v191-controls">
+                <button
+                    id="btHomeCarouselPrev"
+                    class="bt-v191-arrow"
+                    type="button"
+                    aria-label="Card anterior"
+                >‹</button>
+
+                <button
+                    id="btHomeCarouselNext"
+                    class="bt-v191-arrow"
+                    type="button"
+                    aria-label="Próximo card"
+                >›</button>
+            </div>
+
             <div class="bt-v182-recent-head">
                 <div class="bt-v182-section-title" style="margin:0">
                     Oportunidades recentes
@@ -12914,6 +13012,16 @@ function setupBoraTecHomeCarousel(){
             "btHomeQuickDots"
         );
 
+    const prevButton =
+        document.getElementById(
+            "btHomeCarouselPrev"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "btHomeCarouselNext"
+        );
+
     if(!rail || !dotsWrap){
         return;
     }
@@ -12928,6 +13036,10 @@ function setupBoraTecHomeCarousel(){
     if(!cards.length){
         return;
     }
+
+    let currentIndex = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
 
     dotsWrap.innerHTML =
         cards
@@ -12944,96 +13056,154 @@ function setupBoraTecHomeCarousel(){
             )
         ];
 
-    const setActive =
-        index => {
+    const update =
+        () => {
 
             cards.forEach(
-                (card,i) =>
-                    card.classList.toggle(
+                (card,index) => {
+
+                    card.classList.remove(
                         "is-active",
-                        i === index
-                    )
+                        "is-prev",
+                        "is-next",
+                        "is-far-prev",
+                        "is-far-next",
+                        "is-hidden"
+                    );
+
+                    const diff =
+                        index - currentIndex;
+
+                    if(diff === 0){
+                        card.classList.add("is-active");
+                    }
+                    else if(diff === -1){
+                        card.classList.add("is-prev");
+                    }
+                    else if(diff === 1){
+                        card.classList.add("is-next");
+                    }
+                    else if(diff === -2){
+                        card.classList.add("is-far-prev");
+                    }
+                    else if(diff === 2){
+                        card.classList.add("is-far-next");
+                    }
+                    else{
+                        card.classList.add("is-hidden");
+                    }
+                }
             );
 
             dots.forEach(
-                (dot,i) =>
+                (dot,index) =>
                     dot.classList.toggle(
                         "active",
-                        i === index
+                        index === currentIndex
                     )
             );
         };
 
-    setActive(0);
+    const goTo =
+        index => {
 
-    let ticking = false;
-
-    rail.addEventListener(
-        "scroll",
-        () => {
-
-            if(ticking){
-                return;
+            if(index < 0){
+                currentIndex =
+                    cards.length - 1;
+            }
+            else if(index >= cards.length){
+                currentIndex = 0;
+            }
+            else{
+                currentIndex = index;
             }
 
-            ticking = true;
+            update();
+        };
 
-            requestAnimationFrame(
-                () => {
+    prevButton?.addEventListener(
+        "click",
+        () =>
+            goTo(
+                currentIndex - 1
+            )
+    );
 
-                    const railRect =
-                        rail.getBoundingClientRect();
+    nextButton?.addEventListener(
+        "click",
+        () =>
+            goTo(
+                currentIndex + 1
+            )
+    );
 
-                    const railCenter =
-                        railRect.left +
-                        railRect.width / 2;
+    rail.addEventListener(
+        "touchstart",
+        event => {
 
-                    let bestIndex = 0;
-                    let bestDistance = Infinity;
-
-                    cards.forEach(
-                        (card,index) => {
-
-                            const rect =
-                                card.getBoundingClientRect();
-
-                            const center =
-                                rect.left +
-                                rect.width / 2;
-
-                            const distance =
-                                Math.abs(
-                                    center - railCenter
-                                );
-
-                            if(
-                                distance <
-                                bestDistance
-                            ){
-                                bestDistance =
-                                    distance;
-
-                                bestIndex =
-                                    index;
-                            }
-                        }
-                    );
-
-                    setActive(
-                        bestIndex
-                    );
-
-                    ticking = false;
-                }
-            );
+            touchStartX =
+                event.changedTouches[0].screenX;
         },
         {
             passive:true
         }
     );
+
+    rail.addEventListener(
+        "touchend",
+        event => {
+
+            touchEndX =
+                event.changedTouches[0].screenX;
+
+            const delta =
+                touchEndX - touchStartX;
+
+            if(
+                Math.abs(delta) < 45
+            ){
+                return;
+            }
+
+            if(delta < 0){
+                goTo(
+                    currentIndex + 1
+                );
+            }
+            else{
+                goTo(
+                    currentIndex - 1
+                );
+            }
+        },
+        {
+            passive:true
+        }
+    );
+
+    cards.forEach(
+        (card,index) => {
+
+            card.addEventListener(
+                "click",
+                event => {
+
+                    if(
+                        index !== currentIndex
+                    ){
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        goTo(index);
+                    }
+                },
+                true
+            );
+        }
+    );
+
+    update();
 }
-
-
 
 async function loadBoraTecHome(){
 
