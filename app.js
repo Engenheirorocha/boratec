@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8.1
+   BORATEC V1.8.2
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12478,560 +12478,453 @@ function setupBoraTecPWA(){
 
 function createBoraTecHome(){
 
-    if(
-        document.getElementById(
-            "btHomeScreen"
-        )
-    ){
+    if(document.getElementById("btHomeScreen")){
         return;
     }
 
-
-    const style =
-        document.createElement(
-            "style"
-        );
-
-    style.id =
-        "btHomeStyle";
+    const style = document.createElement("style");
+    style.id = "btHomeV182Style";
 
     style.textContent = `
-        html,
-        body{
-            overscroll-behavior:none;
-        }
-
-        body{
-            -webkit-tap-highlight-color:transparent;
-        }
-
         #btHomeScreen{
             position:fixed;
             inset:0;
             z-index:6400;
             display:none;
-            overflow:auto;
-            padding:
-                calc(18px + env(safe-area-inset-top))
-                14px
-                calc(90px + env(safe-area-inset-bottom));
+            overflow-y:auto;
             background:
-                radial-gradient(
-                    circle at top right,
-                    rgba(255,121,0,.10),
-                    transparent 34%
-                ),
-                #06182b;
+                radial-gradient(circle at 85% -10%,rgba(19,120,190,.18),transparent 34%),
+                linear-gradient(180deg,#06182b 0%,#071a2e 100%);
             color:#fff;
         }
 
-        #btHomeScreen.show{
-            display:block;
-        }
+        #btHomeScreen.show{ display:block; }
 
-        .bt-home-wrap{
-            width:min(100%,560px);
+        .bt-home-shell{
+            width:min(100%,680px);
             margin:0 auto;
+            padding:22px 18px 110px;
+            box-sizing:border-box;
         }
 
-        .bt-home-top{
+        .bt-v182-top{
             display:flex;
             align-items:center;
             justify-content:space-between;
-            gap:12px;
-            margin-bottom:22px;
+            gap:14px;
+            margin-bottom:24px;
         }
 
-        .bt-home-brand{
-            font-size:12px;
-            color:#ff8614;
-            font-weight:900;
-            letter-spacing:1.4px;
+        .bt-v182-brand{
+            display:flex;
+            align-items:center;
+            gap:11px;
         }
 
-        .bt-home-avatar{
+        .bt-v182-brand img{
+            width:44px;
+            height:44px;
+            border-radius:13px;
+            object-fit:cover;
+            box-shadow:0 8px 22px rgba(0,0,0,.24);
+        }
+
+        .bt-v182-brand-name{
+            font-size:20px;
+            line-height:1;
+            font-weight:950;
+            letter-spacing:-.4px;
+        }
+
+        .bt-v182-brand-tag{
+            color:#7890a7;
+            font-size:9px;
+            margin-top:5px;
+            text-transform:uppercase;
+            letter-spacing:.7px;
+        }
+
+        .bt-v182-avatar{
             width:44px;
             height:44px;
             border-radius:50%;
-            border:1px solid rgba(255,255,255,.10);
-            background:#10385b;
+            border:2px solid rgba(255,132,0,.75);
+            background:#0d2943;
+            color:#fff;
             display:flex;
             align-items:center;
             justify-content:center;
-            overflow:hidden;
-            color:#fff;
             font-weight:900;
+            overflow:hidden;
             cursor:pointer;
+            flex:0 0 auto;
         }
 
-        .bt-home-avatar img{
+        .bt-v182-avatar img{
             width:100%;
             height:100%;
             object-fit:cover;
         }
 
-        .bt-home-greeting{
-            margin-bottom:4px;
-            color:#91a9bc;
+        .bt-v182-welcome{ margin-bottom:22px; }
+
+        .bt-v182-kicker{
+            color:#8097ac;
             font-size:12px;
-            font-weight:700;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.7px;
         }
 
-        .bt-home-name{
-            font-size:25px;
-            line-height:1.05;
+        .bt-v182-title{
+            margin-top:5px;
+            font-size:28px;
+            line-height:1.1;
             font-weight:950;
-            margin-bottom:22px;
+            letter-spacing:-.8px;
         }
 
-        .bt-home-question{
+        .bt-v182-title span{ color:#ff8500; }
+
+        .bt-v182-subtitle{
+            margin-top:8px;
+            color:#8ea4b7;
+            font-size:13px;
+            line-height:1.45;
+        }
+
+        .bt-v182-section-title{
             font-size:14px;
             font-weight:900;
-            color:#dce8f2;
-            margin-bottom:10px;
+            margin:0 0 11px;
         }
 
-        .bt-home-grid{
+        .bt-v182-actions{
             display:grid;
             grid-template-columns:1fr 1fr;
             gap:10px;
-            margin-bottom:22px;
+            margin-bottom:26px;
         }
 
-        .bt-home-card{
-            min-height:112px;
-            border:1px solid rgba(255,255,255,.075);
+        .bt-v182-action{
+            min-height:124px;
+            border:1px solid rgba(119,151,178,.18);
             border-radius:18px;
-            background:#0b2239;
-            padding:14px;
+            padding:15px;
             text-align:left;
             color:#fff;
-            cursor:pointer;
-            box-shadow:0 8px 30px rgba(0,0,0,.10);
-        }
-
-        .bt-home-card:active{
-            transform:scale(.985);
-        }
-
-        .bt-home-card-icon{
-            display:block;
-            font-size:23px;
-            margin-bottom:12px;
-        }
-
-        .bt-home-card strong{
-            display:block;
-            font-size:13px;
-            line-height:1.25;
-            margin-bottom:5px;
-        }
-
-        .bt-home-card small{
-            display:block;
-            color:#8299ad;
-            font-size:9px;
-            line-height:1.35;
-        }
-
-        .bt-home-card.featured{
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,121,0,.17),
-                    rgba(255,121,0,.035)
-                ),
-                #0b2239;
-            border-color:rgba(255,121,0,.18);
-        }
-
-        .bt-home-section-title{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:10px;
-            margin:4px 0 10px;
-        }
-
-        .bt-home-section-title strong{
-            font-size:13px;
-        }
-
-        .bt-home-section-title button{
-            border:0;
-            background:transparent;
-            color:#ff8614;
-            font-family:inherit;
-            font-size:10px;
-            font-weight:900;
+            background:linear-gradient(145deg,rgba(15,45,70,.95),rgba(9,35,58,.95));
+            box-shadow:0 9px 24px rgba(0,0,0,.12);
             cursor:pointer;
         }
 
-        .bt-home-feed-card{
-            display:flex;
-            gap:10px;
-            align-items:center;
-            border:1px solid rgba(255,255,255,.07);
-            border-radius:15px;
-            background:#091f35;
-            padding:12px;
-            margin-bottom:9px;
-            cursor:pointer;
+        .bt-v182-action.primary{
+            border-color:rgba(255,132,0,.34);
+            background:linear-gradient(145deg,rgba(255,132,0,.13),rgba(11,38,62,.96));
         }
 
-        .bt-home-feed-icon{
+        .bt-v182-action:active{ transform:scale(.985); }
+
+        .bt-v182-action-icon{
             width:38px;
             height:38px;
-            flex:0 0 38px;
             border-radius:12px;
-            background:#103658;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:18px;
+            font-size:20px;
+            background:rgba(255,255,255,.06);
+            margin-bottom:13px;
         }
 
-        .bt-home-feed-text{
-            min-width:0;
-            flex:1;
-        }
-
-        .bt-home-feed-text strong{
+        .bt-v182-action strong{
             display:block;
-            font-size:11px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
+            font-size:14px;
+            font-weight:900;
+            margin-bottom:5px;
         }
 
-        .bt-home-feed-text span{
+        .bt-v182-action small{
             display:block;
-            color:#8199ad;
-            font-size:9px;
-            margin-top:3px;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
+            color:#8098ad;
+            font-size:10.5px;
+            line-height:1.35;
         }
 
-        .bt-home-install{
-            display:none;
-            width:100%;
-            margin-top:16px;
-            border:1px solid rgba(255,121,0,.25);
-            border-radius:14px;
-            background:rgba(255,121,0,.08);
-            color:#fff;
-            padding:12px;
-            font-family:inherit;
+        .bt-v182-recent-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:10px;
+        }
+
+        .bt-v182-feed-link{
+            border:0;
+            background:transparent;
+            color:#ff8500;
             font-size:11px;
             font-weight:900;
             cursor:pointer;
         }
 
-        .bt-home-install.show{
-            display:block;
+        #btHomeRecentList{ min-height:82px; }
+
+        #btInstallAppButton{
+            width:100%;
+            min-height:42px;
+            margin-top:24px;
+            border:1px solid rgba(255,132,0,.38);
+            border-radius:14px;
+            background:rgba(255,132,0,.07);
+            color:#fff;
+            font-weight:850;
+            display:none;
         }
 
-        @media (display-mode: standalone){
-            .bt-home-install{
-                display:none !important;
+        #btInstallAppButton.show{ display:block; }
+
+        html.bt-standalone #btInstallAppButton,
+        body.bt-standalone #btInstallAppButton{
+            display:none !important;
+        }
+
+        @media (min-width:760px){
+            .bt-home-shell{ padding-top:28px; }
+
+            .bt-v182-actions{
+                grid-template-columns:repeat(4,1fr);
             }
+
+            .bt-v182-action{ min-height:145px; }
         }
     `;
 
-    document.head.appendChild(
-        style
-    );
+    document.head.appendChild(style);
 
+    const home = document.createElement("section");
+    home.id = "btHomeScreen";
 
-    const screen =
-        document.createElement(
-            "section"
-        );
+    home.innerHTML = `
+        <div class="bt-home-shell">
 
-    screen.id =
-        "btHomeScreen";
+            <div class="bt-v182-top">
+                <div class="bt-v182-brand">
+                    <img src="./icons/icon-192.png" alt="BoraTec">
 
-    screen.innerHTML = `
-        <div class="bt-home-wrap">
-
-            <div class="bt-home-top">
-                <div class="bt-home-brand">
-                    BORATEC
+                    <div>
+                        <div class="bt-v182-brand-name">BoraTec</div>
+                        <div class="bt-v182-brand-tag">
+                            Profissionais conectando profissionais
+                        </div>
+                    </div>
                 </div>
 
                 <button
-                    class="bt-home-avatar"
                     id="btHomeAvatar"
+                    class="bt-v182-avatar"
                     type="button"
-                    onclick="openMyBoraTecProfileFromHome()"
+                    onclick="selectNav(null,'Perfil')"
                 >
                     BT
                 </button>
             </div>
 
+            <div class="bt-v182-welcome">
+                <div id="btHomeGreeting" class="bt-v182-kicker">Olá</div>
 
-            <div
-                class="bt-home-greeting"
-                id="btHomeGreeting"
-            >
-                Olá
+                <div class="bt-v182-title">
+                    O que você precisa <span>hoje?</span>
+                </div>
+
+                <div class="bt-v182-subtitle">
+                    Gere trabalho, encontre apoio e conecte-se com profissionais da rede.
+                </div>
             </div>
 
-            <div
-                class="bt-home-name"
-                id="btHomeName"
-            >
-                Profissional
-            </div>
+            <div class="bt-v182-section-title">Acesso rápido</div>
 
-
-            <div class="bt-home-question">
-                O que você precisa hoje?
-            </div>
-
-
-            <div class="bt-home-grid">
+            <div class="bt-v182-actions">
 
                 <button
-                    class="bt-home-card featured"
+                    class="bt-v182-action primary"
                     type="button"
-                    onclick="btHomeOpenPublish('service')"
+                    onclick="openPublishForm('service')"
                 >
-                    <span class="bt-home-card-icon">🔥</span>
+                    <div class="bt-v182-action-icon">🔥</div>
                     <strong>Repassar serviço</strong>
-                    <small>
-                        Publique um atendimento que você não consegue realizar.
-                    </small>
+                    <small>Publique um atendimento que você não consegue realizar.</small>
                 </button>
 
                 <button
-                    class="bt-home-card"
+                    class="bt-v182-action"
                     type="button"
-                    onclick="btHomeOpenPublish('helper')"
+                    onclick="openPublishForm('helper')"
                 >
-                    <span class="bt-home-card-icon">👷</span>
+                    <div class="bt-v182-action-icon">👷</div>
                     <strong>Preciso de ajudante</strong>
-                    <small>
-                        Encontre apoio para instalação, manutenção ou obra.
-                    </small>
+                    <small>Encontre apoio para instalação, manutenção ou obra.</small>
                 </button>
 
                 <button
-                    class="bt-home-card"
+                    class="bt-v182-action"
                     type="button"
-                    onclick="btHomeOpenProfessionals()"
+                    onclick="openPublishForm('technician_available')"
                 >
-                    <span class="bt-home-card-icon">👨‍🔧</span>
+                    <div class="bt-v182-action-icon">🧰</div>
+                    <strong>Estou disponível</strong>
+                    <small>Avise à rede onde e quando você pode atender.</small>
+                </button>
+
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="openBoraTecFeedTab('Profissionais')"
+                >
+                    <div class="bt-v182-action-icon">🔎</div>
                     <strong>Encontrar profissional</strong>
-                    <small>
-                        Veja técnicos e ajudantes disponíveis.
-                    </small>
-                </button>
-
-                <button
-                    class="bt-home-card"
-                    type="button"
-                    onclick="openCommunityFromHome()"
-                >
-                    <span class="bt-home-card-icon">💬</span>
-                    <strong>Comunidade</strong>
-                    <small>
-                        Troque dúvidas, dicas e informações com a rede.
-                    </small>
+                    <small>Veja técnicos e ajudantes disponíveis na rede.</small>
                 </button>
 
             </div>
 
-
-            <div class="bt-home-section-title">
-                <strong>Oportunidades recentes</strong>
+            <div class="bt-v182-recent-head">
+                <div class="bt-v182-section-title" style="margin:0">
+                    Oportunidades recentes
+                </div>
 
                 <button
+                    class="bt-v182-feed-link"
                     type="button"
-                    onclick="closeBoraTecHome()"
+                    onclick="openBoraTecFeedTab('Todos')"
                 >
                     Ver feed →
                 </button>
             </div>
 
-            <div id="btHomeRecentList">
-                <div class="bt-community-empty">
-                    Carregando...
-                </div>
-            </div>
+            <div id="btHomeRecentList"></div>
 
-
-            <button
-                id="btInstallAppButton"
-                class="bt-home-install"
-                type="button"
-            >
-                📲 Instalar BoraTec no celular
+            <button id="btInstallAppButton" type="button">
+                📲 Instalar BoraTec
             </button>
 
         </div>
     `;
 
-    document.body.appendChild(
-        screen
-    );
-}
+    document.body.appendChild(home);
 
+    const installBtn = document.getElementById("btInstallAppButton");
 
-function btHomeGreetingText(){
+    if(installBtn){
+        installBtn.addEventListener("click", async () => {
 
-    const hour =
-        new Date()
-        .getHours();
+            if(isBoraTecStandalone()){
+                installBtn.style.display = "none";
+                return;
+            }
 
-    if(hour < 12){
-        return "Bom dia";
+            if(!btInstallPrompt){
+                showToast(
+                    "No Chrome: toque em ⋮ e escolha Instalar app / Adicionar à tela inicial"
+                );
+                return;
+            }
+
+            btInstallPrompt.prompt();
+            await btInstallPrompt.userChoice;
+            btInstallPrompt = null;
+            installBtn.classList.remove("show");
+        });
     }
-
-    if(hour < 18){
-        return "Boa tarde";
-    }
-
-    return "Boa noite";
 }
 
 
 async function loadBoraTecHome(){
 
-    if(
-        !boraUser
-        ||
-        !boraSupabase
-    ){
+    const profile =
+        btCurrentProfile ||
+        boraProfile ||
+        {};
+
+    const displayName =
+        profile.professional_name ||
+        profile.name ||
+        "Profissional";
+
+    const firstName =
+        String(displayName).trim().split(/\s+/)[0] ||
+        "Profissional";
+
+    const hour = new Date().getHours();
+
+    const greeting =
+        hour < 12
+        ? "Bom dia"
+        : hour < 18
+        ? "Boa tarde"
+        : "Boa noite";
+
+    const greetingEl = document.getElementById("btHomeGreeting");
+
+    if(greetingEl){
+        greetingEl.textContent = `${greeting}, ${firstName}`;
+    }
+
+    const avatar = document.getElementById("btHomeAvatar");
+
+    if(avatar){
+
+        const initials =
+            String(displayName)
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0,2)
+            .map(part => part[0])
+            .join("")
+            .toUpperCase() ||
+            "BT";
+
+        avatar.innerHTML =
+            profile.photo_url
+            ? `<img src="${escapeHTML(profile.photo_url)}" alt="">`
+            : escapeHTML(initials);
+    }
+
+    const list = document.getElementById("btHomeRecentList");
+
+    if(!list){
         return;
     }
 
     try{
 
-        const {
-            data:profile
-        } =
-        await boraSupabase
-        .from(
-            "profiles"
-        )
-        .select(`
-            name,
-            professional_name,
-            photo_url
-        `)
-        .eq(
-            "id",
-            boraUser.id
-        )
-        .maybeSingle();
-
-
-        const displayName =
-            profile?.professional_name
-            ||
-            profile?.name
-            ||
-            "Profissional";
-
-        const greeting =
-            document.getElementById(
-                "btHomeGreeting"
-            );
-
-        const name =
-            document.getElementById(
-                "btHomeName"
-            );
-
-        const avatar =
-            document.getElementById(
-                "btHomeAvatar"
-            );
-
-        if(greeting){
-            greeting.textContent =
-                btHomeGreetingText();
-        }
-
-        if(name){
-            name.textContent =
-                displayName;
-        }
-
-        if(avatar){
-
-            if(profile?.photo_url){
-                avatar.innerHTML = `
-                    <img
-                        src="${escapeHtml(profile.photo_url)}"
-                        alt=""
-                    >
-                `;
-            }
-            else{
-                avatar.textContent =
-                    btCommunityInitials(
-                        displayName
-                    );
-            }
-        }
-
-
-        const {
-            data:recent,
-            error
-        } =
-        await boraSupabase
-        .from(
-            "opportunities"
-        )
-        .select(`
-            id,
-            type,
-            title,
-            city,
-            neighborhood,
-            service_date,
-            created_at
-        `)
-        .eq(
-            "status",
-            "open"
-        )
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
-        )
-        .limit(
-            4
-        );
+        const {data,error} =
+            await boraSupabase
+            .from("opportunities")
+            .select("*")
+            .eq("status","open")
+            .order("created_at",{ascending:false})
+            .limit(4);
 
         if(error){
             throw error;
         }
 
+        if(!data || !data.length){
 
-        const list =
-            document.getElementById(
-                "btHomeRecentList"
-            );
-
-        if(!list){
-            return;
-        }
-
-        if(
-            !recent
-            ||
-            recent.length === 0
-        ){
             list.innerHTML = `
-                <div class="bt-community-empty">
+                <div style="
+                    min-height:90px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    text-align:center;
+                    color:#7991a7;
+                    font-size:12px;
+                    border:1px dashed rgba(121,145,167,.16);
+                    border-radius:16px;
+                    padding:18px;
+                ">
                     Nenhuma oportunidade aberta no momento.
                 </div>
             `;
@@ -13040,65 +12933,75 @@ async function loadBoraTecHome(){
         }
 
         list.innerHTML =
-            recent
-            .map(
-                item => {
+            data.map(item => {
 
-                    const icon =
-                        item.type
-                        ===
-                        "helper"
-                        ?
-                        "👷"
-                        :
-                        (
-                            item.type
-                            ===
-                            "technician_available"
-                            ||
-                            item.type
-                            ===
-                            "helper_available"
-                            ?
-                            "👨‍🔧"
-                            :
-                            "🔥"
-                        );
+                const city =
+                    item.city
+                    ? `📍 ${escapeHTML(item.city)}`
+                    : "";
 
-                    const place =
-                        [
-                            item.city,
-                            item.neighborhood
-                        ]
-                        .filter(Boolean)
-                        .join(" • ");
+                const value =
+                    item.value !== null &&
+                    item.value !== undefined
+                    ? `R$ ${Number(item.value).toLocaleString("pt-BR",{
+                        minimumFractionDigits:2,
+                        maximumFractionDigits:2
+                    })}`
+                    : item.value_negotiable
+                    ? "A combinar"
+                    : "";
 
-                    return `
-                        <button
-                            class="bt-home-feed-card"
-                            type="button"
-                            onclick="closeBoraTecHome()"
-                        >
-                            <span class="bt-home-feed-icon">
-                                ${icon}
-                            </span>
+                return `
+                    <div
+                        style="
+                            width:100%;
+                            margin-bottom:9px;
+                            padding:13px 14px;
+                            border:1px solid rgba(120,153,180,.16);
+                            border-radius:15px;
+                            background:#0b243b;
+                            color:#fff;
+                            text-align:left;
+                            box-sizing:border-box;
+                        "
+                    >
+                        <div style="
+                            font-size:13px;
+                            font-weight:900;
+                            margin-bottom:6px;
+                        ">
+                            ${escapeHTML(item.title || "Oportunidade")}
+                        </div>
 
-                            <span class="bt-home-feed-text">
-                                <strong>${escapeHtml(item.title || "Oportunidade")}</strong>
-                                <span>${escapeHtml(place || "BoraTec")}</span>
-                            </span>
-                        </button>
-                    `;
-                }
-            )
-            .join("");
+                        <div style="
+                            display:flex;
+                            gap:8px;
+                            flex-wrap:wrap;
+                            color:#7f98ae;
+                            font-size:10.5px;
+                        ">
+                            ${city ? `<span>${city}</span>` : ""}
+                            ${item.category ? `<span>🧰 ${escapeHTML(item.category)}</span>` : ""}
+                            ${value ? `<span style="color:#ff9b32;font-weight:800">${value}</span>` : ""}
+                        </div>
+                    </div>
+                `;
+            }).join("");
 
     }catch(error){
 
-        console.error(
-            "Erro Home BoraTec:",
-            error
-        );
+        console.error("Erro ao carregar Home:", error);
+
+        list.innerHTML = `
+            <div style="
+                color:#8097ac;
+                font-size:12px;
+                padding:18px 0;
+                text-align:center;
+            ">
+                Não foi possível carregar as oportunidades agora.
+            </div>
+        `;
     }
 }
 
@@ -13927,175 +13830,44 @@ body.bt-standalone #btInstallAppButton{
 setupBoraTecV18HomeStyle();
 
 
-/* ===== V1.8 HOME RENDERER ===== */
-window.renderBoraTecV18Home = async function(){
 
-    const screen = document.getElementById("btHomeScreen");
-    if(!screen) return;
 
-    const profile = btCurrentProfile || {};
-    const displayName =
-        profile.professional_name ||
-        profile.name ||
-        "Profissional";
-
-    const firstName =
-        String(displayName).trim().split(/\s+/)[0];
-
-    const hour = new Date().getHours();
-    const greeting =
-        hour < 12 ? "Bom dia" :
-        hour < 18 ? "Boa tarde" :
-        "Boa noite";
-
-    const initials =
-        String(displayName)
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0,2)
-        .map(v => v[0])
-        .join("")
-        .toUpperCase() || "BT";
-
-    const avatarHTML =
-        profile.photo_url
-        ? `<img src="${escapeHTML(profile.photo_url)}" alt="">`
-        : escapeHTML(initials);
-
-    const oldShell =
-        screen.querySelector(".bt-home-shell") ||
-        screen.firstElementChild;
-
-    if(!oldShell) return;
-
-    oldShell.classList.add("bt-home-shell");
-
-    // Preserve the existing recent-opportunities container and install button logic.
-    const recent =
-        oldShell.querySelector("#btHomeRecentList");
-
-    const install =
-        oldShell.querySelector("#btInstallAppButton");
-
-    oldShell.innerHTML = `
-        <div class="bt-v18-top">
-            <div class="bt-v18-brand">
-                <img src="./icons/icon-192.png" alt="BoraTec">
-                <div>
-                    <div class="bt-v18-brand-name">BoraTec</div>
-                    <div class="bt-v18-brand-tag">Profissionais conectando profissionais</div>
-                </div>
-            </div>
-
-            <button class="bt-v18-user" type="button" onclick="selectNav(null,'Perfil')">
-                ${avatarHTML}
-            </button>
-        </div>
-
-        <section class="bt-v18-welcome">
-            <div class="bt-v18-kicker">${greeting}, ${escapeHTML(firstName)}</div>
-            <div class="bt-v18-title">O que você precisa <span>hoje?</span></div>
-            <div class="bt-v18-subtitle">
-                Gere trabalho, encontre apoio e conecte-se com profissionais da rede.
-            </div>
-        </section>
-
-        <div class="bt-v18-section-title">Acesso rápido</div>
-
-        <section class="bt-v18-actions">
-            <button class="bt-v18-action primary" type="button"
-                onclick="openPublishForm('service')">
-                <div class="bt-v18-action-icon">🔥</div>
-                <strong>Repassar serviço</strong>
-                <small>Publique um atendimento que você não consegue realizar.</small>
-            </button>
-
-            <button class="bt-v18-action" type="button"
-                onclick="openPublishForm('helper')">
-                <div class="bt-v18-action-icon">👷</div>
-                <strong>Preciso de ajudante</strong>
-                <small>Encontre apoio para instalação, manutenção ou obra.</small>
-            </button>
-
-            <button class="bt-v18-action" type="button"
-                onclick="openPublishForm('technician_available')">
-                <div class="bt-v18-action-icon">🧰</div>
-                <strong>Estou disponível</strong>
-                <small>Avise à rede onde e quando você pode atender.</small>
-            </button>
-
-            <button class="bt-v18-action" type="button"
-                onclick="openBoraTecFeedTab('Profissionais')">
-                <div class="bt-v18-action-icon">🔎</div>
-                <strong>Encontrar profissional</strong>
-                <small>Veja técnicos e ajudantes disponíveis na rede.</small>
-            </button>
-        </section>
-
-        <section>
-            <div class="bt-v18-recent-head">
-                <div class="bt-v18-section-title" style="margin:0">Oportunidades recentes</div>
-                <button class="bt-v18-feed-link" type="button"
-                    onclick="openBoraTecFeedTab('Todos')">Ver feed →</button>
-            </div>
-
-            <div id="btHomeRecentList"></div>
-        </section>
-
-        <button id="btInstallAppButton" type="button">
-            📲 Instalar BoraTec
-        </button>
-    `;
-
-    const installBtn = document.getElementById("btInstallAppButton");
-    if(installBtn){
-        installBtn.onclick = async () => {
-            if(isBoraTecStandalone()){
-                installBtn.style.display = "none";
-                return;
-            }
-
-            if(!btInstallPrompt){
-                showToast("No Chrome: toque em ⋮ e escolha Instalar app / Adicionar à tela inicial");
-                return;
-            }
-
-            btInstallPrompt.prompt();
-            await btInstallPrompt.userChoice;
-            btInstallPrompt = null;
-            installBtn.classList.remove("show");
-        };
-    }
-
-    await loadBoraTecHome();
-
-    if(isBoraTecStandalone() && installBtn){
-        installBtn.style.display = "none";
-    }
-};
 
 window.openBoraTecFeedTab = function(tabName){
 
     closeBoraTecHome();
 
     setTimeout(() => {
-        const tabs = [...document.querySelectorAll(".feed-tab, .tab, [data-tab]")];
-        const target = tabs.find(el =>
-            String(el.textContent || "").trim().toLowerCase() ===
-            String(tabName || "").trim().toLowerCase()
-        );
+
+        const candidates = [
+            ...document.querySelectorAll(
+                ".feed-tab, .tab, [data-tab]"
+            )
+        ];
+
+        const target =
+            candidates.find(
+                element =>
+                    String(element.textContent || "")
+                    .trim()
+                    .toLowerCase()
+                    ===
+                    String(tabName || "")
+                    .trim()
+                    .toLowerCase()
+            );
 
         if(target){
             target.click();
-        }else if(typeof setFeedFilter === "function"){
+            return;
+        }
+
+        if(typeof setFeedFilter === "function"){
             setFeedFilter(tabName);
         }
-    }, 80);
+
+    },80);
 };
 
-
-
-
-
-/* ===== V1.8.1 FIX: HOME LOCAL + GLOBAL ===== */
 window.openBoraTecHome = openBoraTecHome;
+
