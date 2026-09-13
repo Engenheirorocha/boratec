@@ -1,10 +1,9 @@
-const CACHE_NAME = "boratec-v171";
+const CACHE_NAME = "boratec-v185";
 
 const APP_SHELL = [
     "./",
     "./index.html",
     "./login.html",
-    "./app.js",
     "./manifest.json",
     "./icons/icon-192.png",
     "./icons/icon-512.png",
@@ -34,9 +33,8 @@ self.addEventListener("activate", event => {
                         .map(key => caches.delete(key))
                 )
             )
+            .then(() => self.clients.claim())
     );
-
-    self.clients.claim();
 });
 
 
@@ -55,12 +53,11 @@ self.addEventListener("fetch", event => {
     }
 
 
-    // HTML / navegação:
-    // tenta buscar a versão mais nova primeiro.
+    // Sempre buscar HTML mais recente.
     if (request.mode === "navigate") {
 
         event.respondWith(
-            fetch(request)
+            fetch(request, { cache: "no-store" })
                 .then(response => {
 
                     const copy = response.clone();
@@ -86,8 +83,8 @@ self.addEventListener("fetch", event => {
     }
 
 
-    // Arquivos principais:
-    // evita ficar preso em versão antiga.
+    // app.js, manifest e service-worker:
+    // nunca deixar o PWA preso em versão antiga.
     if (
         url.pathname.endsWith("/app.js") ||
         url.pathname.endsWith("/manifest.json") ||
@@ -95,7 +92,7 @@ self.addEventListener("fetch", event => {
     ) {
 
         event.respondWith(
-            fetch(request)
+            fetch(request, { cache: "no-store" })
                 .then(response => {
 
                     const copy = response.clone();
@@ -116,8 +113,7 @@ self.addEventListener("fetch", event => {
     }
 
 
-    // Imagens e outros arquivos estáticos:
-    // usa cache quando já estiver disponível.
+    // Ícones e arquivos estáticos podem usar cache.
     event.respondWith(
         caches.match(request)
             .then(cached => {
