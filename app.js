@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8
+   BORATEC V1.8.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -13103,7 +13103,7 @@ async function loadBoraTecHome(){
 }
 
 
-function openBoraTecHome(){
+async function openBoraTecHome(){
 
     createBoraTecHome();
 
@@ -13122,7 +13122,16 @@ function openBoraTecHome(){
     document.body.style.overflow =
         "hidden";
 
-    loadBoraTecHome();
+    try{
+        if(typeof window.renderBoraTecV18Home === "function"){
+            await window.renderBoraTecV18Home();
+        }else{
+            await loadBoraTecHome();
+        }
+    }catch(error){
+        console.error("Erro ao abrir Home V1.8:", error);
+        await loadBoraTecHome();
+    }
 }
 
 
@@ -14086,19 +14095,7 @@ window.openBoraTecFeedTab = function(tabName){
 
 
 
-(function(){
-    const _btOpenHomeV17 = window.openBoraTecHome;
 
-    window.openBoraTecHome = async function(){
-        if(typeof _btOpenHomeV17 === "function"){
-            _btOpenHomeV17();
-        }
 
-        try{
-            await window.renderBoraTecV18Home();
-        }catch(error){
-            console.error("Erro Home V1.8:", error);
-        }
-    };
-})();
-
+/* ===== V1.8.1 FIX: HOME LOCAL + GLOBAL ===== */
+window.openBoraTecHome = openBoraTecHome;
