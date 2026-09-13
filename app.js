@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8.4
+   BORATEC V1.9
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12600,22 +12600,48 @@ function createBoraTecHome(){
         }
 
         .bt-v182-actions{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:10px;
-            margin-bottom:26px;
+            display:flex;
+            gap:12px;
+            overflow-x:auto;
+            overflow-y:hidden;
+            scroll-snap-type:x mandatory;
+            -webkit-overflow-scrolling:touch;
+            scrollbar-width:none;
+            margin:0 -18px 12px;
+            padding:0 18px 6px;
+        }
+
+        .bt-v182-actions::-webkit-scrollbar{
+            display:none;
         }
 
         .bt-v182-action{
-            min-height:124px;
+            flex:0 0 82%;
+            min-height:132px;
+            scroll-snap-align:start;
+            scroll-snap-stop:always;
             border:1px solid rgba(119,151,178,.18);
-            border-radius:18px;
-            padding:15px;
+            border-radius:20px;
+            padding:16px;
             text-align:left;
             color:#fff;
-            background:linear-gradient(145deg,rgba(15,45,70,.95),rgba(9,35,58,.95));
-            box-shadow:0 9px 24px rgba(0,0,0,.12);
+            background:linear-gradient(145deg,rgba(15,45,70,.96),rgba(9,35,58,.96));
+            box-shadow:0 12px 28px rgba(0,0,0,.16);
             cursor:pointer;
+            transition:
+                transform .18s ease,
+                opacity .18s ease,
+                border-color .18s ease;
+        }
+
+        .bt-v182-action.is-active{
+            transform:scale(1);
+            opacity:1;
+        }
+
+        .bt-v182-action:not(.is-active){
+            transform:scale(.965);
+            opacity:.86;
         }
 
         .bt-v182-action.primary{
@@ -12689,14 +12715,33 @@ function createBoraTecHome(){
             display:none !important;
         }
 
+        .bt-v19-dots{
+            display:flex;
+            justify-content:center;
+            gap:6px;
+            margin:4px 0 24px;
+        }
+
+        .bt-v19-dot{
+            width:6px;
+            height:6px;
+            border-radius:999px;
+            background:rgba(126,151,173,.35);
+            transition:all .18s ease;
+        }
+
+        .bt-v19-dot.active{
+            width:18px;
+            background:#ff8500;
+        }
+
         @media (min-width:760px){
             .bt-home-shell{ padding-top:28px; }
 
-            .bt-v182-actions{
-                grid-template-columns:repeat(4,1fr);
+            .bt-v182-action{
+                flex-basis:42%;
+                min-height:145px;
             }
-
-            .bt-v182-action{ min-height:145px; }
         }
     `;
 
@@ -12798,6 +12843,12 @@ function createBoraTecHome(){
 
             </div>
 
+            <div
+                id="btHomeQuickDots"
+                class="bt-v19-dots"
+                aria-hidden="true"
+            ></div>
+
             <div class="bt-v182-recent-head">
                 <div class="bt-v182-section-title" style="margin:0">
                     Oportunidades recentes
@@ -12823,6 +12874,8 @@ function createBoraTecHome(){
 
     document.body.appendChild(home);
 
+    setupBoraTecHomeCarousel();
+
     const installBtn = document.getElementById("btInstallAppButton");
 
     if(installBtn){
@@ -12847,6 +12900,139 @@ function createBoraTecHome(){
         });
     }
 }
+
+
+function setupBoraTecHomeCarousel(){
+
+    const rail =
+        document.querySelector(
+            "#btHomeScreen .bt-v182-actions"
+        );
+
+    const dotsWrap =
+        document.getElementById(
+            "btHomeQuickDots"
+        );
+
+    if(!rail || !dotsWrap){
+        return;
+    }
+
+    const cards =
+        [
+            ...rail.querySelectorAll(
+                ".bt-v182-action"
+            )
+        ];
+
+    if(!cards.length){
+        return;
+    }
+
+    dotsWrap.innerHTML =
+        cards
+        .map(
+            (_,index) =>
+                `<span class="bt-v19-dot${index === 0 ? " active" : ""}"></span>`
+        )
+        .join("");
+
+    const dots =
+        [
+            ...dotsWrap.querySelectorAll(
+                ".bt-v19-dot"
+            )
+        ];
+
+    const setActive =
+        index => {
+
+            cards.forEach(
+                (card,i) =>
+                    card.classList.toggle(
+                        "is-active",
+                        i === index
+                    )
+            );
+
+            dots.forEach(
+                (dot,i) =>
+                    dot.classList.toggle(
+                        "active",
+                        i === index
+                    )
+            );
+        };
+
+    setActive(0);
+
+    let ticking = false;
+
+    rail.addEventListener(
+        "scroll",
+        () => {
+
+            if(ticking){
+                return;
+            }
+
+            ticking = true;
+
+            requestAnimationFrame(
+                () => {
+
+                    const railRect =
+                        rail.getBoundingClientRect();
+
+                    const railCenter =
+                        railRect.left +
+                        railRect.width / 2;
+
+                    let bestIndex = 0;
+                    let bestDistance = Infinity;
+
+                    cards.forEach(
+                        (card,index) => {
+
+                            const rect =
+                                card.getBoundingClientRect();
+
+                            const center =
+                                rect.left +
+                                rect.width / 2;
+
+                            const distance =
+                                Math.abs(
+                                    center - railCenter
+                                );
+
+                            if(
+                                distance <
+                                bestDistance
+                            ){
+                                bestDistance =
+                                    distance;
+
+                                bestIndex =
+                                    index;
+                            }
+                        }
+                    );
+
+                    setActive(
+                        bestIndex
+                    );
+
+                    ticking = false;
+                }
+            );
+        },
+        {
+            passive:true
+        }
+    );
+}
+
 
 
 async function loadBoraTecHome(){
@@ -13880,4 +14066,3 @@ window.openBoraTecFeedTab = function(tabName){
 };
 
 window.openBoraTecHome = openBoraTecHome;
-
