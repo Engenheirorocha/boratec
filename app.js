@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.4
+   BORATEC V1.5
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -10571,6 +10571,1173 @@ window.hideConversationForMe =
     hideConversationForMe;
 
 
+
+/* =========================================================
+   COMUNIDADE BORATEC V1.5
+   CHAT PÚBLICO ENTRE PROFISSIONAIS
+========================================================= */
+
+let btCommunityChannel = null;
+let btCommunityOpened = false;
+
+
+function createCommunityInterface(){
+
+    if(
+        document.getElementById(
+            "btCommunityOverlay"
+        )
+    ){
+        return;
+    }
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "btCommunityStyle";
+
+    style.textContent = `
+        #btCommunityOverlay{
+            position:fixed;
+            inset:0;
+            z-index:7600;
+            display:none;
+            flex-direction:column;
+            background:#06182b;
+            color:#fff;
+        }
+
+        #btCommunityOverlay.show{
+            display:flex;
+        }
+
+        .bt-community-head{
+            min-height:68px;
+            padding:9px 14px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-shrink:0;
+            background:#081e34;
+            border-bottom:1px solid rgba(255,255,255,.08);
+        }
+
+        .bt-community-back{
+            width:40px;
+            height:40px;
+            border:0;
+            border-radius:12px;
+            background:rgba(255,255,255,.07);
+            color:#fff;
+            font-size:20px;
+            cursor:pointer;
+        }
+
+        .bt-community-title{
+            flex:1;
+            min-width:0;
+        }
+
+        .bt-community-title small{
+            display:block;
+            color:#ff8a1d;
+            font-size:9px;
+            font-weight:900;
+            letter-spacing:.9px;
+            margin-bottom:2px;
+        }
+
+        .bt-community-title strong{
+            display:block;
+            font-size:16px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .bt-community-online{
+            font-size:10px;
+            color:#8fa7bc;
+            margin-top:3px;
+        }
+
+        #btCommunityMessages{
+            flex:1;
+            overflow:auto;
+            padding:15px 12px 24px;
+            scroll-behavior:smooth;
+        }
+
+        .bt-community-empty{
+            text-align:center;
+            color:#8fa7bc;
+            padding:50px 22px;
+            line-height:1.55;
+            font-size:13px;
+        }
+
+        .bt-community-message{
+            display:flex;
+            gap:9px;
+            align-items:flex-start;
+            margin-bottom:14px;
+        }
+
+        .bt-community-avatar{
+            width:38px;
+            height:38px;
+            flex:0 0 38px;
+            border-radius:50%;
+            border:1px solid rgba(255,255,255,.09);
+            background:#123b60;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            color:#fff;
+            font-size:11px;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .bt-community-avatar img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .bt-community-bubble{
+            min-width:0;
+            flex:1;
+        }
+
+        .bt-community-meta{
+            display:flex;
+            align-items:center;
+            gap:6px;
+            flex-wrap:wrap;
+            margin-bottom:4px;
+        }
+
+        .bt-community-name{
+            border:0;
+            padding:0;
+            background:none;
+            color:#fff;
+            font-family:inherit;
+            font-size:12px;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .bt-community-rep{
+            font-size:10px;
+            color:#ff9a38;
+            font-weight:800;
+        }
+
+        .bt-community-time{
+            font-size:9px;
+            color:#718aa0;
+        }
+
+        .bt-community-delete{
+            margin-left:auto;
+            width:28px;
+            height:28px;
+            border:0;
+            border-radius:8px;
+            background:rgba(255,76,91,.10);
+            color:#ff7b86;
+            cursor:pointer;
+            font-size:12px;
+        }
+
+        .bt-community-text{
+            display:inline-block;
+            max-width:100%;
+            padding:10px 12px;
+            border-radius:4px 14px 14px 14px;
+            background:#0d2943;
+            border:1px solid rgba(255,255,255,.055);
+            color:#eef6ff;
+            font-size:13px;
+            line-height:1.45;
+            white-space:pre-wrap;
+            word-break:break-word;
+        }
+
+        .bt-community-message.own .bt-community-text{
+            background:#123b60;
+        }
+
+        .bt-community-compose{
+            padding:9px 10px calc(9px + env(safe-area-inset-bottom));
+            display:flex;
+            gap:8px;
+            align-items:flex-end;
+            flex-shrink:0;
+            background:#081e34;
+            border-top:1px solid rgba(255,255,255,.08);
+        }
+
+        #btCommunityInput{
+            min-height:44px;
+            max-height:110px;
+            flex:1;
+            resize:none;
+            border:1px solid rgba(255,255,255,.09);
+            border-radius:14px;
+            background:#0b2239;
+            color:#fff;
+            outline:none;
+            padding:12px 13px;
+            font-family:inherit;
+            font-size:13px;
+            line-height:1.35;
+        }
+
+        #btCommunityInput::placeholder{
+            color:#6f879d;
+        }
+
+        #btCommunitySend{
+            width:46px;
+            height:46px;
+            flex:0 0 46px;
+            border:0;
+            border-radius:14px;
+            background:#ff7900;
+            color:#fff;
+            font-size:18px;
+            font-weight:900;
+            cursor:pointer;
+            box-shadow:0 8px 22px rgba(255,121,0,.18);
+        }
+
+        #btCommunitySend:disabled{
+            opacity:.55;
+            cursor:default;
+        }
+
+        .bt-community-info{
+            padding:7px 13px;
+            flex-shrink:0;
+            background:#071c30;
+            color:#7f98ad;
+            border-bottom:1px solid rgba(255,255,255,.05);
+            font-size:9px;
+            text-align:center;
+        }
+
+        .bt-community-nav-icon{
+            position:relative;
+        }
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+
+    const overlay =
+        document.createElement(
+            "section"
+        );
+
+    overlay.id =
+        "btCommunityOverlay";
+
+    overlay.innerHTML = `
+        <div class="bt-community-head">
+
+            <button
+                class="bt-community-back"
+                type="button"
+                onclick="closeCommunity()"
+            >
+                ‹
+            </button>
+
+            <div class="bt-community-title">
+                <small>BORATEC</small>
+                <strong>💬 Comunidade</strong>
+                <div class="bt-community-online">
+                    Profissionais trocando informações em tempo real
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bt-community-info">
+            Espaço público para usuários BoraTec • respeite os demais profissionais
+        </div>
+
+        <div id="btCommunityMessages">
+            <div class="bt-community-empty">
+                Carregando comunidade...
+            </div>
+        </div>
+
+        <form
+            class="bt-community-compose"
+            onsubmit="sendCommunityMessage(event)"
+        >
+            <textarea
+                id="btCommunityInput"
+                maxlength="1000"
+                rows="1"
+                placeholder="Compartilhe uma dúvida, dica ou informação..."
+            ></textarea>
+
+            <button
+                id="btCommunitySend"
+                type="submit"
+                aria-label="Enviar"
+            >
+                ➤
+            </button>
+        </form>
+    `;
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    const input =
+        document.getElementById(
+            "btCommunityInput"
+        );
+
+    input?.addEventListener(
+        "input",
+        () => {
+
+            input.style.height =
+                "auto";
+
+            input.style.height =
+                Math.min(
+                    input.scrollHeight,
+                    110
+                )
+                +
+                "px";
+        }
+    );
+}
+
+
+function setupCommunityNav(){
+
+    const nav =
+        document.querySelector(
+            ".bottom-nav"
+        );
+
+    if(!nav){
+        return;
+    }
+
+    if(
+        document.getElementById(
+            "btCommunityNavButton"
+        )
+    ){
+        return;
+    }
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+    button.id =
+        "btCommunityNavButton";
+
+    button.className =
+        "nav-button";
+
+    button.type =
+        "button";
+
+    button.setAttribute(
+        "onclick",
+        "selectNav(this,'Comunidade')"
+    );
+
+    button.innerHTML = `
+        <span class="bt-community-nav-icon">
+            ◉
+        </span>
+        Comunidade
+    `;
+
+    const profileButton =
+        Array.from(
+            nav.querySelectorAll(
+                ".nav-button"
+            )
+        )
+        .find(
+            item =>
+                (
+                    item.getAttribute(
+                        "onclick"
+                    )
+                    ||
+                    ""
+                )
+                .toLowerCase()
+                .includes(
+                    "perfil"
+                )
+        );
+
+    if(profileButton){
+        nav.insertBefore(
+            button,
+            profileButton
+        );
+    }
+    else{
+        nav.appendChild(
+            button
+        );
+    }
+}
+
+
+function btCommunityInitials(
+    name
+){
+
+    return String(
+        name
+        ||
+        "BT"
+    )
+    .trim()
+    .split(/\s+/)
+    .slice(0,2)
+    .map(
+        part =>
+            part[0]
+            ||
+            ""
+    )
+    .join("")
+    .toUpperCase();
+}
+
+
+function btCommunityTime(
+    createdAt
+){
+
+    if(!createdAt){
+        return "";
+    }
+
+    const date =
+        new Date(
+            createdAt
+        );
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return "";
+    }
+
+    const today =
+        new Date();
+
+    const sameDay =
+        date.getFullYear()
+        ===
+        today.getFullYear()
+        &&
+        date.getMonth()
+        ===
+        today.getMonth()
+        &&
+        date.getDate()
+        ===
+        today.getDate();
+
+    if(sameDay){
+        return date
+        .toLocaleTimeString(
+            "pt-BR",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+    }
+
+    return date
+    .toLocaleDateString(
+        "pt-BR",
+        {
+            day:"2-digit",
+            month:"2-digit"
+        }
+    )
+    +
+    " "
+    +
+    date
+    .toLocaleTimeString(
+        "pt-BR",
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+}
+
+
+async function loadCommunityMessages(
+    scrollToBottom = true
+){
+
+    const container =
+        document.getElementById(
+            "btCommunityMessages"
+        );
+
+    if(
+        !container
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .from(
+            "community_messages"
+        )
+        .select(`
+            id,
+            sender_id,
+            content,
+            created_at,
+            profiles (
+                id,
+                name,
+                professional_name,
+                photo_url
+            )
+        `)
+        .order(
+            "created_at",
+            {
+                ascending:true
+            }
+        )
+        .limit(
+            200
+        );
+
+        if(error){
+            throw error;
+        }
+
+
+        const senderIds =
+            [
+                ...new Set(
+                    (data || [])
+                    .map(
+                        item =>
+                            item.sender_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+        const reputationMap =
+            new Map();
+
+        if(senderIds.length){
+
+            const {
+                data:reputations,
+                error:repError
+            } =
+            await boraSupabase
+            .from(
+                "v_profile_reputation"
+            )
+            .select(`
+                id,
+                reputation,
+                ratings_count,
+                completed_jobs
+            `)
+            .in(
+                "id",
+                senderIds
+            );
+
+            if(!repError){
+
+                (reputations || [])
+                .forEach(
+                    rep =>
+                        reputationMap.set(
+                            rep.id,
+                            rep
+                        )
+                );
+            }
+        }
+
+
+        if(
+            !data
+            ||
+            data.length === 0
+        ){
+
+            container.innerHTML = `
+                <div class="bt-community-empty">
+                    💬<br><br>
+                    A comunidade ainda está vazia.<br>
+                    Seja o primeiro a compartilhar uma dúvida, dica ou informação.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            data
+            .map(
+                message => {
+
+                    const profile =
+                        message.profiles
+                        ||
+                        {};
+
+                    const displayName =
+                        profile.professional_name
+                        ||
+                        profile.name
+                        ||
+                        "Profissional BoraTec";
+
+                    const reputation =
+                        reputationMap.get(
+                            message.sender_id
+                        )
+                        ||
+                        {};
+
+                    const ratingCount =
+                        Number(
+                            reputation.ratings_count
+                            ||
+                            0
+                        );
+
+                    const repHTML =
+                        ratingCount > 0
+                        ?
+                        `⭐ ${Number(
+                            reputation.reputation
+                            ||
+                            0
+                        ).toFixed(1)}`
+                        :
+                        "NOVO";
+
+                    const avatarHTML =
+                        profile.photo_url
+                        ?
+                        `
+                        <img
+                            src="${escapeHtml(profile.photo_url)}"
+                            alt=""
+                        >
+                        `
+                        :
+                        escapeHtml(
+                            btCommunityInitials(
+                                displayName
+                            )
+                        );
+
+                    const own =
+                        boraUser
+                        &&
+                        message.sender_id
+                        ===
+                        boraUser.id;
+
+                    const deleteHTML =
+                        own
+                        ?
+                        `
+                        <button
+                            class="bt-community-delete"
+                            type="button"
+                            onclick="deleteCommunityMessage('${message.id}')"
+                            title="Apagar minha mensagem"
+                        >
+                            🗑
+                        </button>
+                        `
+                        :
+                        "";
+
+                    return `
+                        <div
+                            class="bt-community-message ${own ? "own" : ""}"
+                            data-community-message-id="${message.id}"
+                        >
+
+                            <button
+                                class="bt-community-avatar"
+                                type="button"
+                                onclick="openPublicProfile('${message.sender_id}')"
+                            >
+                                ${avatarHTML}
+                            </button>
+
+                            <div class="bt-community-bubble">
+
+                                <div class="bt-community-meta">
+
+                                    <button
+                                        class="bt-community-name"
+                                        type="button"
+                                        onclick="openPublicProfile('${message.sender_id}')"
+                                    >
+                                        ${escapeHtml(displayName)}
+                                    </button>
+
+                                    <span class="bt-community-rep">
+                                        ${repHTML}
+                                    </span>
+
+                                    <span class="bt-community-time">
+                                        ${escapeHtml(
+                                            btCommunityTime(
+                                                message.created_at
+                                            )
+                                        )}
+                                    </span>
+
+                                    ${deleteHTML}
+
+                                </div>
+
+                                <div class="bt-community-text">${escapeHtml(message.content)}</div>
+
+                            </div>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+
+
+        if(scrollToBottom){
+
+            requestAnimationFrame(
+                () => {
+
+                    container.scrollTop =
+                        container.scrollHeight;
+                }
+            );
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro comunidade:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="bt-community-empty">
+                Não foi possível carregar a comunidade.
+            </div>
+        `;
+    }
+}
+
+
+async function sendCommunityMessage(
+    event
+){
+
+    event.preventDefault();
+
+    if(
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        showToast(
+            "Usuário não carregado"
+        );
+        return;
+    }
+
+    const input =
+        document.getElementById(
+            "btCommunityInput"
+        );
+
+    const button =
+        document.getElementById(
+            "btCommunitySend"
+        );
+
+    const content =
+        String(
+            input?.value
+            ||
+            ""
+        )
+        .trim();
+
+    if(!content){
+        return;
+    }
+
+    if(content.length > 1000){
+        showToast(
+            "Mensagem muito longa"
+        );
+        return;
+    }
+
+    try{
+
+        if(button){
+            button.disabled =
+                true;
+        }
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from(
+            "community_messages"
+        )
+        .insert({
+            sender_id:
+                boraUser.id,
+            content:
+                content
+        });
+
+        if(error){
+            throw error;
+        }
+
+        if(input){
+            input.value =
+                "";
+
+            input.style.height =
+                "auto";
+        }
+
+        await loadCommunityMessages(
+            true
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro ao enviar comunidade:",
+            error
+        );
+
+        showToast(
+            "Não foi possível enviar a mensagem"
+        );
+
+    }finally{
+
+        if(button){
+            button.disabled =
+                false;
+        }
+
+        input?.focus();
+    }
+}
+
+
+async function deleteCommunityMessage(
+    messageId
+){
+
+    if(
+        !messageId
+        ||
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Apagar esta mensagem da comunidade?"
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from(
+            "community_messages"
+        )
+        .delete()
+        .eq(
+            "id",
+            messageId
+        )
+        .eq(
+            "sender_id",
+            boraUser.id
+        );
+
+        if(error){
+            throw error;
+        }
+
+        showToast(
+            "🗑 Mensagem apagada"
+        );
+
+        await loadCommunityMessages(
+            false
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro ao apagar mensagem comunidade:",
+            error
+        );
+
+        showToast(
+            "Não foi possível apagar a mensagem"
+        );
+    }
+}
+
+
+function listenCommunityRealtime(){
+
+    if(
+        !boraSupabase
+        ||
+        btCommunityChannel
+    ){
+        return;
+    }
+
+    btCommunityChannel =
+        boraSupabase
+        .channel(
+            "boratec-community"
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"community_messages"
+            },
+            async () => {
+
+                if(btCommunityOpened){
+                    await loadCommunityMessages(
+                        true
+                    );
+                }
+            }
+        )
+        .subscribe();
+}
+
+
+async function openCommunity(){
+
+    createCommunityInterface();
+
+    setupCommunityNav();
+
+    const overlay =
+        document.getElementById(
+            "btCommunityOverlay"
+        );
+
+    overlay
+    ?.classList
+    .add(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+    btCommunityOpened =
+        true;
+
+    document
+    .querySelectorAll(
+        ".bottom-nav .nav-button"
+    )
+    .forEach(
+        button =>
+            button.classList.remove(
+                "active"
+            )
+    );
+
+    document
+    .getElementById(
+        "btCommunityNavButton"
+    )
+    ?.classList
+    .add(
+        "active"
+    );
+
+    await loadCommunityMessages(
+        true
+    );
+
+    listenCommunityRealtime();
+
+    setTimeout(
+        () => {
+            document
+            .getElementById(
+                "btCommunityInput"
+            )
+            ?.focus();
+        },
+        120
+    );
+}
+
+
+function closeCommunity(){
+
+    document
+    .getElementById(
+        "btCommunityOverlay"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+    document.body.style.overflow =
+        "";
+
+    btCommunityOpened =
+        false;
+
+    document
+    .getElementById(
+        "btCommunityNavButton"
+    )
+    ?.classList
+    .remove(
+        "active"
+    );
+
+    const homeButton =
+        Array.from(
+            document.querySelectorAll(
+                ".bottom-nav .nav-button"
+            )
+        )
+        .find(
+            item =>
+                (
+                    item.getAttribute(
+                        "onclick"
+                    )
+                    ||
+                    ""
+                )
+                .toLowerCase()
+                .includes(
+                    "início"
+                )
+                ||
+                (
+                    item.getAttribute(
+                        "onclick"
+                    )
+                    ||
+                    ""
+                )
+                .toLowerCase()
+                .includes(
+                    "inicio"
+                )
+        );
+
+    homeButton
+    ?.classList
+    .add(
+        "active"
+    );
+}
+
+
+window.openCommunity =
+    openCommunity;
+
+window.closeCommunity =
+    closeCommunity;
+
+window.sendCommunityMessage =
+    sendCommunityMessage;
+
+window.deleteCommunityMessage =
+    deleteCommunityMessage;
+
 /* =========================================================
    MENU V1.0
 ========================================================= */
@@ -10590,6 +11757,17 @@ function(
         String(page || "")
         .trim()
         .toLowerCase();
+
+    if(
+        normalized === "comunidade"
+        ||
+        normalized === "community"
+    ){
+
+        openCommunity();
+        return;
+    }
+
 
     if(normalized === "perfil"){
 
@@ -10626,6 +11804,10 @@ async function initializeBoraTecV1(){
 
     createBoraTecV1Interface();
 
+    createCommunityInterface();
+
+    setupCommunityNav();
+
     setupBoraTecDeleteStyles();
 
     setupV14MainTabs();
@@ -10655,6 +11837,10 @@ async function initializeBoraTecV1(){
                     await refreshNotificationBadge();
 
                     listenNotificationsRealtime();
+
+                    listenCommunityRealtime();
+
+                    setupCommunityNav();
 
                     setupHelperAvailabilityPublishOption();
 
