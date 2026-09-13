@@ -6303,7 +6303,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.1
+   BORATEC V1.2
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -6311,6 +6311,8 @@ let btAllPosts = [];
 let btNotificationsChannel = null;
 let btCurrentProfileId = null;
 let btProfileConversationInterestId = null;
+let btDirectoryMode = null;
+
 
 const btFeedFilters = {
     type: "",
@@ -7850,6 +7852,28 @@ function renderPublicProfile(profile){
             </div>
 
             <div class="bt-field">
+                <label>Como quero aparecer no BoraTec</label>
+
+                <label class="bt-specialty-option" style="margin-top:8px;">
+                    <input
+                        type="checkbox"
+                        id="btRoleProfessional"
+                        ${(!Array.isArray(profile.roles) || profile.roles.includes("professional")) ? "checked" : ""}
+                    >
+                    <span>👨‍🔧 Profissional / Técnico</span>
+                </label>
+
+                <label class="bt-specialty-option" style="margin-top:8px;">
+                    <input
+                        type="checkbox"
+                        id="btRoleHelper"
+                        ${(Array.isArray(profile.roles) && profile.roles.includes("helper")) ? "checked" : ""}
+                    >
+                    <span>👷 Ajudante</span>
+                </label>
+            </div>
+
+            <div class="bt-field">
                 <label>Especialidades</label>
                 <div class="bt-specialty-grid">
                     ${btSpecialtyCheckboxes(specialties)}
@@ -7933,6 +7957,29 @@ async function saveOwnProfessionalProfile(){
         )
         .map(input => input.value);
 
+    const roles = [];
+
+    if(
+        document
+        .getElementById("btRoleProfessional")
+        ?.checked
+    ){
+        roles.push("professional");
+    }
+
+    if(
+        document
+        .getElementById("btRoleHelper")
+        ?.checked
+    ){
+        roles.push("helper");
+    }
+
+    if(roles.length === 0){
+        showToast("Marque Profissional/Técnico ou Ajudante");
+        return;
+    }
+
     if(!professionalName){
 
         showToast(
@@ -7955,6 +8002,7 @@ async function saveOwnProfessionalProfile(){
             bio:
                 bio || null,
             specialties,
+            roles,
             is_available:
                 isAvailable,
             updated_at:
@@ -8567,6 +8615,326 @@ function listenNotificationsRealtime(){
         .subscribe();
 }
 
+
+/* =========================================================
+   DIRETÓRIO DE PROFISSIONAIS / AJUDANTES
+========================================================= */
+
+function btSetFeedHeaderForDirectory(mode){
+
+    const title =
+        document.querySelector(".feed-header h2");
+
+    const subtitle =
+        document.querySelector(".feed-header p");
+
+    if(title){
+        title.textContent =
+            mode === "helper"
+            ? "Ajudantes disponíveis"
+            : "Profissionais disponíveis";
+    }
+
+    if(subtitle){
+        subtitle.textContent =
+            mode === "helper"
+            ? "Ajudantes disponíveis para novas oportunidades"
+            : "Profissionais disponíveis para novas oportunidades";
+    }
+}
+
+
+function btRestoreFeedHeader(){
+
+    const title =
+        document.querySelector(".feed-header h2");
+
+    const subtitle =
+        document.querySelector(".feed-header p");
+
+    if(title){
+        title.textContent =
+            "Oportunidades agora";
+    }
+
+    if(subtitle){
+        subtitle.textContent =
+            "Publicações recentes da rede";
+    }
+}
+
+
+function btSetDirectoryTabActive(filter){
+
+    document
+    .querySelectorAll(".tab")
+    .forEach(tab => {
+
+        const tabFilter =
+            tab.getAttribute("data-filter");
+
+        tab.classList.toggle(
+            "active",
+            tabFilter === filter
+        );
+    });
+}
+
+
+async function openPeopleDirectory(mode){
+
+    btDirectoryMode = mode;
+
+    btSetDirectoryTabActive(
+        mode === "helper"
+        ? "helpers_directory"
+        : "professionals_directory"
+    );
+
+    btSetFeedHeaderForDirectory(mode);
+
+    const feed =
+        document.getElementById("feed");
+
+    const count =
+        document.getElementById("feedCount");
+
+    if(!feed){
+        return;
+    }
+
+    feed.innerHTML =
+        `<div class="bt-directory-empty">Carregando...</div>`;
+
+    if(count){
+        count.textContent = "carregando";
+    }
+
+    try{
+
+        const role =
+            mode === "helper"
+            ? "helper"
+            : "professional";
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "get_available_people",
+            {
+                p_role:role
+            }
+        );
+
+        if(error){
+            throw error;
+        }
+
+        const people =
+            Array.isArray(data)
+            ? data
+            : [];
+
+        if(count){
+            count.textContent =
+                `${people.length} ${
+                    mode === "helper"
+                    ? (people.length === 1 ? "ajudante" : "ajudantes")
+                    : (people.length === 1 ? "profissional" : "profissionais")
+                }`;
+        }
+
+        if(people.length === 0){
+
+            feed.innerHTML =
+                `<div class="bt-directory-empty">
+                    ${
+                        mode === "helper"
+                        ? "Nenhum ajudante disponível agora."
+                        : "Nenhum profissional disponível agora."
+                    }
+                </div>`;
+
+            return;
+        }
+
+        feed.innerHTML =
+            people
+            .map(person => {
+
+                const name =
+                    person.professional_name
+                    ||
+                    person.name
+                    ||
+                    "Profissional BoraTec";
+
+                const avatar =
+                    person.photo_url
+                    ?
+                    `<img src="${escapeHtml(person.photo_url)}" alt="Perfil">`
+                    :
+                    escapeHtml(
+                        getInitials(name)
+                    );
+
+                const ratingsCount =
+                    Number(
+                        person.ratings_count
+                        ||
+                        0
+                    );
+
+                const reputation =
+                    ratingsCount > 0
+                    ?
+                    `⭐ ${Number(person.reputation || 0).toFixed(1)}`
+                    :
+                    "NOVO";
+
+                const completed =
+                    Number(
+                        person.completed_jobs
+                        ||
+                        0
+                    );
+
+                const recommend =
+                    ratingsCount > 0
+                    ?
+                    `${Number(person.recommend_percent || 0).toFixed(0)}% recomendam`
+                    :
+                    "sem avaliações";
+
+                const specialties =
+                    Array.isArray(person.specialties)
+                    &&
+                    person.specialties.length
+                    ?
+                    person.specialties
+                    .slice(0,4)
+                    .join(" • ")
+                    :
+                    "Especialidades não informadas";
+
+                return `
+                    <div class="bt-directory-card">
+
+                        <div class="bt-directory-top">
+
+                            <div class="bt-directory-avatar">
+                                ${avatar}
+                            </div>
+
+                            <div>
+                                <div class="bt-directory-name">
+                                    ${escapeHtml(name)}
+                                </div>
+
+                                <div class="bt-directory-meta">
+                                    🟢 Disponível agora<br>
+                                    ${escapeHtml(reputation)}
+                                    • ${completed} serviços
+                                    • ${escapeHtml(recommend)}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="bt-directory-specialties">
+                            🔧 ${escapeHtml(specialties)}
+                        </div>
+
+                        <div class="bt-directory-actions">
+
+                            <button
+                                class="bt-secondary"
+                                type="button"
+                                onclick="openPublicProfile('${person.id}')"
+                            >
+                                Ver perfil
+                            </button>
+
+                        </div>
+
+                    </div>
+                `;
+            })
+            .join("");
+
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar diretório:",
+            error
+        );
+
+        feed.innerHTML =
+            `<div class="bt-directory-empty">
+                Não foi possível carregar agora.
+            </div>`;
+
+        if(count){
+            count.textContent = "erro";
+        }
+    }
+}
+
+
+function closePeopleDirectory(){
+
+    btDirectoryMode = null;
+
+    btRestoreFeedHeader();
+
+    loadOpportunities();
+}
+
+
+const btOriginalChangeFilter =
+    window.changeFilter
+    ||
+    changeFilter;
+
+changeFilter =
+function(filter,button){
+
+    if(
+        filter === "professionals_directory"
+    ){
+        openPeopleDirectory(
+            "professional"
+        );
+        return;
+    }
+
+    if(
+        filter === "helpers_directory"
+    ){
+        openPeopleDirectory(
+            "helper"
+        );
+        return;
+    }
+
+    btDirectoryMode = null;
+
+    btRestoreFeedHeader();
+
+    return btOriginalChangeFilter(
+        filter,
+        button
+    );
+};
+
+window.changeFilter =
+    changeFilter;
+
+window.openPeopleDirectory =
+    openPeopleDirectory;
 
 /* =========================================================
    MENU V1.0
