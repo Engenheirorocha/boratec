@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V2.0 STABLE
+   BORATEC R11 PWA
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12476,6 +12476,128 @@ function setupBoraTecPWA(){
     }
 }
 
+
+let boraTecDeferredInstallPrompt = null;
+
+function isBoraTecStandalone(){
+    return (
+        window.matchMedia?.("(display-mode: standalone)")?.matches
+        ||
+        window.navigator.standalone === true
+    );
+}
+
+function updateBoraTecInstallButton(){
+
+    const button =
+        document.getElementById(
+            "btHomeInstallButton"
+        )
+        ||
+        document.getElementById(
+            "btHomeInstall"
+        );
+
+    if(!button){
+        return;
+    }
+
+    if(isBoraTecStandalone()){
+        button.style.display = "none";
+        return;
+    }
+
+    button.style.display = "flex";
+}
+
+async function installBoraTecApp(){
+
+    if(isBoraTecStandalone()){
+        showToast?.("BoraTec já está instalado");
+        updateBoraTecInstallButton();
+        return;
+    }
+
+    if(boraTecDeferredInstallPrompt){
+
+        try{
+
+            boraTecDeferredInstallPrompt.prompt();
+
+            const choice =
+                await boraTecDeferredInstallPrompt.userChoice;
+
+            if(choice?.outcome === "accepted"){
+                showToast?.("Instalação iniciada");
+            }
+
+            boraTecDeferredInstallPrompt = null;
+            updateBoraTecInstallButton();
+
+            return;
+
+        }catch(error){
+
+            console.error(
+                "Erro ao abrir instalação:",
+                error
+            );
+        }
+    }
+
+    const isIOS =
+        /iphone|ipad|ipod/i
+        .test(
+            navigator.userAgent
+        );
+
+    if(isIOS){
+
+        alert(
+            "Para instalar o BoraTec no iPhone:\n\n" +
+            "1. Toque em Compartilhar.\n" +
+            "2. Escolha \"Adicionar à Tela de Início\"."
+        );
+
+        return;
+    }
+
+    alert(
+        "Para instalar o BoraTec:\n\n" +
+        "Abra o menu do navegador (⋮) e escolha " +
+        "\"Instalar app\" ou \"Adicionar à tela inicial\"."
+    );
+}
+
+window.addEventListener(
+    "beforeinstallprompt",
+    event => {
+
+        event.preventDefault();
+
+        boraTecDeferredInstallPrompt =
+            event;
+
+        updateBoraTecInstallButton();
+    }
+);
+
+window.addEventListener(
+    "appinstalled",
+    () => {
+
+        boraTecDeferredInstallPrompt = null;
+        updateBoraTecInstallButton();
+
+        showToast?.(
+            "📲 BoraTec instalado!"
+        );
+    }
+);
+
+window.installBoraTecApp =
+    installBoraTecApp;
+
 function createBoraTecHome(){
 
     if(document.getElementById("btHomeScreen")){
@@ -12947,6 +13069,7 @@ function createBoraTecHome(){
     document.body.appendChild(home);
 
     setupBoraTecHomeCarousel();
+    updateBoraTecInstallButton();
 
     const installBtn = document.getElementById("btInstallAppButton");
 
@@ -12954,7 +13077,7 @@ function createBoraTecHome(){
         installBtn.addEventListener("click", async () => {
 
             if(isBoraTecStandalone()){
-                installBtn.style.display = "none";
+                installBtn.style.display = "flex";
                 return;
             }
 
