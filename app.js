@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8.2
+   BORATEC V1.8.3
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12749,7 +12749,7 @@ function createBoraTecHome(){
                 <button
                     class="bt-v182-action primary"
                     type="button"
-                    onclick="openPublishForm('service')"
+                    onclick="btHomeOpenPublish('service')"
                 >
                     <div class="bt-v182-action-icon">🔥</div>
                     <strong>Repassar serviço</strong>
@@ -12759,7 +12759,7 @@ function createBoraTecHome(){
                 <button
                     class="bt-v182-action"
                     type="button"
-                    onclick="openPublishForm('helper')"
+                    onclick="btHomeOpenPublish('helper')"
                 >
                     <div class="bt-v182-action-icon">👷</div>
                     <strong>Preciso de ajudante</strong>
@@ -12769,7 +12769,7 @@ function createBoraTecHome(){
                 <button
                     class="bt-v182-action"
                     type="button"
-                    onclick="openPublishForm('technician_available')"
+                    onclick="btHomeOpenPublish('technician_available')"
                 >
                     <div class="bt-v182-action-icon">🧰</div>
                     <strong>Estou disponível</strong>
