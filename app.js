@@ -52,165 +52,53 @@ let interestsChannel = null;
    START
 ========================================================= */
 
-
-async function ensureBoraTecSupabaseLoaded(){
-
-    if(typeof window.supabase !== "undefined"){
-        return true;
-    }
-
-    return new Promise(resolve => {
-
-        const existing =
-            document.querySelector(
-                'script[data-boratec-supabase-loader="1"]'
-            );
-
-        if(existing){
-
-            const check = setInterval(() => {
-
-                if(typeof window.supabase !== "undefined"){
-                    clearInterval(check);
-                    resolve(true);
-                }
-
-            },100);
-
-            setTimeout(() => {
-                clearInterval(check);
-                resolve(
-                    typeof window.supabase !== "undefined"
-                );
-            },5000);
-
-            return;
-        }
-
-        const script =
-            document.createElement("script");
-
-        script.src =
-            "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-
-        script.async =
-            true;
-
-        script.dataset.boratecSupabaseLoader =
-            "1";
-
-        script.onload =
-            () => resolve(
-                typeof window.supabase !== "undefined"
-            );
-
-        script.onerror =
-            () => resolve(false);
-
-        document.head.appendChild(script);
-    });
-}
-
-
 async function startBoraTec(){
 
-    console.log("🚀 BoraTec Recovery iniciando...");
+    console.log("🚀 BoraTec iniciando...");
 
-    try{
 
-        const supabaseReady =
-            await ensureBoraTecSupabaseLoaded();
+    if(typeof window.supabase === "undefined"){
 
-        if(!supabaseReady){
+        console.error("Supabase não carregado.");
 
-            console.error(
-                "Supabase não carregou."
-            );
+        return;
 
-            return;
-        }
-
-        if(!boraSupabase){
-
-            boraSupabase =
-                window.supabase.createClient(
-                    BORATEC_SUPABASE_URL,
-                    BORATEC_SUPABASE_KEY
-                );
-        }
-
-        const logged =
-            await checkBoraTecSession();
-
-        if(!logged){
-            return;
-        }
-
-        try{
-            await loadBoraTecProfile();
-        }catch(error){
-            console.error(
-                "Erro perfil recovery:",
-                error
-            );
-        }
-
-        try{
-            updateBoraTecUserInterface();
-        }catch(error){
-            console.error(
-                "Erro UI recovery:",
-                error
-            );
-        }
-
-        try{
-            createChatInterface();
-        }catch(error){
-            console.error(
-                "Erro chat recovery:",
-                error
-            );
-        }
-
-        try{
-            await loadOpportunities();
-        }catch(error){
-            console.error(
-                "Erro feed recovery:",
-                error
-            );
-        }
-
-        try{
-            listenAuthChanges();
-        }catch(error){
-            console.error(
-                "Erro auth listener:",
-                error
-            );
-        }
-
-        try{
-            listenForNewInterests();
-        }catch(error){
-            console.error(
-                "Erro interest listener:",
-                error
-            );
-        }
-
-        console.log(
-            "✅ BoraTec Recovery iniciado."
-        );
-
-    }catch(error){
-
-        console.error(
-            "Falha crítica startBoraTec:",
-            error
-        );
     }
+
+
+    boraSupabase =
+        window.supabase.createClient(
+            BORATEC_SUPABASE_URL,
+            BORATEC_SUPABASE_KEY
+        );
+
+
+    const logged =
+        await checkBoraTecSession();
+
+
+    if(!logged){
+
+        return;
+
+    }
+
+
+    await loadBoraTecProfile();
+
+    updateBoraTecUserInterface();
+
+    createChatInterface();
+
+    await loadOpportunities();
+
+    listenAuthChanges();
+
+    listenForNewInterests();
+
+
+    console.log("✅ BoraTec iniciado.");
+
 }
 
 
@@ -6475,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.8.5 RECOVERY
+   BORATEC V1.8.4
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -13592,92 +13480,27 @@ function(
 
 async function initializeBoraTecV1(){
 
-    const safe =
-        async (
-            label,
-            fn
-        ) => {
+    setupBoraTecPWA();
 
-            try{
-                return await fn();
-            }catch(error){
+    setupStandaloneBehavior();
 
-                console.error(
-                    `Recovery ${label}:`,
-                    error
-                );
+    createBoraTecSplash();
 
-                return null;
-            }
-        };
+    createBoraTecV1Interface();
 
+    createCommunityInterface();
 
-    await safe(
-        "PWA",
-        async () =>
-            setupBoraTecPWA()
-    );
+    createBoraTecHome();
 
-    await safe(
-        "standalone",
-        async () =>
-            setupStandaloneBehavior()
-    );
+    setupCommunityNav();
 
-    await safe(
-        "splash",
-        async () =>
-            createBoraTecSplash()
-    );
+    setupBoraTecDeleteStyles();
 
-    await safe(
-        "interface",
-        async () =>
-            createBoraTecV1Interface()
-    );
+    setupV14MainTabs();
 
-    await safe(
-        "community",
-        async () =>
-            createCommunityInterface()
-    );
+    setupAvailabilityDateTimeField();
 
-    await safe(
-        "home",
-        async () =>
-            createBoraTecHome()
-    );
-
-    await safe(
-        "community nav",
-        async () =>
-            setupCommunityNav()
-    );
-
-    await safe(
-        "delete styles",
-        async () =>
-            setupBoraTecDeleteStyles()
-    );
-
-    await safe(
-        "tabs v14",
-        async () =>
-            setupV14MainTabs()
-    );
-
-    await safe(
-        "availability datetime",
-        async () =>
-            setupAvailabilityDateTimeField()
-    );
-
-    await safe(
-        "helper availability",
-        async () =>
-            setupHelperAvailabilityPublishOption()
-    );
-
+    setupHelperAvailabilityPublishOption();
 
     let attempts = 0;
 
@@ -13697,65 +13520,28 @@ async function initializeBoraTecV1(){
                         waitForAuth
                     );
 
-                    await safe(
-                        "notifications",
-                        async () =>
-                            refreshNotificationBadge()
-                    );
+                    await refreshNotificationBadge();
 
-                    await safe(
-                        "notification realtime",
-                        async () =>
-                            listenNotificationsRealtime()
-                    );
+                    listenNotificationsRealtime();
 
-                    await safe(
-                        "community realtime",
-                        async () =>
-                            listenCommunityRealtime()
-                    );
+                    listenCommunityRealtime();
 
-                    await safe(
-                        "community nav 2",
-                        async () =>
-                            setupCommunityNav()
-                    );
+                    setupCommunityNav();
 
-                    await safe(
-                        "helper publish 2",
-                        async () =>
-                            setupHelperAvailabilityPublishOption()
-                    );
+                    setupHelperAvailabilityPublishOption();
 
-                    await safe(
-                        "home data",
-                        async () =>
-                            loadBoraTecHome()
-                    );
+                    await loadBoraTecHome();
 
-                    await safe(
-                        "open home",
-                        async () =>
-                            openBoraTecHome()
-                    );
+                    openBoraTecHome();
 
-                    await safe(
-                        "install helper",
-                        async () =>
-                            showInstallHelpIfNeeded()
-                    );
+                    showInstallHelpIfNeeded();
 
                     return;
                 }
 
-                if(attempts >= 40){
-
+                if(attempts >= 20){
                     clearInterval(
                         waitForAuth
-                    );
-
-                    console.warn(
-                        "Recovery: auth não ficou pronta."
                     );
                 }
 
@@ -13763,6 +13549,7 @@ async function initializeBoraTecV1(){
             250
         );
 }
+
 
 /* =========================================================
    GLOBAL V1.0
@@ -14094,114 +13881,3 @@ window.openBoraTecFeedTab = function(tabName){
 
 window.openBoraTecHome = openBoraTecHome;
 
-
-
-/* =========================================================
-   BORATEC RECOVERY NAV
-========================================================= */
-
-function setupBoraTecRecoveryNavigation(){
-
-    const nav =
-        document.querySelector(
-            ".bottom-nav"
-        );
-
-    if(!nav){
-        return;
-    }
-
-    const buttons =
-        [
-            ...nav.querySelectorAll(
-                "button"
-            )
-        ];
-
-    buttons.forEach(
-        button => {
-
-            const label =
-                String(
-                    button.textContent || ""
-                )
-                .trim()
-                .toLowerCase();
-
-            if(
-                label.includes("início")
-                ||
-                label.includes("inicio")
-            ){
-
-                button.onclick =
-                    event => {
-
-                        event.preventDefault();
-
-                        if(
-                            typeof openBoraTecHome
-                            ===
-                            "function"
-                        ){
-                            openBoraTecHome();
-                        }
-                    };
-            }
-
-            else if(
-                label.includes("mensagens")
-            ){
-
-                button.onclick =
-                    event => {
-
-                        event.preventDefault();
-
-                        closeBoraTecHome?.();
-
-                        openConversations?.();
-                    };
-            }
-
-            else if(
-                label.includes("perfil")
-            ){
-
-                button.onclick =
-                    event => {
-
-                        event.preventDefault();
-
-                        closeBoraTecHome?.();
-
-                        if(
-                            boraUser?.id
-                            &&
-                            typeof openPublicProfile
-                            ===
-                            "function"
-                        ){
-                            openPublicProfile(
-                                boraUser.id
-                            );
-                        }
-                    };
-            }
-        }
-    );
-}
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        setupBoraTecRecoveryNavigation();
-
-        setTimeout(
-            setupBoraTecRecoveryNavigation,
-            1200
-        );
-    }
-);
