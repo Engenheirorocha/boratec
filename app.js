@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.9.2
+   BORATEC V1.8.4
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -12600,107 +12600,22 @@ function createBoraTecHome(){
         }
 
         .bt-v182-actions{
-            position:relative;
-            display:flex;
-            align-items:center;
-            gap:0;
-            overflow:hidden;
-            margin:0 -18px;
-            padding:20px 0 12px;
-            min-height:250px;
-            perspective:900px;
-            transform-style:preserve-3d;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-bottom:26px;
         }
 
         .bt-v182-action{
-            position:absolute;
-            left:50%;
-            width:210px;
-            min-height:230px;
-            border:1px solid rgba(52,165,230,.26);
-            border-radius:24px;
-            padding:22px 18px;
-            text-align:center;
+            min-height:124px;
+            border:1px solid rgba(119,151,178,.18);
+            border-radius:18px;
+            padding:15px;
+            text-align:left;
             color:#fff;
-            background:linear-gradient(180deg,#0a1626 0%,#091422 100%);
-            box-shadow:0 18px 45px rgba(0,0,0,.28);
+            background:linear-gradient(145deg,rgba(15,45,70,.95),rgba(9,35,58,.95));
+            box-shadow:0 9px 24px rgba(0,0,0,.12);
             cursor:pointer;
-            transition:
-                transform .34s cubic-bezier(.22,.61,.36,1),
-                opacity .34s ease,
-                filter .34s ease,
-                border-color .34s ease;
-            transform-origin:center;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .bt-v182-action.is-active{
-            transform:
-                translateX(-50%)
-                translateZ(0)
-                rotateY(0deg)
-                scale(1);
-            opacity:1;
-            z-index:6;
-            filter:none;
-            border-color:rgba(53,184,255,.42);
-        }
-
-        .bt-v182-action.is-prev{
-            transform:
-                translateX(-108%)
-                translateZ(-70px)
-                rotateY(18deg)
-                scale(.82);
-            opacity:.42;
-            z-index:4;
-            filter:brightness(.58);
-        }
-
-        .bt-v182-action.is-next{
-            transform:
-                translateX(8%)
-                translateZ(-70px)
-                rotateY(-18deg)
-                scale(.82);
-            opacity:.42;
-            z-index:4;
-            filter:brightness(.58);
-        }
-
-        .bt-v182-action.is-far-prev{
-            transform:
-                translateX(-150%)
-                translateZ(-140px)
-                rotateY(28deg)
-                scale(.66);
-            opacity:.12;
-            z-index:2;
-            filter:brightness(.36);
-        }
-
-        .bt-v182-action.is-far-next{
-            transform:
-                translateX(50%)
-                translateZ(-140px)
-                rotateY(-28deg)
-                scale(.66);
-            opacity:.12;
-            z-index:2;
-            filter:brightness(.36);
-        }
-
-        .bt-v182-action.is-hidden{
-            transform:
-                translateX(-50%)
-                translateZ(-220px)
-                scale(.48);
-            opacity:0;
-            pointer-events:none;
-            z-index:0;
         }
 
         .bt-v182-action.primary{
@@ -12711,31 +12626,29 @@ function createBoraTecHome(){
         .bt-v182-action:active{ transform:scale(.985); }
 
         .bt-v182-action-icon{
-            width:72px;
-            height:72px;
-            border-radius:18px;
+            width:38px;
+            height:38px;
+            border-radius:12px;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:38px;
-            background:rgba(255,255,255,.035);
-            margin-bottom:18px;
+            font-size:20px;
+            background:rgba(255,255,255,.06);
+            margin-bottom:13px;
         }
 
         .bt-v182-action strong{
             display:block;
-            font-size:20px;
-            line-height:1.05;
-            font-weight:950;
-            margin-bottom:10px;
+            font-size:14px;
+            font-weight:900;
+            margin-bottom:5px;
         }
 
         .bt-v182-action small{
             display:block;
-            color:#7890a6;
-            font-size:11px;
-            line-height:1.4;
-            max-width:170px;
+            color:#8098ad;
+            font-size:10.5px;
+            line-height:1.35;
         }
 
         .bt-v182-recent-head{
@@ -12776,79 +12689,14 @@ function createBoraTecHome(){
             display:none !important;
         }
 
-        .bt-v19-dots{
-            display:flex;
-            justify-content:center;
-            gap:6px;
-            margin:2px 0 10px;
-        }
-
-        .bt-v19-dot{
-            width:6px;
-            height:6px;
-            border-radius:999px;
-            background:rgba(126,151,173,.28);
-            transition:all .18s ease;
-        }
-
-        .bt-v19-dot.active{
-            width:18px;
-            background:#ff8500;
-        }
-
-        .bt-v191-controls{
-            display:flex;
-            justify-content:center;
-            gap:14px;
-            margin:10px 0 26px;
-        }
-
-        .bt-v191-arrow{
-            width:44px;
-            height:44px;
-            border-radius:14px;
-            border:1px solid rgba(120,153,180,.22);
-            background:#0b1c30;
-            color:#fff;
-            font-size:26px;
-            line-height:1;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            box-shadow:0 8px 20px rgba(0,0,0,.15);
-        }
-
-        .bt-v191-arrow:active{
-            transform:scale(.96);
-        }
-
-        @media (max-width:430px){
-            .bt-v182-action{
-                width:190px;
-                min-height:220px;
-            }
-
-            .bt-v182-action.is-prev{
-                transform:translateX(-111%) scale(.78);
-            }
-
-            .bt-v182-action.is-next{
-                transform:translateX(11%) scale(.78);
-            }
-        }
-
         @media (min-width:760px){
             .bt-home-shell{ padding-top:28px; }
 
             .bt-v182-actions{
-                min-height:280px;
+                grid-template-columns:repeat(4,1fr);
             }
 
-            .bt-v182-action{
-                width:250px;
-                min-height:250px;
-            }
+            .bt-v182-action{ min-height:145px; }
         }
     `;
 
@@ -12950,28 +12798,6 @@ function createBoraTecHome(){
 
             </div>
 
-            <div
-                id="btHomeQuickDots"
-                class="bt-v19-dots"
-                aria-hidden="true"
-            ></div>
-
-            <div class="bt-v191-controls">
-                <button
-                    id="btHomeCarouselPrev"
-                    class="bt-v191-arrow"
-                    type="button"
-                    aria-label="Card anterior"
-                >‹</button>
-
-                <button
-                    id="btHomeCarouselNext"
-                    class="bt-v191-arrow"
-                    type="button"
-                    aria-label="Próximo card"
-                >›</button>
-            </div>
-
             <div class="bt-v182-recent-head">
                 <div class="bt-v182-section-title" style="margin:0">
                     Oportunidades recentes
@@ -12996,8 +12822,6 @@ function createBoraTecHome(){
     `;
 
     document.body.appendChild(home);
-
-    setupBoraTecHomeCarousel();
 
     const installBtn = document.getElementById("btInstallAppButton");
 
@@ -13024,298 +12848,6 @@ function createBoraTecHome(){
     }
 }
 
-
-function setupBoraTecHomeCarousel(){
-
-    const rail =
-        document.querySelector(
-            "#btHomeScreen .bt-v182-actions"
-        );
-
-    const dotsWrap =
-        document.getElementById(
-            "btHomeQuickDots"
-        );
-
-    const prevButton =
-        document.getElementById(
-            "btHomeCarouselPrev"
-        );
-
-    const nextButton =
-        document.getElementById(
-            "btHomeCarouselNext"
-        );
-
-    if(!rail || !dotsWrap){
-        return;
-    }
-
-    const cards =
-        [
-            ...rail.querySelectorAll(
-                ".bt-v182-action"
-            )
-        ];
-
-    if(!cards.length){
-        return;
-    }
-
-    let currentIndex = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
-    let isAnimating = false;
-
-    const total =
-        cards.length;
-
-    dotsWrap.innerHTML =
-        cards
-        .map(
-            (_,index) =>
-                `<span class="bt-v19-dot${index === 0 ? " active" : ""}"></span>`
-        )
-        .join("");
-
-    const dots =
-        [
-            ...dotsWrap.querySelectorAll(
-                ".bt-v19-dot"
-            )
-        ];
-
-
-    const circularDistance =
-        (index,active) => {
-
-            let diff =
-                index - active;
-
-            const half =
-                total / 2;
-
-            if(diff > half){
-                diff -= total;
-            }
-
-            if(diff < -half){
-                diff += total;
-            }
-
-            return diff;
-        };
-
-
-    const update =
-        () => {
-
-            cards.forEach(
-                (card,index) => {
-
-                    card.classList.remove(
-                        "is-active",
-                        "is-prev",
-                        "is-next",
-                        "is-far-prev",
-                        "is-far-next",
-                        "is-hidden"
-                    );
-
-                    const diff =
-                        circularDistance(
-                            index,
-                            currentIndex
-                        );
-
-                    if(diff === 0){
-                        card.classList.add(
-                            "is-active"
-                        );
-                    }
-                    else if(diff === -1){
-                        card.classList.add(
-                            "is-prev"
-                        );
-                    }
-                    else if(diff === 1){
-                        card.classList.add(
-                            "is-next"
-                        );
-                    }
-                    else if(diff === -2){
-                        card.classList.add(
-                            "is-far-prev"
-                        );
-                    }
-                    else if(diff === 2){
-                        card.classList.add(
-                            "is-far-next"
-                        );
-                    }
-                    else{
-                        card.classList.add(
-                            "is-hidden"
-                        );
-                    }
-                }
-            );
-
-            dots.forEach(
-                (dot,index) =>
-                    dot.classList.toggle(
-                        "active",
-                        index === currentIndex
-                    )
-            );
-        };
-
-
-    const normalizeIndex =
-        index =>
-            (
-                (
-                    index %
-                    total
-                ) +
-                total
-            ) %
-            total;
-
-
-    const goTo =
-        index => {
-
-            if(isAnimating){
-                return;
-            }
-
-            isAnimating =
-                true;
-
-            currentIndex =
-                normalizeIndex(
-                    index
-                );
-
-            update();
-
-            window.setTimeout(
-                () => {
-                    isAnimating = false;
-                },
-                340
-            );
-        };
-
-
-    prevButton?.addEventListener(
-        "click",
-        () =>
-            goTo(
-                currentIndex - 1
-            )
-    );
-
-    nextButton?.addEventListener(
-        "click",
-        () =>
-            goTo(
-                currentIndex + 1
-            )
-    );
-
-
-    rail.addEventListener(
-        "touchstart",
-        event => {
-
-            touchStartX =
-                event.changedTouches[0].screenX;
-        },
-        {
-            passive:true
-        }
-    );
-
-
-    rail.addEventListener(
-        "touchend",
-        event => {
-
-            touchEndX =
-                event.changedTouches[0].screenX;
-
-            const delta =
-                touchEndX -
-                touchStartX;
-
-            if(
-                Math.abs(delta) <
-                40
-            ){
-                return;
-            }
-
-            if(delta < 0){
-                goTo(
-                    currentIndex + 1
-                );
-            }
-            else{
-                goTo(
-                    currentIndex - 1
-                );
-            }
-        },
-        {
-            passive:true
-        }
-    );
-
-
-    cards.forEach(
-        (card,index) => {
-
-            card.addEventListener(
-                "click",
-                event => {
-
-                    if(
-                        index ===
-                        currentIndex
-                    ){
-                        return;
-                    }
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    const diff =
-                        circularDistance(
-                            index,
-                            currentIndex
-                        );
-
-                    if(diff < 0){
-                        goTo(
-                            currentIndex - 1
-                        );
-                    }
-                    else{
-                        goTo(
-                            currentIndex + 1
-                        );
-                    }
-                },
-                true
-            );
-        }
-    );
-
-
-    update();
-}
 
 async function loadBoraTecHome(){
 
