@@ -7676,6 +7676,155 @@ function closePublicProfile(){
     ?.classList.remove("show");
 }
 
+let btPendingProfilePhoto = null;
+
+function previewOwnProfilePhoto(event){
+
+    const file =
+        event?.target?.files?.[0];
+
+    if(!file){
+        return;
+    }
+
+    if(!file.type?.startsWith("image/")){
+        showToast("Escolha uma imagem válida");
+        event.target.value = "";
+        return;
+    }
+
+    const maxBytes =
+        5 * 1024 * 1024;
+
+    if(file.size > maxBytes){
+        showToast("A foto deve ter no máximo 5 MB");
+        event.target.value = "";
+        return;
+    }
+
+    btPendingProfilePhoto = file;
+
+    const preview =
+        document.getElementById(
+            "btOwnPhotoPreview"
+        );
+
+    if(preview){
+        preview.src =
+            URL.createObjectURL(file);
+
+        preview.style.display =
+            "block";
+    }
+
+    const initials =
+        document.getElementById(
+            "btOwnPhotoInitials"
+        );
+
+    if(initials){
+        initials.style.display =
+            "none";
+    }
+
+    const status =
+        document.getElementById(
+            "btOwnPhotoStatus"
+        );
+
+    if(status){
+        status.textContent =
+            "Nova foto selecionada. Toque em Salvar meu perfil.";
+    }
+}
+
+async function uploadOwnProfilePhoto(){
+
+    if(
+        !btPendingProfilePhoto
+        ||
+        !boraUser
+    ){
+        return (
+            boraProfile?.photo_url
+            ||
+            btCurrentProfile?.photo_url
+            ||
+            null
+        );
+    }
+
+    const file =
+        btPendingProfilePhoto;
+
+    const originalName =
+        String(
+            file.name
+            ||
+            ""
+        );
+
+    const extMatch =
+        originalName
+        .toLowerCase()
+        .match(/\.([a-z0-9]{2,5})$/);
+
+    const extension =
+        extMatch?.[1]
+        ||
+        (
+            file.type === "image/png"
+            ? "png"
+            : file.type === "image/webp"
+            ? "webp"
+            : "jpg"
+        );
+
+    const objectPath =
+        `${boraUser.id}/avatar-${Date.now()}.${extension}`;
+
+    const {
+        error:uploadError
+    } =
+    await boraSupabase
+    .storage
+    .from("profile-photos")
+    .upload(
+        objectPath,
+        file,
+        {
+            cacheControl:"3600",
+            upsert:false
+        }
+    );
+
+    if(uploadError){
+        throw uploadError;
+    }
+
+    const {
+        data:publicData
+    } =
+    boraSupabase
+    .storage
+    .from("profile-photos")
+    .getPublicUrl(
+        objectPath
+    );
+
+    const publicUrl =
+        publicData?.publicUrl;
+
+    if(!publicUrl){
+        throw new Error(
+            "Não foi possível obter a URL da foto"
+        );
+    }
+
+    return publicUrl;
+}
+
+
 function renderPublicProfile(profile){
 
     const body =
@@ -7947,6 +8096,121 @@ function renderPublicProfile(profile){
             </div>
 
             <div class="bt-field">
+                <label>Foto de perfil</label>
+
+                <div
+                    style="
+                        display:flex;
+                        align-items:center;
+                        gap:12px;
+                        margin-top:8px;
+                    "
+                >
+                    <div
+                        style="
+                            width:68px;
+                            height:68px;
+                            flex:0 0 68px;
+                            border-radius:12px;
+                            overflow:hidden;
+                            border:1px solid #40505a;
+                            background:#10171b;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                        "
+                    >
+                        ${
+                            profile.photo_url
+                            ?
+                            `
+                            <img
+                                id="btOwnPhotoPreview"
+                                src="${escapeHtml(profile.photo_url)}"
+                                alt="Minha foto"
+                                style="
+                                    width:100%;
+                                    height:100%;
+                                    object-fit:cover;
+                                    display:block;
+                                "
+                            >
+                            <span
+                                id="btOwnPhotoInitials"
+                                style="display:none;"
+                            ></span>
+                            `
+                            :
+                            `
+                            <img
+                                id="btOwnPhotoPreview"
+                                alt="Minha foto"
+                                style="
+                                    width:100%;
+                                    height:100%;
+                                    object-fit:cover;
+                                    display:none;
+                                "
+                            >
+                            <span
+                                id="btOwnPhotoInitials"
+                                style="
+                                    color:#08baf0;
+                                    font-weight:950;
+                                    font-size:18px;
+                                "
+                            >
+                                ${escapeHtml(getInitials(professionalName))}
+                            </span>
+                            `
+                        }
+                    </div>
+
+                    <div style="flex:1;min-width:0;">
+                        <label
+                            for="btOwnPhotoFile"
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                min-height:38px;
+                                padding:0 13px;
+                                border-radius:8px;
+                                border:1px solid #22c9f6;
+                                background:linear-gradient(180deg,#0aaee0,#087fae);
+                                color:white;
+                                font-size:10px;
+                                font-weight:900;
+                                cursor:pointer;
+                            "
+                        >
+                            📷 Escolher foto
+                        </label>
+
+                        <input
+                            id="btOwnPhotoFile"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onchange="previewOwnProfilePhoto(event)"
+                            style="display:none;"
+                        >
+
+                        <div
+                            id="btOwnPhotoStatus"
+                            style="
+                                margin-top:7px;
+                                color:#7f96a9;
+                                font-size:9px;
+                                line-height:1.35;
+                            "
+                        >
+                            JPG, PNG ou WEBP. Máximo 5 MB.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bt-field">
                 <label>Nome profissional</label>
                 <input
                     id="btOwnProfessionalName"
@@ -8115,6 +8379,9 @@ async function saveOwnProfessionalProfile(){
 
     try{
 
+        const photoUrl =
+            await uploadOwnProfilePhoto();
+
         const {
             error
         } =
@@ -8129,6 +8396,8 @@ async function saveOwnProfessionalProfile(){
             roles,
             is_available:
                 isAvailable,
+            photo_url:
+                photoUrl,
             updated_at:
                 new Date().toISOString()
         })
@@ -8137,6 +8406,8 @@ async function saveOwnProfessionalProfile(){
         if(error){
             throw error;
         }
+
+        btPendingProfilePhoto = null;
 
         await loadBoraTecProfile();
         updateBoraTecUserInterface();
@@ -8163,6 +8434,9 @@ async function saveOwnProfessionalProfile(){
     }
 }
 
+
+window.previewOwnProfilePhoto =
+    previewOwnProfilePhoto;
 
 /* =========================================================
    INTERESSADOS / COMPARAÇÃO
@@ -12688,6 +12962,57 @@ function createBoraTecHome(){
             object-fit:cover;
         }
 
+        .bt-v182-user-button{
+            max-width:190px;
+            min-width:0;
+            padding:5px 8px 5px 5px;
+            border:1px solid rgba(119,151,178,.20);
+            border-radius:12px;
+            background:rgba(10,25,36,.72);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            cursor:pointer;
+            text-align:left;
+        }
+
+        .bt-v182-user-data{
+            min-width:0;
+            display:flex;
+            flex-direction:column;
+            line-height:1.08;
+        }
+
+        .bt-v182-user-data strong{
+            max-width:118px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            font-size:11px;
+            font-weight:900;
+            color:#f4f7f8;
+        }
+
+        .bt-v182-user-data small{
+            margin-top:4px;
+            color:#7f96a9;
+            font-size:8px;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.45px;
+        }
+
+        @media(max-width:420px){
+            .bt-v182-user-button{
+                max-width:154px;
+            }
+
+            .bt-v182-user-data strong{
+                max-width:86px;
+            }
+        }
+
         .bt-v182-welcome{ margin-bottom:22px; }
 
         .bt-v182-kicker{
@@ -12944,12 +13269,28 @@ function createBoraTecHome(){
                 </div>
 
                 <button
-                    id="btHomeAvatar"
-                    class="bt-v182-avatar"
+                    id="btHomeUserButton"
+                    class="bt-v182-user-button"
                     type="button"
                     onclick="selectNav(null,'Perfil')"
+                    aria-label="Abrir meu perfil"
                 >
-                    BT
+                    <span
+                        id="btHomeAvatar"
+                        class="bt-v182-avatar"
+                    >
+                        BT
+                    </span>
+
+                    <span class="bt-v182-user-data">
+                        <strong id="btHomeUserName">
+                            Meu perfil
+                        </strong>
+
+                        <small>
+                            Editar perfil
+                        </small>
+                    </span>
                 </button>
             </div>
 
@@ -13321,7 +13662,15 @@ async function loadBoraTecHome(){
         greetingEl.textContent = `${greeting}, ${firstName}`;
     }
 
-    const avatar = document.getElementById("btHomeAvatar");
+    const avatar =
+        document.getElementById("btHomeAvatar");
+
+    const userNameEl =
+        document.getElementById("btHomeUserName");
+
+    if(userNameEl){
+        userNameEl.textContent = displayName;
+    }
 
     if(avatar){
 
@@ -13337,7 +13686,7 @@ async function loadBoraTecHome(){
 
         avatar.innerHTML =
             profile.photo_url
-            ? `<img src="${escapeHTML(profile.photo_url)}" alt="">`
+            ? `<img src="${escapeHTML(profile.photo_url)}" alt="Minha foto de perfil">`
             : escapeHTML(initials);
     }
 
@@ -14417,6 +14766,24 @@ window.openBoraTecHome = openBoraTecHome;
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,.04),
                 0 4px 10px rgba(0,0,0,.25);
+        }
+
+        #btHomeScreen .bt-v182-user-button{
+            border:1px solid #3c4850 !important;
+            border-radius:9px !important;
+            background:
+                linear-gradient(145deg,#182127,#0d1317) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.035),
+                0 4px 10px rgba(0,0,0,.24);
+        }
+
+        #btHomeScreen .bt-v182-user-button:active{
+            transform:translateY(1px);
+        }
+
+        #btHomeScreen .bt-v182-user-data small{
+            color:#47c8ee !important;
         }
 
         /* CARROSSEL ROBUSTO */
