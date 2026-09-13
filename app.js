@@ -6307,7 +6307,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.2.1
+   BORATEC V1.2.2
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -8621,6 +8621,176 @@ function listenNotificationsRealtime(){
 
 
 /* =========================================================
+   ATALHO: SOU AJUDANTE / ESTOU DISPONÍVEL
+========================================================= */
+
+function setupHelperAvailabilityPublishOption(){
+
+    const options =
+        document.getElementById(
+            "publishOptions"
+        );
+
+    if(!options){
+        return;
+    }
+
+    const buttons =
+        Array.from(
+            options.querySelectorAll(
+                ".publish-option"
+            )
+        );
+
+    const availableButton =
+        buttons.find(button => {
+
+            const onclick =
+                button.getAttribute(
+                    "onclick"
+                )
+                ||
+                "";
+
+            return onclick.includes(
+                "available"
+            );
+        })
+        ||
+        buttons[2];
+
+    if(!availableButton){
+        return;
+    }
+
+    availableButton.setAttribute(
+        "onclick",
+        "activateHelperAvailability()"
+    );
+
+    const icon =
+        availableButton
+        .querySelector(
+            ".option-icon"
+        );
+
+    const strong =
+        availableButton
+        .querySelector(
+            "strong"
+        );
+
+    const span =
+        availableButton
+        .querySelector(
+            "span"
+        );
+
+    if(icon){
+        icon.textContent =
+            "🟢";
+    }
+
+    if(strong){
+        strong.textContent =
+            "Sou ajudante / Estou disponível";
+    }
+
+    if(span){
+        span.textContent =
+            "Apareça para profissionais que estão procurando ajuda";
+    }
+}
+
+
+async function activateHelperAvailability(){
+
+    if(
+        !boraUser
+        ||
+        !boraSupabase
+    ){
+        showToast(
+            "Usuário ainda não carregado"
+        );
+        return;
+    }
+
+    try{
+
+        const currentRoles =
+            Array.isArray(
+                boraProfile?.roles
+            )
+            ?
+            [...boraProfile.roles]
+            :
+            ["professional"];
+
+        if(
+            !currentRoles.includes(
+                "helper"
+            )
+        ){
+            currentRoles.push(
+                "helper"
+            );
+        }
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("profiles")
+        .update({
+            roles:
+                currentRoles,
+            is_available:
+                true,
+            updated_at:
+                new Date()
+                .toISOString()
+        })
+        .eq(
+            "id",
+            boraUser.id
+        );
+
+        if(error){
+            throw error;
+        }
+
+        await loadBoraTecProfile();
+
+        updateBoraTecUserInterface();
+
+        closePublish();
+
+        showToast(
+            "✅ Você está disponível como ajudante"
+        );
+
+        await openPeopleDirectory();
+
+    }catch(error){
+
+        console.error(
+            "Erro ao ativar ajudante:",
+            error
+        );
+
+        showToast(
+            "Não foi possível ativar sua disponibilidade"
+        );
+    }
+}
+
+
+window.activateHelperAvailability =
+    activateHelperAvailability;
+
+
+/* =========================================================
    DIRETÓRIO DE DISPONÍVEIS
    - mostra profissionais e ajudantes juntos
    - só entra quem estiver is_available = true
@@ -9005,6 +9175,8 @@ async function initializeBoraTecV1(){
 
     createBoraTecV1Interface();
 
+    setupHelperAvailabilityPublishOption();
+
     let attempts = 0;
 
     const waitForAuth =
@@ -9026,6 +9198,8 @@ async function initializeBoraTecV1(){
                     await refreshNotificationBadge();
 
                     listenNotificationsRealtime();
+
+                    setupHelperAvailabilityPublishOption();
 
                     return;
                 }
