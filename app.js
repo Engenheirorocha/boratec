@@ -1,17 +1,18 @@
 /* =========================================================
    BORATEC
    APP.JS
-   V0.3
+   V0.4
 
-   - Supabase
-   - Sessão
+   FUNCIONANDO:
+   - Login / sessão
    - Perfil real
-   - Feed real
+   - Feed Supabase
    - Publicação real
-   - Interesse real
+   - Interesse
    - Conversa privada
-   - Mensagens
-   - Realtime
+   - Chat realtime
+   - Lista de mensagens
+   - Fechar com profissional
 ========================================================= */
 
 
@@ -27,9 +28,7 @@ const BORATEC_SUPABASE_KEY =
 
 
 let boraSupabase = null;
-
 let boraUser = null;
-
 let boraProfile = null;
 
 
@@ -38,11 +37,10 @@ let boraProfile = null;
 ========================================================= */
 
 let currentConversationId = null;
-
 let currentConversationTitle = null;
+let currentConversationData = null;
 
 let messagesChannel = null;
-
 let interestsChannel = null;
 
 
@@ -52,21 +50,15 @@ let interestsChannel = null;
 
 async function startBoraTec(){
 
-    console.log(
-        "🚀 BoraTec iniciando..."
-    );
+    console.log("🚀 BoraTec iniciando...");
 
 
-    if(
-        typeof window.supabase ===
-        "undefined"
-    ){
+    if(typeof window.supabase === "undefined"){
 
-        console.error(
-            "Supabase não carregado."
-        );
+        console.error("Supabase não carregado.");
 
         return;
+
     }
 
 
@@ -84,30 +76,24 @@ async function startBoraTec(){
     if(!logged){
 
         return;
+
     }
 
 
     await loadBoraTecProfile();
 
-
     updateBoraTecUserInterface();
-
 
     createChatInterface();
 
-
     await loadOpportunities();
 
-
     listenAuthChanges();
-
 
     listenForNewInterests();
 
 
-    console.log(
-        "✅ BoraTec iniciado."
-    );
+    console.log("✅ BoraTec iniciado.");
 
 }
 
@@ -124,30 +110,27 @@ async function checkBoraTecSession(){
             data,
             error
         } =
-        await boraSupabase
-        .auth
+        await boraSupabase.auth
         .getSession();
 
 
         if(error){
 
-            console.error(
-                error
-            );
+            console.error(error);
 
             redirectToLogin();
 
             return false;
+
         }
 
 
-        if(
-            !data?.session?.user
-        ){
+        if(!data?.session?.user){
 
             redirectToLogin();
 
             return false;
+
         }
 
 
@@ -155,24 +138,14 @@ async function checkBoraTecSession(){
             data.session.user;
 
 
-        console.log(
-            "👤 Logado:",
-            boraUser.email
-        );
-
-
         return true;
 
 
     }catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         redirectToLogin();
-
 
         return false;
 
@@ -194,9 +167,7 @@ async function loadBoraTecProfile(){
             error
         } =
         await boraSupabase
-        .from(
-            "profiles"
-        )
+        .from("profiles")
         .select("*")
         .eq(
             "id",
@@ -206,12 +177,6 @@ async function loadBoraTecProfile(){
 
 
         if(error){
-
-            console.warn(
-                "Perfil não encontrado:",
-                error
-            );
-
 
             boraProfile = {
 
@@ -265,7 +230,7 @@ async function loadBoraTecProfile(){
 
 
 /* =========================================================
-   INTERFACE DO USUÁRIO
+   INTERFACE USUÁRIO
 ========================================================= */
 
 function updateBoraTecUserInterface(){
@@ -292,6 +257,7 @@ function updateGreeting(){
     if(!hello){
 
         return;
+
     }
 
 
@@ -367,12 +333,11 @@ function updateAvatar(){
     if(!avatar){
 
         return;
+
     }
 
 
-    if(
-        boraProfile?.photo_url
-    ){
+    if(boraProfile?.photo_url){
 
         avatar.innerHTML = `
 
@@ -380,17 +345,20 @@ function updateAvatar(){
                 src="${escapeHtml(
                     boraProfile.photo_url
                 )}"
+                alt="Perfil"
                 style="
                     width:100%;
                     height:100%;
-                    border-radius:50%;
                     object-fit:cover;
+                    border-radius:50%;
                 "
             >
 
         `;
 
+
         return;
+
     }
 
 
@@ -417,6 +385,7 @@ function getInitials(name){
     if(!name){
 
         return "BT";
+
     }
 
 
@@ -427,9 +396,7 @@ function getInitials(name){
         .filter(Boolean);
 
 
-    if(
-        parts.length === 1
-    ){
+    if(parts.length === 1){
 
         return parts[0]
         .substring(
@@ -454,7 +421,7 @@ function getInitials(name){
 
 
 /* =========================================================
-   EMAIL PARA NOME
+   EMAIL → NOME
 ========================================================= */
 
 function getEmailName(email){
@@ -462,6 +429,7 @@ function getEmailName(email){
     if(!email){
 
         return "Profissional";
+
     }
 
 
@@ -497,7 +465,34 @@ function escapeHtml(value){
 
 
 /* =========================================================
-   FEED REAL
+   ESCAPE JS
+========================================================= */
+
+function escapeJs(value){
+
+    return String(
+        value
+        ??
+        ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /\n/g,
+        " "
+    );
+
+}
+
+
+/* =========================================================
+   FEED
 ========================================================= */
 
 async function loadOpportunities(){
@@ -509,9 +504,7 @@ async function loadOpportunities(){
             error
         } =
         await boraSupabase
-        .from(
-            "opportunities"
-        )
+        .from("opportunities")
         .select(`
 
             id,
@@ -564,6 +557,7 @@ async function loadOpportunities(){
 
 
             return;
+
         }
 
 
@@ -578,9 +572,7 @@ async function loadOpportunities(){
 
     }catch(error){
 
-        console.error(
-            error
-        );
+        console.error(error);
 
     }
 
@@ -588,7 +580,7 @@ async function loadOpportunities(){
 
 
 /* =========================================================
-   BANCO -> CARD
+   BANCO → CARD
 ========================================================= */
 
 function convertDatabaseOpportunity(item){
@@ -604,11 +596,9 @@ function convertDatabaseOpportunity(item){
 
 
     if(
-        item.type ===
-        "technician_available"
+        item.type === "technician_available"
         ||
-        item.type ===
-        "helper_available"
+        item.type === "helper_available"
     ){
 
         uiType =
@@ -629,9 +619,7 @@ function convertDatabaseOpportunity(item){
         "";
 
 
-    if(
-        item.neighborhood
-    ){
+    if(item.neighborhood){
 
         location +=
             item.neighborhood;
@@ -639,9 +627,7 @@ function convertDatabaseOpportunity(item){
     }
 
 
-    if(
-        item.city
-    ){
+    if(item.city){
 
         if(location){
 
@@ -657,9 +643,7 @@ function convertDatabaseOpportunity(item){
     }
 
 
-    if(
-        item.state
-    ){
+    if(item.state){
 
         location +=
             ` - ${item.state}`;
@@ -736,12 +720,10 @@ function convertDatabaseOpportunity(item){
 
 
 /* =========================================================
-   DATA
+   DATA SERVIÇO
 ========================================================= */
 
-function formatServiceDate(
-    serviceDate
-){
+function formatServiceDate(serviceDate){
 
     if(!serviceDate){
 
@@ -751,9 +733,7 @@ function formatServiceDate(
 
 
     const date =
-        new Date(
-            serviceDate
-        );
+        new Date(serviceDate);
 
 
     const today =
@@ -800,7 +780,7 @@ function formatServiceDate(
 
 
 /* =========================================================
-   TEMPO
+   TEMPO PUBLICAÇÃO
 ========================================================= */
 
 function timeAgo(dateString){
@@ -813,19 +793,13 @@ function timeAgo(dateString){
 
 
     const created =
-        new Date(
-            dateString
-        );
-
-
-    const now =
-        new Date();
+        new Date(dateString);
 
 
     const seconds =
         Math.floor(
             (
-                now
+                new Date()
                 -
                 created
             )
@@ -834,9 +808,7 @@ function timeAgo(dateString){
         );
 
 
-    if(
-        seconds < 60
-    ){
+    if(seconds < 60){
 
         return "agora";
 
@@ -849,9 +821,7 @@ function timeAgo(dateString){
         );
 
 
-    if(
-        minutes < 60
-    ){
+    if(minutes < 60){
 
         return `há ${minutes} min`;
 
@@ -864,9 +834,7 @@ function timeAgo(dateString){
         );
 
 
-    if(
-        hours < 24
-    ){
+    if(hours < 24){
 
         return `há ${hours} h`;
 
@@ -885,7 +853,7 @@ function timeAgo(dateString){
 
 
 /* =========================================================
-   CARD
+   CARD FEED
 ========================================================= */
 
 cardHTML =
@@ -907,10 +875,7 @@ function(post){
         "action-btn";
 
 
-    if(
-        post.type ===
-        "service"
-    ){
+    if(post.type === "service"){
 
         typeText =
             post.urgent
@@ -922,10 +887,7 @@ function(post){
     }
 
 
-    if(
-        post.type ===
-        "helper"
-    ){
+    if(post.type === "helper"){
 
         typeText =
             "PRECISO DE AJUDANTE";
@@ -942,10 +904,7 @@ function(post){
     }
 
 
-    if(
-        post.type ===
-        "available"
-    ){
+    if(post.type === "available"){
 
         typeText =
             "PROFISSIONAL DISPONÍVEL";
@@ -1062,13 +1021,7 @@ function(post){
     <article
         class="
             job-card
-            ${
-                post.urgent
-                ?
-                "urgent"
-                :
-                ""
-            }
+            ${post.urgent ? "urgent" : ""}
         "
     >
 
@@ -1092,9 +1045,7 @@ function(post){
 
             <div class="time">
 
-                ${safe(
-                    post.time
-                )}
+                ${safe(post.time)}
 
             </div>
 
@@ -1103,9 +1054,7 @@ function(post){
 
         <div class="job-title">
 
-            ${safe(
-                post.title
-            )}
+            ${safe(post.title)}
 
         </div>
 
@@ -1113,32 +1062,20 @@ function(post){
         <div class="job-info">
 
             <span>
-
                 📍
-                ${safe(
-                    post.location
-                )}
-
+                ${safe(post.location)}
             </span>
 
 
             <span>
-
                 📅
-                ${safe(
-                    post.date
-                )}
-
+                ${safe(post.date)}
             </span>
 
 
             <span>
-
                 ❄
-                ${safe(
-                    post.category
-                )}
-
+                ${safe(post.category)}
             </span>
 
         </div>
@@ -1146,9 +1083,7 @@ function(post){
 
         <div class="job-description">
 
-            ${safe(
-                post.description
-            )}
+            ${safe(post.description)}
 
         </div>
 
@@ -1157,9 +1092,7 @@ function(post){
 
             <div class="prof-avatar">
 
-                ${safe(
-                    post.initials
-                )}
+                ${safe(post.initials)}
 
             </div>
 
@@ -1168,9 +1101,7 @@ function(post){
 
                 <div class="prof-name">
 
-                    ${safe(
-                        post.author
-                    )}
+                    ${safe(post.author)}
 
                 </div>
 
@@ -1213,7 +1144,7 @@ function(post){
 
 
 /* =========================================================
-   PUBLICAÇÃO
+   PUBLICAR
 ========================================================= */
 
 publishPost =
@@ -1222,15 +1153,14 @@ async function(event){
     event.preventDefault();
 
 
-    if(
-        !boraUser
-    ){
+    if(!boraUser){
 
         showToast(
             "Usuário não carregado"
         );
 
         return;
+
     }
 
 
@@ -1359,10 +1289,7 @@ async function(event){
             uiType;
 
 
-        if(
-            uiType ===
-            "available"
-        ){
+        if(uiType === "available"){
 
             databaseType =
                 "technician_available";
@@ -1374,21 +1301,13 @@ async function(event){
             null;
 
 
-        if(
-            priceText
-        ){
+        if(priceText){
 
             const parsed =
-                Number(
-                    priceText
-                );
+                Number(priceText);
 
 
-            if(
-                !Number.isNaN(
-                    parsed
-                )
-            ){
+            if(!Number.isNaN(parsed)){
 
                 value =
                     parsed;
@@ -1402,9 +1321,7 @@ async function(event){
             error
         } =
         await boraSupabase
-        .from(
-            "opportunities"
-        )
+        .from("opportunities")
         .insert({
 
             author_id:
@@ -1508,7 +1425,7 @@ async function(event){
     }catch(error){
 
         console.error(
-            "Erro ao publicar:",
+            "Erro publicar:",
             error
         );
 
@@ -1533,7 +1450,7 @@ async function(event){
 
 
 /* =========================================================
-   CONVERTER DATA
+   DATA PUBLICAÇÃO
 ========================================================= */
 
 function convertDateOption(option){
@@ -1542,10 +1459,7 @@ function convertDateOption(option){
         new Date();
 
 
-    if(
-        option ===
-        "Amanhã"
-    ){
+    if(option === "Amanhã"){
 
         date.setDate(
             date.getDate() + 1
@@ -1554,10 +1468,7 @@ function convertDateOption(option){
     }
 
 
-    if(
-        option ===
-        "Esta semana"
-    ){
+    if(option === "Esta semana"){
 
         date.setDate(
             date.getDate() + 3
@@ -1566,8 +1477,7 @@ function convertDateOption(option){
     }
 
 
-    return date
-    .toISOString();
+    return date.toISOString();
 
 }
 
@@ -1579,9 +1489,7 @@ function convertDateOption(option){
 interest =
 async function(opportunityId){
 
-    if(
-        !boraUser
-    ){
+    if(!boraUser){
 
         return;
 
@@ -1609,7 +1517,8 @@ async function(opportunityId){
 
 
     if(
-        post.authorId ===
+        post.authorId
+        ===
         boraUser.id
     ){
 
@@ -1663,19 +1572,16 @@ async function(opportunityId){
         }
 
 
-        const result =
-            data[0];
-
-
         currentConversationId =
-            result.conversation_id;
+            data[0]
+            .conversation_id;
 
 
         currentConversationTitle =
             post.title;
 
 
-        openChat(
+        await openChat(
             currentConversationId,
             currentConversationTitle
         );
@@ -1699,7 +1605,7 @@ async function(opportunityId){
 
 
 /* =========================================================
-   CRIAR INTERFACE DO CHAT
+   CRIAR INTERFACE CHAT
 ========================================================= */
 
 function createChatInterface(){
@@ -1727,9 +1633,13 @@ function createChatInterface(){
 
         position:fixed;
         inset:0;
+
         background:#06182b;
+
         z-index:3000;
+
         display:none;
+
         flex-direction:column;
 
     }
@@ -1744,10 +1654,13 @@ function createChatInterface(){
 
     .bt-chat-header{
 
-        height:68px;
-        padding:0 16px;
+        min-height:68px;
+
+        padding:
+        9px 14px;
 
         display:flex;
+
         align-items:center;
 
         gap:12px;
@@ -1766,6 +1679,8 @@ function createChatInterface(){
 
         width:40px;
         height:40px;
+
+        flex-shrink:0;
 
         border:none;
 
@@ -1814,10 +1729,96 @@ function createChatInterface(){
         display:block;
 
         white-space:nowrap;
+
         overflow:hidden;
+
         text-overflow:ellipsis;
 
         font-size:14px;
+
+    }
+
+
+    .bt-close-job{
+
+        border:none;
+
+        border-radius:11px;
+
+        padding:
+        9px 12px;
+
+        background:
+        linear-gradient(
+            135deg,
+            #ff7900,
+            #ff982f
+        );
+
+        color:white;
+
+        font-weight:900;
+
+        font-size:10px;
+
+        cursor:pointer;
+
+        white-space:nowrap;
+
+    }
+
+
+    .bt-job-closed{
+
+        padding:
+        8px 11px;
+
+        border-radius:10px;
+
+        background:
+        rgba(25,200,117,.13);
+
+        border:
+        1px solid rgba(25,200,117,.2);
+
+        color:#50df96;
+
+        font-size:9px;
+
+        font-weight:900;
+
+        white-space:nowrap;
+
+    }
+
+
+    .bt-chat-status{
+
+        display:none;
+
+        padding:
+        10px 14px;
+
+        background:
+        rgba(25,200,117,.08);
+
+        border-bottom:
+        1px solid rgba(25,200,117,.13);
+
+        color:#5be39f;
+
+        text-align:center;
+
+        font-size:10px;
+
+        font-weight:800;
+
+    }
+
+
+    .bt-chat-status.show{
+
+        display:block;
 
     }
 
@@ -1828,7 +1829,8 @@ function createChatInterface(){
 
         overflow-y:auto;
 
-        padding:18px 14px 110px;
+        padding:
+        18px 14px 110px;
 
         display:flex;
 
@@ -1846,8 +1848,7 @@ function createChatInterface(){
         padding:
         10px 12px;
 
-        border-radius:
-        15px;
+        border-radius:15px;
 
         font-size:12px;
 
@@ -1862,8 +1863,7 @@ function createChatInterface(){
 
         align-self:flex-end;
 
-        background:
-        #147ee8;
+        background:#147ee8;
 
         color:white;
 
@@ -1876,8 +1876,7 @@ function createChatInterface(){
 
         align-self:flex-start;
 
-        background:
-        #132f4c;
+        background:#132f4c;
 
         color:white;
 
@@ -2070,6 +2069,15 @@ function createChatInterface(){
     }
 
 
+    .bt-conv-card strong{
+
+        display:block;
+
+        font-size:12px;
+
+    }
+
+
     .bt-conv-card small{
 
         display:block;
@@ -2088,6 +2096,131 @@ function createChatInterface(){
         text-align:center;
 
         color:#7890a7;
+
+    }
+
+
+    .bt-confirm-overlay{
+
+        position:fixed;
+
+        inset:0;
+
+        z-index:5000;
+
+        background:
+        rgba(0,8,17,.85);
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        padding:20px;
+
+    }
+
+
+    .bt-confirm-box{
+
+        width:100%;
+
+        max-width:390px;
+
+        padding:22px;
+
+        border-radius:20px;
+
+        background:#102d4a;
+
+        border:
+        1px solid rgba(255,255,255,.08);
+
+        color:white;
+
+        text-align:center;
+
+    }
+
+
+    .bt-confirm-icon{
+
+        font-size:38px;
+
+        margin-bottom:12px;
+
+    }
+
+
+    .bt-confirm-box h3{
+
+        font-size:18px;
+
+        margin-bottom:8px;
+
+    }
+
+
+    .bt-confirm-box p{
+
+        color:#99aec2;
+
+        font-size:11px;
+
+        line-height:1.5;
+
+        margin-bottom:18px;
+
+    }
+
+
+    .bt-confirm-actions{
+
+        display:grid;
+
+        grid-template-columns:
+        1fr 1fr;
+
+        gap:8px;
+
+    }
+
+
+    .bt-confirm-cancel,
+    .bt-confirm-ok{
+
+        height:43px;
+
+        border:none;
+
+        border-radius:11px;
+
+        color:white;
+
+        font-weight:900;
+
+        cursor:pointer;
+
+    }
+
+
+    .bt-confirm-cancel{
+
+        background:
+        rgba(255,255,255,.08);
+
+    }
+
+
+    .bt-confirm-ok{
+
+        background:
+        linear-gradient(
+            135deg,
+            #ff7900,
+            #ff962e
+        );
 
     }
 
@@ -2114,18 +2247,16 @@ function createChatInterface(){
 
 
     document.head
-    .appendChild(
-        style
-    );
+    .appendChild(style);
 
 
-    const html =
+    const holder =
         document.createElement(
             "div"
         );
 
 
-    html.innerHTML = `
+    holder.innerHTML = `
 
     <div id="boratecConversations">
 
@@ -2152,6 +2283,7 @@ function createChatInterface(){
 
         </div>
 
+
         <div
             id="boratecConversationList"
             class="bt-conv-list"
@@ -2173,6 +2305,7 @@ function createChatInterface(){
                 ←
             </button>
 
+
             <div class="bt-chat-title">
 
                 <small>
@@ -2187,6 +2320,19 @@ function createChatInterface(){
 
             </div>
 
+
+            <div
+                id="boratecChatAction"
+            >
+            </div>
+
+        </div>
+
+
+        <div
+            id="boratecChatStatus"
+            class="bt-chat-status"
+        >
         </div>
 
 
@@ -2209,6 +2355,7 @@ function createChatInterface(){
                 autocomplete="off"
             >
 
+
             <button
                 class="bt-chat-send"
                 type="submit"
@@ -2223,13 +2370,11 @@ function createChatInterface(){
     `;
 
 
-    while(
-        html.firstChild
-    ){
+    while(holder.firstChild){
 
         document.body
         .appendChild(
-            html.firstChild
+            holder.firstChild
         );
 
     }
@@ -2254,6 +2399,10 @@ async function openChat(
         title
         ||
         "Conversa";
+
+
+    currentConversationData =
+        null;
 
 
     document
@@ -2291,10 +2440,631 @@ async function openChat(
         "hidden";
 
 
+    await loadConversationContext();
+
     await loadChatMessages();
 
-
     listenConversationMessages();
+
+}
+
+
+/* =========================================================
+   CONTEXTO DA CONVERSA
+========================================================= */
+
+async function loadConversationContext(){
+
+    if(!currentConversationId){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            data:conversation,
+            error
+        } =
+        await boraSupabase
+        .from("conversations")
+        .select(`
+            id,
+            opportunity_id,
+            interest_id,
+            created_at
+        `)
+        .eq(
+            "id",
+            currentConversationId
+        )
+        .single();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        const {
+            data:opportunity,
+            error:opportunityError
+        } =
+        await boraSupabase
+        .from("opportunities")
+        .select(`
+            id,
+            author_id,
+            title,
+            value,
+            status
+        `)
+        .eq(
+            "id",
+            conversation.opportunity_id
+        )
+        .single();
+
+
+        if(opportunityError){
+
+            throw opportunityError;
+
+        }
+
+
+        const {
+            data:interestData,
+            error:interestError
+        } =
+        await boraSupabase
+        .from("interests")
+        .select(`
+            id,
+            professional_id,
+            status
+        `)
+        .eq(
+            "id",
+            conversation.interest_id
+        )
+        .single();
+
+
+        if(interestError){
+
+            throw interestError;
+
+        }
+
+
+        currentConversationData = {
+
+            conversationId:
+                conversation.id,
+
+            opportunityId:
+                conversation.opportunity_id,
+
+            interestId:
+                conversation.interest_id,
+
+            opportunityAuthorId:
+                opportunity.author_id,
+
+            opportunityTitle:
+                opportunity.title,
+
+            opportunityStatus:
+                opportunity.status,
+
+            opportunityValue:
+                opportunity.value,
+
+            professionalId:
+                interestData.professional_id,
+
+            interestStatus:
+                interestData.status
+
+        };
+
+
+        await updateChatAction();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro contexto conversa:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BOTÃO FECHAR COM PROFISSIONAL
+========================================================= */
+
+async function updateChatAction(){
+
+    const action =
+        document.getElementById(
+            "boratecChatAction"
+        );
+
+
+    const status =
+        document.getElementById(
+            "boratecChatStatus"
+        );
+
+
+    if(
+        !action
+        ||
+        !status
+        ||
+        !currentConversationData
+    ){
+
+        return;
+
+    }
+
+
+    action.innerHTML =
+        "";
+
+
+    status.classList.remove(
+        "show"
+    );
+
+
+    status.textContent =
+        "";
+
+
+    const isPublisher =
+        currentConversationData
+        .opportunityAuthorId
+        ===
+        boraUser.id;
+
+
+    const accepted =
+        currentConversationData
+        .interestStatus
+        ===
+        "accepted";
+
+
+    const assigned =
+        currentConversationData
+        .opportunityStatus
+        ===
+        "assigned";
+
+
+    /*
+       SERVIÇO JÁ FECHADO
+    */
+
+    if(
+        accepted
+        &&
+        assigned
+    ){
+
+        action.innerHTML = `
+
+            <div class="bt-job-closed">
+                ✓ FECHADO
+            </div>
+
+        `;
+
+
+        status.textContent =
+            isPublisher
+            ?
+            "🤝 Você fechou este serviço com este profissional."
+            :
+            "🤝 Você foi escolhido para realizar este serviço.";
+
+
+        status.classList.add(
+            "show"
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       INTERESSE REJEITADO
+    */
+
+    if(
+        currentConversationData
+        .interestStatus
+        ===
+        "rejected"
+    ){
+
+        status.textContent =
+            "Esta oportunidade foi fechada com outro profissional.";
+
+
+        status.classList.add(
+            "show"
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       SOMENTE QUEM PUBLICOU
+       VÊ O BOTÃO
+    */
+
+    if(
+        isPublisher
+        &&
+        (
+            currentConversationData
+            .opportunityStatus
+            ===
+            "open"
+            ||
+            currentConversationData
+            .opportunityStatus
+            ===
+            "negotiating"
+        )
+    ){
+
+        action.innerHTML = `
+
+            <button
+                class="bt-close-job"
+                onclick="confirmAssignProfessional()"
+            >
+                🤝 Fechar
+            </button>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   CONFIRMAR ESCOLHA
+========================================================= */
+
+function confirmAssignProfessional(){
+
+    if(
+        !currentConversationData
+    ){
+
+        return;
+
+    }
+
+
+    const existing =
+        document.getElementById(
+            "btAssignConfirm"
+        );
+
+
+    if(existing){
+
+        existing.remove();
+
+    }
+
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+
+    overlay.id =
+        "btAssignConfirm";
+
+
+    overlay.className =
+        "bt-confirm-overlay";
+
+
+    overlay.innerHTML = `
+
+        <div class="bt-confirm-box">
+
+            <div class="bt-confirm-icon">
+                🤝
+            </div>
+
+
+            <h3>
+                Fechar com este profissional?
+            </h3>
+
+
+            <p>
+
+                Ao confirmar, este profissional
+                será escolhido para realizar o serviço.
+
+                <br><br>
+
+                A oportunidade deixará de aparecer
+                no feed público e ficará registrada
+                como serviço em andamento.
+
+            </p>
+
+
+            <div class="bt-confirm-actions">
+
+                <button
+                    class="bt-confirm-cancel"
+                    onclick="closeAssignConfirmation()"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    id="btConfirmAssignButton"
+                    class="bt-confirm-ok"
+                    onclick="assignProfessional()"
+                >
+                    Confirmar
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body
+    .appendChild(
+        overlay
+    );
+
+}
+
+
+/* =========================================================
+   FECHAR CONFIRMAÇÃO
+========================================================= */
+
+function closeAssignConfirmation(){
+
+    document
+    .getElementById(
+        "btAssignConfirm"
+    )
+    ?.remove();
+
+}
+
+
+/* =========================================================
+   FECHAR COM PROFISSIONAL
+========================================================= */
+
+async function assignProfessional(){
+
+    if(
+        !currentConversationId
+    ){
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "btConfirmAssignButton"
+        );
+
+
+    if(button){
+
+        button.disabled =
+            true;
+
+
+        button.textContent =
+            "Fechando...";
+
+    }
+
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "assign_professional",
+            {
+                p_conversation_id:
+                    currentConversationId
+            }
+        );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        if(
+            !data
+            ||
+            data.length === 0
+        ){
+
+            throw new Error(
+                "Serviço não criado"
+            );
+
+        }
+
+
+        console.log(
+            "🤝 Serviço fechado:",
+            data[0]
+        );
+
+
+        closeAssignConfirmation();
+
+
+        /*
+           Atualiza dados da conversa
+        */
+
+        await loadConversationContext();
+
+
+        /*
+           Atualiza feed.
+
+           Como agora status = assigned,
+           a oportunidade some do feed.
+        */
+
+        await loadOpportunities();
+
+
+        showToast(
+            "🤝 Profissional escolhido!"
+        );
+
+
+        /*
+           Mensagem automática dentro
+           do chat para registrar o fechamento.
+        */
+
+        await sendSystemLikeMessage(
+            "🤝 Serviço fechado. Profissional selecionado para esta oportunidade."
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao fechar serviço:",
+            error
+        );
+
+
+        showToast(
+            "Não foi possível fechar o serviço"
+        );
+
+
+        if(button){
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "Confirmar";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   MENSAGEM AUTOMÁTICA
+========================================================= */
+
+async function sendSystemLikeMessage(
+    content
+){
+
+    if(
+        !currentConversationId
+        ||
+        !boraUser
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .from("messages")
+        .insert({
+
+            conversation_id:
+                currentConversationId,
+
+            sender_id:
+                boraUser.id,
+
+            content:
+                content
+
+        });
+
+
+        if(error){
+
+            console.error(
+                "Erro mensagem automática:",
+                error
+            );
+
+        }
+
+
+    }catch(error){
+
+        console.error(error);
+
+    }
 
 }
 
@@ -2330,9 +3100,7 @@ function closeChat(){
 
 async function loadChatMessages(){
 
-    if(
-        !currentConversationId
-    ){
+    if(!currentConversationId){
 
         return;
 
@@ -2361,12 +3129,14 @@ async function loadChatMessages(){
             error
         } =
         await boraSupabase
-        .from(
-            "messages"
-        )
-        .select(
-            "id, conversation_id, sender_id, content, created_at"
-        )
+        .from("messages")
+        .select(`
+            id,
+            conversation_id,
+            sender_id,
+            content,
+            created_at
+        `)
         .eq(
             "conversation_id",
             currentConversationId
@@ -2405,7 +3175,8 @@ async function loadChatMessages(){
 
             <div class="bt-chat-empty">
 
-                Não foi possível carregar as mensagens.
+                Não foi possível carregar
+                as mensagens.
 
             </div>
 
@@ -2479,7 +3250,8 @@ function renderMessages(messages){
 function messageHTML(message){
 
     const mine =
-        message.sender_id ===
+        message.sender_id
+        ===
         boraUser.id;
 
 
@@ -2534,16 +3306,12 @@ function messageHTML(message){
    ENVIAR MENSAGEM
 ========================================================= */
 
-async function sendChatMessage(
-    event
-){
+async function sendChatMessage(event){
 
     event.preventDefault();
 
 
-    if(
-        !currentConversationId
-    ){
+    if(!currentConversationId){
 
         return;
 
@@ -2579,9 +3347,7 @@ async function sendChatMessage(
             error
         } =
         await boraSupabase
-        .from(
-            "messages"
-        )
+        .from("messages")
         .insert({
 
             conversation_id:
@@ -2603,16 +3369,10 @@ async function sendChatMessage(
         }
 
 
-        /*
-        Realtime adicionará a mensagem
-        automaticamente.
-        */
-
-
     }catch(error){
 
         console.error(
-            "Erro ao enviar:",
+            "Erro enviar:",
             error
         );
 
@@ -2631,7 +3391,7 @@ async function sendChatMessage(
 
 
 /* =========================================================
-   REALTIME MENSAGENS
+   REALTIME CHAT
 ========================================================= */
 
 function listenConversationMessages(){
@@ -2639,9 +3399,7 @@ function listenConversationMessages(){
     stopMessagesChannel();
 
 
-    if(
-        !currentConversationId
-    ){
+    if(!currentConversationId){
 
         return;
 
@@ -2682,7 +3440,7 @@ function listenConversationMessages(){
 
 
 /* =========================================================
-   PARAR CANAL
+   PARAR REALTIME
 ========================================================= */
 
 function stopMessagesChannel(){
@@ -2708,7 +3466,7 @@ function stopMessagesChannel(){
 
 
 /* =========================================================
-   ADICIONAR MENSAGEM
+   APPEND MENSAGEM
 ========================================================= */
 
 function appendMessage(message){
@@ -2756,7 +3514,7 @@ function appendMessage(message){
 
 
 /* =========================================================
-   SCROLL
+   SCROLL CHAT
 ========================================================= */
 
 function scrollChatBottom(){
@@ -2792,9 +3550,7 @@ function scrollChatBottom(){
 
 function listenForNewInterests(){
 
-    if(
-        interestsChannel
-    ){
+    if(interestsChannel){
 
         boraSupabase
         .removeChannel(
@@ -2821,7 +3577,7 @@ function listenForNewInterests(){
 
             },
 
-            async payload => {
+            payload => {
 
                 const interestData =
                     payload.new;
@@ -2842,9 +3598,7 @@ function listenForNewInterests(){
                     );
 
 
-                if(
-                    !ownOpportunity
-                ){
+                if(!ownOpportunity){
 
                     return;
 
@@ -2855,80 +3609,9 @@ function listenForNewInterests(){
                     "🔥 Novo profissional interessado!"
                 );
 
-
-                /*
-                Pequeno atraso para a RPC terminar
-                de criar a conversa.
-                */
-
-                setTimeout(
-                    async () => {
-
-                        const conversation =
-                            await findConversationByInterest(
-                                interestData.id
-                            );
-
-
-                        if(conversation){
-
-                            console.log(
-                                "Nova conversa:",
-                                conversation.id
-                            );
-
-                        }
-
-                    },
-                    700
-                );
-
             }
         )
         .subscribe();
-
-}
-
-
-/* =========================================================
-   PROCURAR CONVERSA PELO INTERESSE
-========================================================= */
-
-async function findConversationByInterest(
-    interestId
-){
-
-    const {
-        data,
-        error
-    } =
-    await boraSupabase
-    .from(
-        "conversations"
-    )
-    .select(
-        "id, opportunity_id, interest_id, created_at"
-    )
-    .eq(
-        "interest_id",
-        interestId
-    )
-    .maybeSingle();
-
-
-    if(error){
-
-        console.error(
-            error
-        );
-
-
-        return null;
-
-    }
-
-
-    return data;
 
 }
 
@@ -3011,12 +3694,13 @@ async function loadConversations(){
             error
         } =
         await boraSupabase
-        .from(
-            "conversations"
-        )
-        .select(
-            "id, opportunity_id, interest_id, created_at"
-        )
+        .from("conversations")
+        .select(`
+            id,
+            opportunity_id,
+            interest_id,
+            created_at
+        `)
         .order(
             "created_at",
             {
@@ -3145,7 +3829,7 @@ async function loadConversations(){
 
 
 /* =========================================================
-   DADOS DA CONVERSA
+   DETALHES CONVERSA
 ========================================================= */
 
 async function getConversationDetails(
@@ -3164,12 +3848,12 @@ async function getConversationDetails(
         data:opportunity
     } =
     await boraSupabase
-    .from(
-        "opportunities"
-    )
-    .select(
-        "id, title, author_id"
-    )
+    .from("opportunities")
+    .select(`
+        id,
+        title,
+        author_id
+    `)
     .eq(
         "id",
         conversation.opportunity_id
@@ -3177,9 +3861,7 @@ async function getConversationDetails(
     .maybeSingle();
 
 
-    if(
-        opportunity?.title
-    ){
+    if(opportunity?.title){
 
         title =
             opportunity.title;
@@ -3201,9 +3883,7 @@ async function getConversationDetails(
             data:interestData
         } =
         await boraSupabase
-        .from(
-            "interests"
-        )
+        .from("interests")
         .select(
             "professional_id"
         )
@@ -3232,20 +3912,17 @@ async function getConversationDetails(
     }
 
 
-    if(
-        otherUserId
-    ){
+    if(otherUserId){
 
         const {
             data:profile
         } =
         await boraSupabase
-        .from(
-            "profiles"
-        )
-        .select(
-            "name, professional_name"
-        )
+        .from("profiles")
+        .select(`
+            name,
+            professional_name
+        `)
         .eq(
             "id",
             otherUserId
@@ -3284,34 +3961,7 @@ async function getConversationDetails(
 
 
 /* =========================================================
-   ESCAPE JS PARA ONCLICK
-========================================================= */
-
-function escapeJs(value){
-
-    return String(
-        value
-        ??
-        ""
-    )
-    .replace(
-        /\\/g,
-        "\\\\"
-    )
-    .replace(
-        /'/g,
-        "\\'"
-    )
-    .replace(
-        /\n/g,
-        " "
-    );
-
-}
-
-
-/* =========================================================
-   BOTÃO ANTIGO "ABRIR CONVERSA"
+   CHAT DEMO ANTIGO
 ========================================================= */
 
 openChatDemo =
@@ -3327,9 +3977,7 @@ function(){
     );
 
 
-    if(
-        currentConversationId
-    ){
+    if(currentConversationId){
 
         openChat(
             currentConversationId,
@@ -3342,7 +3990,7 @@ function(){
 
 
 /* =========================================================
-   MENU INFERIOR
+   MENU
 ========================================================= */
 
 selectNav =
@@ -3351,10 +3999,7 @@ function(
     page
 ){
 
-    if(
-        page ===
-        "Mensagens"
-    ){
+    if(page === "Mensagens"){
 
         openConversations();
 
@@ -3363,10 +4008,7 @@ function(
     }
 
 
-    if(
-        page ===
-        "Perfil"
-    ){
+    if(page === "Perfil"){
 
         showToast(
             "Perfil será a próxima etapa"
@@ -3377,10 +4019,7 @@ function(
     }
 
 
-    if(
-        page ===
-        "Início"
-    ){
+    if(page === "Início"){
 
         document
         .querySelectorAll(
@@ -3425,9 +4064,7 @@ async function logoutBoraTec(){
 
     }catch(error){
 
-        console.error(
-            error
-        );
+        console.error(error);
 
     }
 
@@ -3435,7 +4072,7 @@ async function logoutBoraTec(){
 
 
 /* =========================================================
-   REDIRECT LOGIN
+   REDIRECT
 ========================================================= */
 
 function redirectToLogin(){
@@ -3473,9 +4110,7 @@ function listenAuthChanges(){
             }
 
 
-            if(
-                session?.user
-            ){
+            if(session?.user){
 
                 boraUser =
                     session.user;
@@ -3510,24 +4145,30 @@ window.openConversations =
 window.closeConversations =
     closeConversations;
 
+window.confirmAssignProfessional =
+    confirmAssignProfessional;
+
+window.closeAssignConfirmation =
+    closeAssignConfirmation;
+
+window.assignProfessional =
+    assignProfessional;
+
 window.loadOpportunities =
     loadOpportunities;
 
 window.getBoraTecUser =
-    () =>
-    boraUser;
+    () => boraUser;
 
 window.getBoraTecProfile =
-    () =>
-    boraProfile;
+    () => boraProfile;
 
 window.getBoraTecSupabase =
-    () =>
-    boraSupabase;
+    () => boraSupabase;
 
 
 /* =========================================================
-   INICIAR
+   START
 ========================================================= */
 
 document.addEventListener(
