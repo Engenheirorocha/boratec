@@ -6303,7 +6303,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.0.2
+   BORATEC V1.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -7438,6 +7438,43 @@ function applyCurrentFeedFilters(){
    PERFIL PÚBLICO / PRÓPRIO PERFIL
 ========================================================= */
 
+const BT_SPECIALTY_OPTIONS = [
+    "Instalação de ar-condicionado",
+    "Manutenção de ar-condicionado",
+    "Limpeza / higienização",
+    "Refrigeração comercial",
+    "Geladeira e freezer",
+    "Câmara fria",
+    "Elétrica",
+    "Ajudante",
+    "Outros"
+];
+
+function btSpecialtyCheckboxes(selected){
+
+    const selectedSet =
+        new Set(
+            Array.isArray(selected)
+            ? selected
+            : []
+        );
+
+    return BT_SPECIALTY_OPTIONS
+    .map((item,index) => `
+        <label class="bt-specialty-option">
+            <input
+                type="checkbox"
+                class="btOwnSpecialtyCheck"
+                value="${escapeHtml(item)}"
+                ${selectedSet.has(item) ? "checked" : ""}
+            >
+            <span>${escapeHtml(item)}</span>
+        </label>
+    `)
+    .join("");
+}
+
+
 async function openPublicProfile(profileId){
 
     if(!profileId){
@@ -7543,6 +7580,9 @@ function renderPublicProfile(profile){
     const recommend =
         Number(profile.recommend_percent || 0);
 
+    const isAvailable =
+        profile.is_available !== false;
+
     const isOwn =
         boraUser
         &&
@@ -7557,21 +7597,14 @@ function renderPublicProfile(profile){
             getInitials(professionalName)
         );
 
-    const location =
-        [profile.city, profile.state]
-        .filter(Boolean)
-        .join(" - ")
-        ||
-        "Local não informado";
-
     const specialties =
         Array.isArray(profile.specialties)
         ? profile.specialties
         : [];
 
-    const regions =
-        Array.isArray(profile.regions_served)
-        ? profile.regions_served
+    const reviews =
+        Array.isArray(profile.recent_reviews)
+        ? profile.recent_reviews
         : [];
 
     const reputationTitle =
@@ -7594,8 +7627,12 @@ function renderPublicProfile(profile){
                     ${escapeHtml(professionalName)}
                 </div>
 
-                <div class="bt-profile-place">
-                    📍 ${escapeHtml(location)}
+                <div class="bt-availability ${isAvailable ? "" : "off"}">
+                    ${
+                        isAvailable
+                        ? "🟢 DISPONÍVEL AGORA"
+                        : "⚪ INDISPONÍVEL NO MOMENTO"
+                    }
                 </div>
             </div>
 
@@ -7682,6 +7719,27 @@ function renderPublicProfile(profile){
 
 
         <div class="bt-section-title">
+            ESPECIALIDADES
+        </div>
+
+        <div class="bt-chip-wrap">
+
+            ${
+                specialties.length
+                ?
+                specialties
+                .map(item =>
+                    `<span class="bt-chip">🔧 ${escapeHtml(item)}</span>`
+                )
+                .join("")
+                :
+                `<span style="color:#7892a8;font-size:10px;">Não informadas</span>`
+            }
+
+        </div>
+
+
+        <div class="bt-section-title">
             SOBRE
         </div>
 
@@ -7701,57 +7759,37 @@ function renderPublicProfile(profile){
 
 
         <div class="bt-section-title">
-            ESPECIALIDADES
+            AVALIAÇÕES RECEBIDAS
         </div>
 
-        <div class="bt-chip-wrap">
+        ${
+            reviews.length
+            ?
+            reviews
+            .map(review => `
+                <div class="bt-review-card">
+                    <div class="bt-review-top">
+                        <span>${escapeHtml(review.reviewer_name || "Profissional BoraTec")}</span>
+                        <span>⭐ ${Number(review.score || 0).toFixed(1)}</span>
+                    </div>
 
-            ${
-                specialties.length
-                ?
-                specialties
-                .map(item =>
-                    `<span class="bt-chip">${escapeHtml(item)}</span>`
-                )
-                .join("")
-                :
-                `<span style="color:#7892a8;font-size:10px;">Não informadas</span>`
-            }
-
-        </div>
-
-
-        <div class="bt-section-title">
-            REGIÕES ATENDIDAS
-        </div>
-
-        <div class="bt-chip-wrap">
-
-            ${
-                regions.length
-                ?
-                regions
-                .map(item =>
-                    `<span class="bt-chip">${escapeHtml(item)}</span>`
-                )
-                .join("")
-                :
-                `<span style="color:#7892a8;font-size:10px;">Não informadas</span>`
-            }
-
-        </div>
-
-
-        <div
-            style="
-                margin-top:12px;
-                color:#7892a8;
-                font-size:10px;
-            "
-        >
-            Raio informado:
-            ${Number(profile.service_radius_km || 30)} km
-        </div>
+                    <div class="bt-review-comment">
+                        ${
+                            review.comment
+                            ? escapeHtml(review.comment)
+                            : (
+                                review.would_recommend
+                                ? "Recomenda este profissional."
+                                : "Avaliação registrada sem comentário."
+                            )
+                        }
+                    </div>
+                </div>
+            `)
+            .join("")
+            :
+            `<div style="color:#7892a8;font-size:10px;">Ainda não há avaliações para exibir.</div>`
+        }
 
 
         ${
@@ -7795,59 +7833,27 @@ function renderPublicProfile(profile){
                 <label>Apresentação</label>
                 <textarea
                     id="btOwnBio"
-                    placeholder="Conte sua experiência..."
+                    placeholder="Conte sua experiência e o tipo de serviço que realiza..."
                 >${escapeHtml(profile.bio || "")}</textarea>
             </div>
 
-            <div class="bt-grid-2">
+            <div class="bt-field">
+                <label>Disponibilidade</label>
+                <select id="btOwnAvailability">
+                    <option value="true" ${isAvailable ? "selected" : ""}>
+                        🟢 Disponível agora
+                    </option>
+                    <option value="false" ${!isAvailable ? "selected" : ""}>
+                        ⚪ Indisponível no momento
+                    </option>
+                </select>
+            </div>
 
-                <div class="bt-field">
-                    <label>Cidade</label>
-                    <input
-                        id="btOwnCity"
-                        value="${escapeHtml(profile.city || "")}"
-                    >
+            <div class="bt-field">
+                <label>Especialidades</label>
+                <div class="bt-specialty-grid">
+                    ${btSpecialtyCheckboxes(specialties)}
                 </div>
-
-                <div class="bt-field">
-                    <label>Estado</label>
-                    <input
-                        id="btOwnState"
-                        value="${escapeHtml(profile.state || "")}"
-                        maxlength="2"
-                        placeholder="RJ"
-                    >
-                </div>
-
-            </div>
-
-            <div class="bt-field">
-                <label>Especialidades — separar por vírgula</label>
-                <input
-                    id="btOwnSpecialties"
-                    value="${escapeHtml(specialties.join(", "))}"
-                    placeholder="Ar-condicionado, Refrigeração"
-                >
-            </div>
-
-            <div class="bt-field">
-                <label>Regiões atendidas — separar por vírgula</label>
-                <input
-                    id="btOwnRegions"
-                    value="${escapeHtml(regions.join(", "))}"
-                    placeholder="Cabo Frio, Búzios, Rio das Ostras"
-                >
-            </div>
-
-            <div class="bt-field">
-                <label>Raio de atendimento em km</label>
-                <input
-                    id="btOwnRadius"
-                    type="number"
-                    min="1"
-                    max="500"
-                    value="${Number(profile.service_radius_km || 30)}"
-                >
             </div>
 
             <button
@@ -7901,13 +7907,6 @@ async function saveOwnProfessionalProfile(){
         return;
     }
 
-    const splitList =
-        value =>
-        String(value || "")
-        .split(",")
-        .map(item => item.trim())
-        .filter(Boolean);
-
     const professionalName =
         document
         .getElementById("btOwnProfessionalName")
@@ -7920,47 +7919,28 @@ async function saveOwnProfessionalProfile(){
         .value
         .trim();
 
-    const city =
+    const isAvailable =
         document
-        .getElementById("btOwnCity")
-        .value
-        .trim();
-
-    const state =
-        document
-        .getElementById("btOwnState")
-        .value
-        .trim()
-        .toUpperCase();
+        .getElementById("btOwnAvailability")
+        .value === "true";
 
     const specialties =
-        splitList(
-            document
-            .getElementById("btOwnSpecialties")
-            .value
-        );
-
-    const regions =
-        splitList(
-            document
-            .getElementById("btOwnRegions")
-            .value
-        );
-
-    const radius =
-        Math.max(
-            1,
-            Math.min(
-                500,
-                Number(
-                    document
-                    .getElementById("btOwnRadius")
-                    .value
-                    ||
-                    30
-                )
+        Array
+        .from(
+            document.querySelectorAll(
+                ".btOwnSpecialtyCheck:checked"
             )
+        )
+        .map(input => input.value);
+
+    if(!professionalName){
+
+        showToast(
+            "Informe seu nome profissional"
         );
+
+        return;
+    }
 
     try{
 
@@ -7971,18 +7951,12 @@ async function saveOwnProfessionalProfile(){
         .from("profiles")
         .update({
             professional_name:
-                professionalName || null,
+                professionalName,
             bio:
                 bio || null,
-            city:
-                city || null,
-            state:
-                state || null,
             specialties,
-            regions_served:
-                regions,
-            service_radius_km:
-                radius,
+            is_available:
+                isAvailable,
             updated_at:
                 new Date().toISOString()
         })
@@ -7997,7 +7971,7 @@ async function saveOwnProfessionalProfile(){
         await loadOpportunities();
 
         showToast(
-            "✅ Perfil atualizado"
+            "✅ Perfil profissional atualizado"
         );
 
         await openPublicProfile(
@@ -8093,13 +8067,6 @@ async function openInterestedProfessionals(opportunityId){
                     :
                     `NOVO • ${Number(item.completed_jobs || 0)} serviços`;
 
-                const location =
-                    [item.city,item.state]
-                    .filter(Boolean)
-                    .join(" - ")
-                    ||
-                    "Local não informado";
-
                 const specialties =
                     Array.isArray(item.specialties)
                     &&
@@ -8129,7 +8096,6 @@ async function openInterestedProfessionals(opportunityId){
 
                     <div class="bt-interested-meta">
                         ${escapeHtml(repText)}<br>
-                        📍 ${escapeHtml(location)}<br>
                         🔧 ${escapeHtml(specialties)}
                     </div>
 
