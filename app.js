@@ -1698,7 +1698,7 @@ function createChatInterface(){
         position:fixed;
         inset:0;
 
-        background:#101316;
+        background:#06182b;
 
         z-index:3000;
 
@@ -1815,8 +1815,8 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #00bff3,
-            #2499d4
+            #ff7900,
+            #ff982f
         );
 
         color:white;
@@ -2042,7 +2042,7 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #00bff3,
+            #ff7900,
             #ff962e
         );
 
@@ -2063,7 +2063,7 @@ function createChatInterface(){
 
         z-index:2900;
 
-        background:#101316;
+        background:#06182b;
 
         display:none;
 
@@ -2146,7 +2146,7 @@ function createChatInterface(){
 
         display:block;
 
-        color:#2499d4;
+        color:#ff922f;
 
         margin-top:5px;
 
@@ -2282,7 +2282,7 @@ function createChatInterface(){
         background:
         linear-gradient(
             135deg,
-            #00bff3,
+            #ff7900,
             #ff962e
         );
 
@@ -4269,7 +4269,7 @@ function createMyJobsInterface(){
         position:fixed;
         inset:0;
         z-index:2850;
-        background:#101316;
+        background:#06182b;
         display:none;
         overflow-y:auto;
         color:white;
@@ -4408,7 +4408,7 @@ function createMyJobsInterface(){
         border:none;
         border-radius:12px;
         margin-top:5px;
-        background:linear-gradient(135deg,#00bff3,#2499d4);
+        background:linear-gradient(135deg,#ff7900,#ff982f);
         color:white;
         font-size:11px;
         font-weight:900;
@@ -5658,7 +5658,7 @@ function createRatingInterface(){
         margin-top:15px;
         border:none;
         border-radius:12px;
-        background:linear-gradient(135deg,#00bff3,#2499d4);
+        background:linear-gradient(135deg,#ff7900,#ff982f);
         color:white;
         font-weight:900;
         font-size:11px;
@@ -6363,7 +6363,7 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC R10 - TEMA GRAFITE AZUL (TESTE)
+   BORATEC R11 PWA
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
@@ -6440,7 +6440,7 @@ function createBoraTecV1Interface(){
         align-items:center;
         justify-content:center;
         border-radius:20px;
-        background:#00bff3;
+        background:#ff7900;
         color:#fff;
         font-size:9px;
         font-weight:900;
@@ -6574,7 +6574,7 @@ function createBoraTecV1Interface(){
         min-height:45px;
         border:none;
         border-radius:12px;
-        background:linear-gradient(135deg,#00bff3,#31b9e8);
+        background:linear-gradient(135deg,#ff7900,#ff9a35);
         color:#fff;
         font-size:11px;
         font-weight:900;
@@ -6656,7 +6656,7 @@ function createBoraTecV1Interface(){
 
     .bt-reputation-score strong{
         font-size:25px;
-        color:#31b9e8;
+        color:#ff9b34;
     }
 
     .bt-reputation-score span{
@@ -10607,7 +10607,7 @@ function createCommunityInterface(){
             z-index:7600;
             display:none;
             flex-direction:column;
-            background:#101316;
+            background:#06182b;
             color:#fff;
         }
 
@@ -10811,7 +10811,7 @@ function createCommunityInterface(){
             flex:0 0 46px;
             border:0;
             border-radius:14px;
-            background:#00bff3;
+            background:#ff7900;
             color:#fff;
             font-size:18px;
             font-weight:900;
@@ -10868,7 +10868,7 @@ function createCommunityInterface(){
         .bt-community-reply-preview{
             margin-bottom:6px;
             padding:7px 9px;
-            border-left:3px solid #00bff3;
+            border-left:3px solid #ff7900;
             border-radius:7px;
             background:rgba(255,255,255,.045);
             cursor:pointer;
@@ -12402,7 +12402,7 @@ function setupBoraTecPWA(){
 
         ensureMeta(
             "theme-color",
-            "#101316"
+            "#06182b"
         );
 
         ensureMeta(
@@ -12616,7 +12616,7 @@ function createBoraTecHome(){
             overflow-y:auto;
             background:
                 radial-gradient(circle at 85% -10%,rgba(19,120,190,.18),transparent 34%),
-                linear-gradient(180deg,#101316 0%,#11171b 100%);
+                linear-gradient(180deg,#06182b 0%,#071a2e 100%);
             color:#fff;
         }
 
@@ -13449,7 +13449,7 @@ async function loadBoraTecHome(){
                         ">
                             ${city ? `<span>${city}</span>` : ""}
                             ${item.category ? `<span>🧰 ${escapeHTML(item.category)}</span>` : ""}
-                            ${value ? `<span style="color:#31b9e8;font-weight:800">${value}</span>` : ""}
+                            ${value ? `<span style="color:#ff9b32;font-weight:800">${value}</span>` : ""}
                         </div>
                     </div>
                 `;
@@ -13690,7 +13690,7 @@ function createBoraTecSplash(){
             display:flex;
             align-items:center;
             justify-content:center;
-            background:#101316;
+            background:#06182b;
             opacity:1;
             transition:opacity .28s ease;
         }
@@ -14087,7 +14087,7 @@ function setupBoraTecV18HomeStyle(){
 #btHomeScreen{
     background:
         radial-gradient(circle at 85% -10%, rgba(22,123,190,.18), transparent 34%),
-        linear-gradient(180deg,#101316 0%,#11171b 100%) !important;
+        linear-gradient(180deg,#06182b 0%,#071a2e 100%) !important;
 }
 
 #btHomeScreen .bt-home-shell{
@@ -14337,4 +14337,322 @@ window.openBoraTecFeedTab = function(tabName){
 };
 
 window.openBoraTecHome = openBoraTecHome;
+
+
+/* =========================================================
+   BORATEC R10 — INDUSTRIAL TECH UI
+   Override visual isolado. Não altera regras de negócio.
+========================================================= */
+(function(){
+
+    if(document.getElementById("btIndustrialTechTheme")){
+        return;
+    }
+
+    const style =
+        document.createElement("style");
+
+    style.id =
+        "btIndustrialTechTheme";
+
+    style.textContent = `
+        :root{
+            --bt-tech-bg:#090d10;
+            --bt-tech-panel:#12191e;
+            --bt-tech-panel2:#182127;
+            --bt-tech-edge:#39454d;
+            --bt-tech-edge-hi:#59656d;
+            --bt-tech-blue:#08baf0;
+            --bt-tech-blue2:#087eae;
+            --bt-tech-red:#e34843;
+            --bt-tech-text:#f3f6f8;
+            --bt-tech-muted:#8f9ba3;
+        }
+
+        /* HOME */
+        #btHomeScreen{
+            background:
+                radial-gradient(circle at 82% -12%,rgba(8,186,240,.11),transparent 30%),
+                linear-gradient(180deg,#090d10 0%,#0b1013 100%) !important;
+        }
+
+        #btHomeScreen .bt-home-shell{
+            max-width:680px;
+        }
+
+        #btHomeScreen .bt-v182-top{
+            position:relative;
+            padding:9px 10px 11px;
+            border:1px solid #354149;
+            border-radius:10px;
+            background:
+                linear-gradient(145deg,#151d22,#0c1114);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.04),
+                0 8px 20px rgba(0,0,0,.26);
+        }
+
+        #btHomeScreen .bt-v182-top::after{
+            content:"";
+            position:absolute;
+            left:14px;
+            right:38%;
+            bottom:-1px;
+            height:2px;
+            background:linear-gradient(90deg,#08baf0,rgba(8,186,240,0));
+            box-shadow:0 0 8px rgba(8,186,240,.18);
+        }
+
+        #btHomeScreen .bt-v182-brand img{
+            border-radius:8px !important;
+            border:1px solid #42505a;
+            background:#0d1317;
+        }
+
+        #btHomeScreen .bt-v182-brand-name{
+            color:#eef2f4;
+            text-shadow:0 2px 10px rgba(0,0,0,.35);
+        }
+
+        #btHomeScreen .bt-v182-brand-name span,
+        #btHomeScreen .bt-v182-title span{
+            color:#08baf0 !important;
+        }
+
+        #btHomeScreen .bt-v182-brand-tag,
+        #btHomeScreen .bt-v182-kicker,
+        #btHomeScreen .bt-v182-subtitle{
+            color:#88969f !important;
+        }
+
+        #btHomeScreen .bt-v182-avatar{
+            border-radius:9px !important;
+            border:1px solid #4a5962 !important;
+            outline:1px solid rgba(8,186,240,.18);
+            background:linear-gradient(145deg,#1b252b,#0e1418) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.04),
+                0 4px 10px rgba(0,0,0,.25);
+        }
+
+        /* CARROSSEL ROBUSTO */
+        #btHomeScreen .bt-v182-actions{
+            height:258px !important;
+            perspective:900px;
+        }
+
+        #btHomeScreen .bt-v182-action{
+            width:min(76vw,270px) !important;
+            min-height:226px !important;
+            border-radius:11px !important;
+            border:1px solid #44515a !important;
+            background:
+                linear-gradient(145deg,#1a2329 0%,#10171b 50%,#0b1013 100%) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.045),
+                inset 0 0 0 1px rgba(0,0,0,.32),
+                0 14px 32px rgba(0,0,0,.34) !important;
+        }
+
+        #btHomeScreen .bt-v182-action::before{
+            content:"";
+            position:absolute;
+            inset:7px;
+            border:1px solid rgba(255,255,255,.028);
+            border-radius:7px;
+            pointer-events:none;
+        }
+
+        #btHomeScreen .bt-v182-action::after{
+            content:"";
+            position:absolute;
+            top:0;
+            left:18px;
+            width:38%;
+            height:3px;
+            background:linear-gradient(90deg,#08baf0,rgba(8,186,240,0));
+            box-shadow:0 0 10px rgba(8,186,240,.18);
+            pointer-events:none;
+        }
+
+        #btHomeScreen .bt-v182-action.primary{
+            border-color:#47717f !important;
+            background:
+                linear-gradient(145deg,#1a252b 0%,#10191e 48%,#0a1013 100%) !important;
+        }
+
+        #btHomeScreen .bt-v182-action.bt-carousel-active{
+            filter:none !important;
+            transform:translateX(-50%) scale(1) !important;
+        }
+
+        #btHomeScreen .bt-v182-action.bt-carousel-prev{
+            opacity:.34 !important;
+            filter:brightness(.54) saturate(.72) !important;
+            transform:translateX(-114%) scale(.80) rotateY(12deg) !important;
+        }
+
+        #btHomeScreen .bt-v182-action.bt-carousel-next{
+            opacity:.34 !important;
+            filter:brightness(.54) saturate(.72) !important;
+            transform:translateX(14%) scale(.80) rotateY(-12deg) !important;
+        }
+
+        #btHomeScreen .bt-v182-action-icon{
+            border-radius:9px !important;
+            background:
+                radial-gradient(circle at 50% 38%,rgba(8,186,240,.16),rgba(8,186,240,.04)) !important;
+            border:1px solid rgba(8,186,240,.24);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.04),
+                0 0 16px rgba(8,186,240,.05);
+        }
+
+        #btHomeScreen .bt-v182-action strong{
+            color:#f4f6f7;
+        }
+
+        #btHomeScreen .bt-v182-action small{
+            color:#8e9ba4 !important;
+        }
+
+        #btHomeScreen .bt-home-carousel-arrow{
+            border-radius:8px !important;
+            border:1px solid #3e4b54 !important;
+            background:
+                linear-gradient(180deg,#1a2329,#0d1317) !important;
+            color:#dfe7eb !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.04),
+                0 3px 8px rgba(0,0,0,.23);
+        }
+
+        #btHomeScreen .bt-home-carousel-dot{
+            background:#364149 !important;
+        }
+
+        #btHomeScreen .bt-home-carousel-dot.active{
+            background:#08baf0 !important;
+            box-shadow:0 0 9px rgba(8,186,240,.35);
+        }
+
+        #btHomeScreen .bt-v182-feed-link{
+            color:#31c7ef !important;
+        }
+
+        #btInstallAppButton{
+            border-radius:8px !important;
+            border:1px solid #3f4d55 !important;
+            background:linear-gradient(180deg,#182127,#10161a) !important;
+            color:#dfe7eb !important;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+        }
+
+        /* FEED / CARDS DINÂMICOS */
+        .job-card{
+            border-radius:10px !important;
+            background:
+                linear-gradient(145deg,#192127 0%,#12191e 48%,#0d1317 100%) !important;
+            border:1px solid #3a454d !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.045),
+                inset 0 0 0 1px rgba(0,0,0,.34),
+                0 8px 22px rgba(0,0,0,.30) !important;
+        }
+
+        .job-card.urgent{
+            border-color:#713632 !important;
+        }
+
+        .job-card.urgent::before{
+            background:#e34843 !important;
+            box-shadow:0 0 10px rgba(227,72,67,.30);
+        }
+
+        .action-btn,
+        .action-btn.orange{
+            border-radius:8px !important;
+            border:1px solid #22c9f6 !important;
+            background:
+                linear-gradient(180deg,#0aaee0,#087fae) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.16),
+                0 4px 11px rgba(0,0,0,.28),
+                0 0 11px rgba(8,186,240,.08) !important;
+        }
+
+        /* OVERLAYS / TELAS GERADAS PELO APP */
+        .bt-overlay,
+        [class*="bt-"][class*="overlay"]{
+            backdrop-filter:blur(7px);
+        }
+
+        .bt-sheet,
+        .bt-modal-card,
+        .bt-profile-card,
+        .bt-conv-item,
+        .bt-job-card,
+        .bt-community-message,
+        [class*="bt-"][class*="card"]{
+            border-color:#39454d !important;
+        }
+
+        /* CONVERSAS / JOBS / COMUNIDADE */
+        .bt-conv-item,
+        .bt-job-card,
+        .bt-community-message{
+            background:
+                linear-gradient(145deg,#182127,#10161a) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.035),
+                0 5px 14px rgba(0,0,0,.21) !important;
+            border-radius:9px !important;
+        }
+
+        .bt-chat-header,
+        .bt-conv-header,
+        .bt-jobs-header{
+            background:
+                linear-gradient(180deg,#151d22,#0b1013) !important;
+            border-bottom:1px solid #39444c !important;
+        }
+
+        /* NAVEGAÇÃO */
+        .bottom-nav{
+            background:
+                linear-gradient(180deg,rgba(16,22,26,.99),rgba(7,10,12,.995)) !important;
+            border-top:1px solid #3a454d !important;
+            box-shadow:
+                0 -8px 26px rgba(0,0,0,.35),
+                inset 0 1px 0 rgba(255,255,255,.03) !important;
+        }
+
+        .nav-button.active::after{
+            background:#08baf0 !important;
+            box-shadow:0 0 8px rgba(8,186,240,.48);
+        }
+
+        .publish-fab{
+            border-radius:8px !important;
+            border:1px solid #21c7f3 !important;
+            background:
+                linear-gradient(180deg,#0bb6e7,#087ca9) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.18),
+                0 5px 13px rgba(0,0,0,.30),
+                0 0 12px rgba(8,186,240,.15) !important;
+        }
+
+        @media(min-width:800px){
+            #btHomeScreen .bt-v182-action{
+                width:278px !important;
+            }
+        }
+    `;
+
+    document.head.appendChild(
+        style
+    );
+
+})();
 
