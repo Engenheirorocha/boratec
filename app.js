@@ -6303,13 +6303,14 @@ document.addEventListener(
 );
 
 /* =========================================================
-   BORATEC V1.0
+   BORATEC V1.0.1
    REPUTAÇÃO + PERFIL + INTERESSADOS + FILTROS + NOTIFICAÇÕES
 ========================================================= */
 
 let btAllPosts = [];
 let btNotificationsChannel = null;
 let btCurrentProfileId = null;
+let btProfileConversationInterestId = null;
 
 const btFeedFilters = {
     type: "",
@@ -7432,6 +7433,14 @@ async function openPublicProfile(profileId){
 
     btCurrentProfileId = profileId;
 
+    // Perfil aberto fora da lista de interessados:
+    // não herda conversa contextual antiga.
+    if(!window.__btOpeningInterestedProfile){
+        btProfileConversationInterestId = null;
+    }
+
+    window.__btOpeningInterestedProfile = false;
+
     const overlay =
         document.getElementById("btProfileOverlay");
 
@@ -7727,6 +7736,26 @@ function renderPublicProfile(profile){
 
 
         ${
+            !isOwn
+            &&
+            btProfileConversationInterestId
+            ?
+            `
+            <button
+                class="bt-primary"
+                type="button"
+                style="margin-top:16px;"
+                onclick="chatFromPublicProfile('${escapeJs(professionalName)}')"
+            >
+                💬 Conversar
+            </button>
+            `
+            :
+            ""
+        }
+
+
+        ${
             isOwn
             ?
             `
@@ -7815,6 +7844,33 @@ function renderPublicProfile(profile){
         }
     `;
 }
+
+async function chatFromPublicProfile(
+    professionalName
+){
+
+    const interestId =
+        btProfileConversationInterestId;
+
+    if(!interestId){
+
+        showToast(
+            "Conversa não encontrada"
+        );
+
+        return;
+    }
+
+    closePublicProfile();
+
+    await openInterestConversation(
+        interestId,
+        professionalName
+        ||
+        "Profissional"
+    );
+}
+
 
 async function saveOwnProfessionalProfile(){
 
@@ -8063,7 +8119,10 @@ async function openInterestedProfessionals(opportunityId){
                         <button
                             class="bt-secondary"
                             type="button"
-                            onclick="openPublicProfile('${item.professional_id}')"
+                            onclick="openInterestedProfile(
+                                '${item.professional_id}',
+                                '${item.interest_id}'
+                            )"
                         >
                             Ver perfil
                         </button>
@@ -8093,6 +8152,27 @@ async function openInterestedProfessionals(opportunityId){
         body.innerHTML =
             `<div class="bt-empty">Não foi possível carregar os interessados.</div>`;
     }
+}
+
+function openInterestedProfile(
+    profileId,
+    interestId
+){
+
+    // Fecha a janela de interessados antes de abrir o perfil.
+    closeInterestedProfessionals();
+
+    btProfileConversationInterestId =
+        interestId
+        ||
+        null;
+
+    window.__btOpeningInterestedProfile =
+        true;
+
+    openPublicProfile(
+        profileId
+    );
 }
 
 function closeInterestedProfessionals(){
@@ -8599,6 +8679,12 @@ window.clearFeedFilters =
 
 window.openPublicProfile =
     openPublicProfile;
+
+window.openInterestedProfile =
+    openInterestedProfile;
+
+window.chatFromPublicProfile =
+    chatFromPublicProfile;
 
 window.closePublicProfile =
     closePublicProfile;
