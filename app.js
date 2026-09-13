@@ -1,7 +1,7 @@
 /* =========================================================
    BORATEC
    APP.JS
-   V0.5
+   V0.5.1
 
    FUNCIONANDO:
    - Login / sessão
@@ -1605,7 +1605,8 @@ async function(opportunityId){
 
     }
 
-};/* =========================================================
+};
+/* =========================================================
    CRIAR INTERFACE CHAT
 ========================================================= */
 
@@ -4153,7 +4154,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   BORATEC V0.5
+   BORATEC V0.5.1
    MEUS SERVIÇOS
 ========================================================= */
 
@@ -4499,8 +4500,7 @@ async function loadMyJobs(){
                 professional_id,
                 agreed_value,
                 status,
-                created_at,
-                updated_at
+                created_at
             `)
             .or(
                 `publisher_id.eq.${boraUser.id},professional_id.eq.${boraUser.id}`
@@ -5248,7 +5248,7 @@ function(
 
 
 /* =========================================================
-   GLOBAL V0.5
+   GLOBAL V0.5.1
 ========================================================= */
 
 window.selectNav =
@@ -5274,7 +5274,7 @@ window.confirmBoraTecJob =
 
 
 /* =========================================================
-   INICIAR INTERFACE V0.5
+   INICIAR INTERFACE V0.5.1
 ========================================================= */
 
 document.addEventListener(
