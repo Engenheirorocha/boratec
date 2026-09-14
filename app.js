@@ -14407,6 +14407,60 @@ function createTechnicalArea(){
                 margin-bottom:18px;
             }
 
+            .bt-compressor-icon{
+                position:relative;
+                width:42px;
+                height:48px;
+                display:block;
+            }
+
+            .bt-compressor-icon::before{
+                content:"";
+                position:absolute;
+                left:7px;
+                right:7px;
+                top:10px;
+                bottom:5px;
+                border:2px solid #5ecfff;
+                border-radius:14px 14px 9px 9px;
+                background:linear-gradient(180deg,rgba(94,207,255,.20),rgba(94,207,255,.045));
+                box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 0 12px rgba(94,207,255,.08);
+            }
+
+            .bt-compressor-icon::after{
+                content:"";
+                position:absolute;
+                left:13px;
+                top:4px;
+                width:16px;
+                height:10px;
+                border:2px solid #5ecfff;
+                border-bottom:0;
+                border-radius:7px 7px 0 0;
+                box-sizing:border-box;
+                box-shadow:-7px 34px 0 -5px #5ecfff,7px 34px 0 -5px #5ecfff;
+            }
+
+            .bt-compressor-terminal{
+                position:absolute;
+                width:4px;
+                height:4px;
+                border-radius:50%;
+                background:#ff9b32;
+                top:20px;
+                left:19px;
+                box-shadow:-7px 7px 0 #ff9b32,7px 7px 0 #ff9b32;
+                z-index:2;
+            }
+
+            .bt-tech-subarea-card-icon .bt-compressor-icon{
+                width:31px;
+                height:35px;
+                transform:scale(.78);
+                transform-origin:left top;
+                margin-bottom:-6px;
+            }
+
             .bt-tech-card strong{
                 display:block;
                 font-size:19px;
@@ -14727,7 +14781,9 @@ function createTechnicalArea(){
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('compressores')">
-                    <div class="bt-tech-card-icon">🧰</div>
+                    <div class="bt-tech-card-icon" aria-hidden="true">
+                        <span class="bt-compressor-icon"><span class="bt-compressor-terminal"></span></span>
+                    </div>
                     <strong>Compressores</strong>
                     <small>Identificação elétrica, enrolamentos, corrente e dados de placa.</small>
                 </button>
@@ -16611,9 +16667,14 @@ function renderTechnicalCompressorsArea(){
 
     workspace.innerHTML = `
         <div class="bt-tech-workspace-title">
-            <div>
-                <strong>Compressores</strong>
-                <span>Ferramentas para identificação e análise elétrica de compressores.</span>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="bt-tech-subarea-card-icon" aria-hidden="true" style="margin:0;min-width:34px;">
+                    <span class="bt-compressor-icon"><span class="bt-compressor-terminal"></span></span>
+                </div>
+                <div>
+                    <strong>Compressores</strong>
+                    <span>Ferramentas para identificação e análise elétrica de compressores.</span>
+                </div>
             </div>
         </div>
 
