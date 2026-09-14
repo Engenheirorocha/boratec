@@ -15302,10 +15302,263 @@ function calculateTechnicalGasSaturation(){
 }
 
 
+function btGetSuperheatSaturationC(gasKey,psig){
+
+    const gas =
+        btRefrigerantPT[gasKey];
+
+    if(!gas){
+        return null;
+    }
+
+    if(gas.kind === "blend"){
+        return btInterpolateTempFromPressure(
+            gas.dew,
+            gas.sourceUnit,
+            psig
+        );
+    }
+
+    return btInterpolateTempFromPressure(
+        gas.data,
+        gas.sourceUnit,
+        psig
+    );
+}
+
+
+function renderTechnicalSuperheatTool(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    const gasOptions =
+        Object.entries(btRefrigerantPT)
+        .map(([key,gas]) =>
+            `<option value="${key}">${gas.label}</option>`
+        )
+        .join("");
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Superaquecimento</strong>
+                <span>Informe a pressão de sucção e a temperatura real da linha de sucção.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label for="btTechSuperheatGas">Refrigerante</label>
+                <select id="btTechSuperheatGas">
+                    ${gasOptions}
+                </select>
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechSuperheatPressure">Pressão de sucção</label>
+                <input
+                    id="btTechSuperheatPressure"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.1"
+                    placeholder="Ex.: 118"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechSuperheatPressureUnit">Unidade</label>
+                <select id="btTechSuperheatPressureUnit">
+                    <option value="psig">PSI (g)</option>
+                    <option value="barg">bar (g)</option>
+                    <option value="kpag">kPa (g)</option>
+                </select>
+            </div>
+
+            <div class="bt-tech-field full">
+                <label for="btTechSuperheatLineTemp">Temperatura da linha de sucção (°C)</label>
+                <input
+                    id="btTechSuperheatLineTemp"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.1"
+                    placeholder="Ex.: 12"
+                >
+            </div>
+        </div>
+
+        <button
+            id="btTechSuperheatCalculate"
+            class="bt-tech-calc-button"
+            type="button"
+        >CALCULAR SUPERAQUECIMENTO</button>
+
+        <div
+            id="btTechSuperheatResult"
+            class="bt-tech-result"
+            style="display:none"
+        ></div>
+
+        <div class="bt-tech-info-note">
+            Fórmula: temperatura real da linha de sucção − temperatura de saturação. Em refrigerantes com glide, o BoraTec usa automaticamente o ponto <strong>Dew / vapor</strong> para o cálculo.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    document
+    .getElementById(
+        "btTechSuperheatCalculate"
+    )
+    ?.addEventListener(
+        "click",
+        calculateTechnicalSuperheat
+    );
+}
+
+
+function calculateTechnicalSuperheat(){
+
+    const gasKey =
+        document.getElementById(
+            "btTechSuperheatGas"
+        )?.value;
+
+    const pressureRaw =
+        document.getElementById(
+            "btTechSuperheatPressure"
+        )?.value;
+
+    const pressureUnit =
+        document.getElementById(
+            "btTechSuperheatPressureUnit"
+        )?.value;
+
+    const lineTempRaw =
+        document.getElementById(
+            "btTechSuperheatLineTemp"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechSuperheatResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const pressure =
+        Number(
+            String(pressureRaw || "")
+            .replace(",",".")
+        );
+
+    const lineTemp =
+        Number(
+            String(lineTempRaw || "")
+            .replace(",",".")
+        );
+
+    if(
+        !Number.isFinite(pressure)
+        ||
+        pressure < 0
+        ||
+        !Number.isFinite(lineTemp)
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique os valores</div>
+            <div class="bt-tech-result-secondary">Informe uma pressão válida e a temperatura medida na linha de sucção.</div>
+        `;
+        return;
+    }
+
+    const gas =
+        btRefrigerantPT[gasKey];
+
+    if(!gas){
+        return;
+    }
+
+    const psig =
+        btPressureToPsig(
+            pressure,
+            pressureUnit
+        );
+
+    const saturation =
+        btGetSuperheatSaturationC(
+            gasKey,
+            psig
+        );
+
+    result.style.display = "block";
+
+    if(saturation === null){
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Fora da faixa da tabela</div>
+            <div class="bt-tech-result-secondary">A pressão informada está fora da faixa P-T disponível para ${gas.label}.</div>
+        `;
+        return;
+    }
+
+    const superheat =
+        lineTemp - saturation;
+
+    const blendText =
+        gas.kind === "blend"
+        ? " • saturação Dew / vapor"
+        : "";
+
+    const negativeNote =
+        superheat < 0
+        ? `<br><strong>Atenção:</strong> o resultado ficou negativo. Confira pressão, refrigerante selecionado e posição/contato do sensor de temperatura.`
+        : "";
+
+    result.innerHTML = `
+        <div class="bt-tech-result-label">${gas.label} • Superaquecimento</div>
+        <div class="bt-tech-result-value">${btFormatCelsius(superheat)}</div>
+        <div class="bt-tech-result-secondary">
+            Temperatura de saturação: <strong>${btFormatCelsius(saturation)}</strong>${blendText}<br>
+            Temperatura da linha: <strong>${btFormatCelsius(lineTemp)}</strong><br>
+            Cálculo: ${lineTemp.toFixed(1).replace(".",",")} − ${saturation.toFixed(1).replace(".",",")} = <strong>${superheat.toFixed(1).replace(".",",")} °C</strong>${negativeNote}
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
 
     if(type === "gases"){
         renderTechnicalGasTool();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
+    if(type === "superaquecimento"){
+        renderTechnicalSuperheatTool();
 
         window.setTimeout(
             () => {
