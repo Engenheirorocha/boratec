@@ -14228,8 +14228,8 @@ function openMyBoraTecProfileFromHome(){
 
 
 /* =========================================================
-   ÁREA TÉCNICA BORATEC R12.1
-   MÓDULO ISOLADO - CARROSSEL VERTICAL DE CALCULADORAS
+   ÁREA TÉCNICA BORATEC R12.2
+   MÓDULO ISOLADO - CARROSSEL HORIZONTAL NO PADRÃO DA HOME
 ========================================================= */
 
 function createTechnicalArea(){
@@ -14249,33 +14249,27 @@ function createTechnicalArea(){
                 inset:0;
                 z-index:6500;
                 display:none;
-                overflow:hidden;
+                overflow-y:auto;
                 background:
                     radial-gradient(circle at 82% -8%,rgba(0,188,255,.16),transparent 32%),
                     linear-gradient(180deg,#06182b 0%,#071a2e 100%);
                 color:#fff;
             }
 
-            #btTechnicalAreaScreen.show{
-                display:block;
-            }
+            #btTechnicalAreaScreen.show{ display:block; }
 
             .bt-tech-shell{
                 width:min(100%,680px);
-                height:100dvh;
                 margin:0 auto;
-                padding:18px 18px 22px;
+                padding:20px 18px 110px;
                 box-sizing:border-box;
-                display:flex;
-                flex-direction:column;
             }
 
             .bt-tech-top{
                 display:flex;
                 align-items:center;
                 gap:12px;
-                flex:0 0 auto;
-                padding-bottom:14px;
+                margin-bottom:20px;
             }
 
             .bt-tech-back{
@@ -14294,9 +14288,7 @@ function createTechnicalArea(){
                 flex:0 0 auto;
             }
 
-            .bt-tech-heading{
-                min-width:0;
-            }
+            .bt-tech-heading{ min-width:0; }
 
             .bt-tech-heading small{
                 display:block;
@@ -14317,19 +14309,14 @@ function createTechnicalArea(){
             }
 
             .bt-tech-intro{
-                flex:0 0 auto;
-                margin:3px 0 12px;
-                padding:13px 15px;
-                border:1px solid rgba(94,207,255,.16);
-                border-radius:16px;
-                background:rgba(8,33,54,.70);
+                margin-bottom:18px;
             }
 
             .bt-tech-intro strong{
                 display:block;
-                font-size:13px;
+                font-size:14px;
                 font-weight:950;
-                margin-bottom:3px;
+                margin-bottom:5px;
             }
 
             .bt-tech-intro span{
@@ -14339,45 +14326,72 @@ function createTechnicalArea(){
                 line-height:1.4;
             }
 
-            .bt-tech-vertical-carousel{
-                flex:1 1 auto;
-                min-height:0;
-                overflow-y:auto;
-                overscroll-behavior:contain;
-                scroll-snap-type:y mandatory;
-                scroll-behavior:smooth;
-                scrollbar-width:none;
-                padding:7vh 5px 18vh;
-                box-sizing:border-box;
+            .bt-tech-actions{
+                position:relative;
+                height:246px;
+                margin:0 -18px 8px;
+                overflow:hidden;
                 touch-action:pan-y;
-            }
-
-            .bt-tech-vertical-carousel::-webkit-scrollbar{
-                display:none;
+                user-select:none;
             }
 
             .bt-tech-card{
-                width:100%;
-                min-height:188px;
-                margin:0 0 16px;
-                padding:22px 20px;
+                position:absolute;
+                top:10px;
+                left:50%;
+                width:min(72vw,250px);
+                min-height:220px;
                 border:1px solid rgba(119,151,178,.18);
                 border-radius:22px;
-                background:linear-gradient(145deg,rgba(15,45,70,.98),rgba(9,35,58,.98));
+                padding:22px 18px;
+                text-align:center;
                 color:#fff;
+                background:linear-gradient(145deg,rgba(15,45,70,.98),rgba(9,35,58,.98));
                 box-shadow:0 16px 38px rgba(0,0,0,.22);
-                box-sizing:border-box;
-                scroll-snap-align:center;
-                scroll-snap-stop:always;
-                display:flex;
-                align-items:center;
-                gap:18px;
-                text-align:left;
                 cursor:pointer;
+                box-sizing:border-box;
+                display:flex;
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                opacity:0;
+                pointer-events:none;
+                transform:translateX(-50%) scale(.72);
+                transition:transform .32s cubic-bezier(.22,.61,.36,1),opacity .32s ease,filter .32s ease;
+                will-change:transform,opacity;
             }
 
-            .bt-tech-card:active{
-                transform:scale(.985);
+            .bt-tech-card.bt-tech-carousel-active{
+                z-index:5;
+                opacity:1;
+                pointer-events:auto;
+                filter:none;
+                transform:translateX(-50%) scale(1);
+            }
+
+            .bt-tech-card.bt-tech-carousel-prev{
+                z-index:3;
+                opacity:.38;
+                filter:brightness(.62);
+                transform:translateX(-112%) scale(.80) rotateY(10deg);
+            }
+
+            .bt-tech-card.bt-tech-carousel-next{
+                z-index:3;
+                opacity:.38;
+                filter:brightness(.62);
+                transform:translateX(12%) scale(.80) rotateY(-10deg);
+            }
+
+            .bt-tech-card.bt-tech-carousel-hidden{
+                z-index:1;
+                opacity:0;
+                pointer-events:none;
+                transform:translateX(-50%) scale(.64);
+            }
+
+            .bt-tech-card.bt-tech-carousel-active:active{
+                transform:translateX(-50%) scale(.985);
             }
 
             .bt-tech-card-icon{
@@ -14387,75 +14401,85 @@ function createTechnicalArea(){
                 display:flex;
                 align-items:center;
                 justify-content:center;
-                flex:0 0 auto;
-                font-size:32px;
+                font-size:34px;
                 background:rgba(94,207,255,.08);
                 border:1px solid rgba(94,207,255,.12);
+                margin-bottom:18px;
             }
 
-            .bt-tech-card-copy{
-                min-width:0;
-            }
-
-            .bt-tech-card-copy strong{
+            .bt-tech-card strong{
                 display:block;
                 font-size:19px;
                 line-height:1.08;
                 font-weight:950;
-                margin-bottom:7px;
+                margin-bottom:9px;
             }
 
-            .bt-tech-card-copy small{
+            .bt-tech-card small{
                 display:block;
-                color:#8199ad;
+                max-width:190px;
+                color:#8098ad;
                 font-size:11px;
                 line-height:1.42;
             }
 
-            .bt-tech-card-arrow{
-                margin-left:auto;
-                color:#5ecfff;
-                font-size:23px;
-                font-weight:900;
-                flex:0 0 auto;
+            .bt-tech-carousel-controls{
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                gap:12px;
+                margin:3px 0 24px;
             }
 
-            .bt-tech-scroll-hint{
-                position:absolute;
-                left:50%;
-                bottom:14px;
-                transform:translateX(-50%);
-                z-index:2;
-                padding:6px 11px;
-                border-radius:999px;
-                background:rgba(5,20,34,.82);
-                border:1px solid rgba(119,151,178,.16);
-                color:#718ca2;
-                font-size:9px;
-                font-weight:850;
-                letter-spacing:.35px;
-                pointer-events:none;
+            .bt-tech-carousel-arrow{
+                width:42px;
+                height:42px;
+                border-radius:13px;
+                border:1px solid rgba(119,151,178,.20);
+                background:#0b243b;
+                color:#fff;
+                font-size:24px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                cursor:pointer;
             }
 
-            @media(max-width:420px){
-                .bt-tech-shell{
-                    padding-left:14px;
-                    padding-right:14px;
-                }
+            .bt-tech-carousel-arrow:active{ transform:scale(.96); }
 
-                .bt-tech-vertical-carousel{
-                    padding-top:5vh;
+            .bt-tech-carousel-dots{
+                min-width:104px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                gap:6px;
+            }
+
+            .bt-tech-carousel-dot{
+                width:6px;
+                height:6px;
+                border-radius:99px;
+                background:rgba(128,151,172,.30);
+                transition:width .2s ease,background .2s ease;
+            }
+
+            .bt-tech-carousel-dot.active{
+                width:18px;
+                background:#5ecfff;
+            }
+
+            @media(min-width:760px){
+                .bt-tech-shell{ padding-top:28px; }
+
+                .bt-tech-actions{
+                    height:268px;
+                    margin-left:-34px;
+                    margin-right:-34px;
                 }
 
                 .bt-tech-card{
-                    min-height:174px;
-                    padding:19px 16px;
-                }
-
-                .bt-tech-card-icon{
-                    width:60px;
-                    height:60px;
-                    font-size:29px;
+                    width:260px;
+                    min-height:236px;
                 }
             }
         `;
@@ -14485,72 +14509,285 @@ function createTechnicalArea(){
 
             <div class="bt-tech-intro">
                 <strong>Calculadoras</strong>
-                <span>Deslize para cima ou para baixo e escolha a ferramenta.</span>
+                <span>Deslize para os lados e escolha a ferramenta.</span>
             </div>
 
-            <div class="bt-tech-vertical-carousel" id="btTechnicalVerticalCarousel">
+            <div class="bt-tech-actions" id="btTechnicalCarousel">
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('btu')">
-                    <span class="bt-tech-card-icon">❄️</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>BTU</strong>
-                        <small>Dimensionamento de capacidade para ambientes.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">❄️</div>
+                    <strong>Calculadora de BTU/h</strong>
+                    <small>Dimensionamento de capacidade para ambientes.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('superaquecimento')">
-                    <span class="bt-tech-card-icon">🌡️</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>Superaquecimento</strong>
-                        <small>Calcule o superaquecimento do sistema de refrigeração.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">🌡️</div>
+                    <strong>Superaquecimento</strong>
+                    <small>Calcule o superaquecimento do sistema de refrigeração.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('subresfriamento')">
-                    <span class="bt-tech-card-icon">🧊</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>Sub-resfriamento</strong>
-                        <small>Calcule o sub-resfriamento para análise do sistema.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">🧊</div>
+                    <strong>Sub-resfriamento</strong>
+                    <small>Calcule o sub-resfriamento para análise do sistema.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('pressao')">
-                    <span class="bt-tech-card-icon">⏱️</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>Conversão de pressão</strong>
-                        <small>Converta PSI, bar, kPa e outras unidades de pressão.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">⏱️</div>
+                    <strong>Conversão de pressão</strong>
+                    <small>Converta PSI, bar, kPa e outras unidades de pressão.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('temperatura')">
-                    <span class="bt-tech-card-icon">🌡</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>Conversão de temperatura</strong>
-                        <small>Converta Celsius, Fahrenheit e Kelvin rapidamente.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">🌡</div>
+                    <strong>Conversão de temperatura</strong>
+                    <small>Converta Celsius, Fahrenheit e Kelvin rapidamente.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('eletrica')">
-                    <span class="bt-tech-card-icon">⚡</span>
-                    <span class="bt-tech-card-copy">
-                        <strong>Elétrica</strong>
-                        <small>Cálculos elétricos para uso técnico em campo.</small>
-                    </span>
-                    <span class="bt-tech-card-arrow">›</span>
+                    <div class="bt-tech-card-icon">⚡</div>
+                    <strong>Elétrica</strong>
+                    <small>Cálculos elétricos para uso técnico em campo.</small>
                 </button>
 
             </div>
 
-            <div class="bt-tech-scroll-hint">↕ DESLIZE</div>
+            <div class="bt-tech-carousel-controls">
+                <button
+                    id="btTechnicalCarouselPrev"
+                    class="bt-tech-carousel-arrow"
+                    type="button"
+                    aria-label="Anterior"
+                >‹</button>
+
+                <div
+                    id="btTechnicalCarouselDots"
+                    class="bt-tech-carousel-dots"
+                    aria-hidden="true"
+                ></div>
+
+                <button
+                    id="btTechnicalCarouselNext"
+                    class="bt-tech-carousel-arrow"
+                    type="button"
+                    aria-label="Próximo"
+                >›</button>
+            </div>
+
         </div>
     `;
 
     document.body.appendChild(screen);
+    setupTechnicalAreaCarousel();
+}
+
+
+function setupTechnicalAreaCarousel(){
+
+    const screen =
+        document.getElementById(
+            "btTechnicalAreaScreen"
+        );
+
+    if(!screen){
+        return;
+    }
+
+    const rail =
+        document.getElementById(
+            "btTechnicalCarousel"
+        );
+
+    const dotsBox =
+        document.getElementById(
+            "btTechnicalCarouselDots"
+        );
+
+    const prev =
+        document.getElementById(
+            "btTechnicalCarouselPrev"
+        );
+
+    const next =
+        document.getElementById(
+            "btTechnicalCarouselNext"
+        );
+
+    if(!rail || !dotsBox || !prev || !next){
+        return;
+    }
+
+    const cards =
+        Array.from(
+            rail.querySelectorAll(
+                ".bt-tech-card"
+            )
+        );
+
+    if(cards.length < 2){
+        return;
+    }
+
+    let current = 0;
+    let pointerStartX = null;
+    let dragged = false;
+
+    dotsBox.innerHTML =
+        cards
+        .map(
+            (_,index) =>
+                `<span class="bt-tech-carousel-dot${index === 0 ? " active" : ""}"></span>`
+        )
+        .join("");
+
+    const dots =
+        Array.from(
+            dotsBox.querySelectorAll(
+                ".bt-tech-carousel-dot"
+            )
+        );
+
+    function normalize(index){
+        return ((index % cards.length) + cards.length) % cards.length;
+    }
+
+    function render(){
+
+        const previous = normalize(current - 1);
+        const following = normalize(current + 1);
+
+        cards.forEach(
+            (card,index) => {
+
+                card.classList.remove(
+                    "bt-tech-carousel-active",
+                    "bt-tech-carousel-prev",
+                    "bt-tech-carousel-next",
+                    "bt-tech-carousel-hidden"
+                );
+
+                if(index === current){
+                    card.classList.add("bt-tech-carousel-active");
+                }
+                else if(index === previous){
+                    card.classList.add("bt-tech-carousel-prev");
+                }
+                else if(index === following){
+                    card.classList.add("bt-tech-carousel-next");
+                }
+                else{
+                    card.classList.add("bt-tech-carousel-hidden");
+                }
+            }
+        );
+
+        dots.forEach(
+            (dot,index) =>
+                dot.classList.toggle(
+                    "active",
+                    index === current
+                )
+        );
+    }
+
+    function move(direction){
+        current = normalize(current + direction);
+        render();
+    }
+
+    prev.onclick = () => move(-1);
+    next.onclick = () => move(1);
+
+    rail.addEventListener(
+        "pointerdown",
+        event => {
+
+            if(
+                event.pointerType === "mouse"
+                &&
+                event.button !== 0
+            ){
+                return;
+            }
+
+            pointerStartX = event.clientX;
+            dragged = false;
+        }
+    );
+
+    rail.addEventListener(
+        "pointermove",
+        event => {
+
+            if(pointerStartX === null){
+                return;
+            }
+
+            if(
+                Math.abs(
+                    event.clientX - pointerStartX
+                ) > 10
+            ){
+                dragged = true;
+            }
+        }
+    );
+
+    rail.addEventListener(
+        "pointerup",
+        event => {
+
+            if(pointerStartX === null){
+                return;
+            }
+
+            const delta =
+                event.clientX - pointerStartX;
+
+            pointerStartX = null;
+
+            if(Math.abs(delta) >= 42){
+
+                if(delta < 0){
+                    move(1);
+                }
+                else{
+                    move(-1);
+                }
+            }
+
+            window.setTimeout(
+                () => {
+                    dragged = false;
+                },
+                0
+            );
+        }
+    );
+
+    rail.addEventListener(
+        "pointercancel",
+        () => {
+            pointerStartX = null;
+            dragged = false;
+        }
+    );
+
+    rail.addEventListener(
+        "click",
+        event => {
+
+            if(!dragged){
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+        },
+        true
+    );
+
+    render();
 }
 
 
@@ -14569,15 +14806,6 @@ function openTechnicalArea(){
 
     screen.classList.add("show");
     document.body.style.overflow = "hidden";
-
-    const carousel =
-        document.getElementById(
-            "btTechnicalVerticalCarousel"
-        );
-
-    if(carousel){
-        carousel.scrollTop = 0;
-    }
 }
 
 
@@ -14607,7 +14835,7 @@ function closeTechnicalArea(){
 function openTechnicalCalculator(type){
 
     const names = {
-        btu:"Calculadora de BTU",
+        btu:"Calculadora de BTU/h",
         superaquecimento:"Superaquecimento",
         subresfriamento:"Sub-resfriamento",
         pressao:"Conversão de pressão",
