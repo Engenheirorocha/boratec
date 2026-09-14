@@ -15535,6 +15535,240 @@ function calculateTechnicalSuperheat(){
 }
 
 
+
+function btGetSubcoolingSaturationC(gasKey,psig){
+
+    const gas =
+        btRefrigerantPT[gasKey];
+
+    if(!gas){
+        return null;
+    }
+
+    if(gas.kind === "blend"){
+        return btInterpolateTempFromPressure(
+            gas.bubble,
+            gas.sourceUnit,
+            psig
+        );
+    }
+
+    return btInterpolateTempFromPressure(
+        gas.data,
+        gas.sourceUnit,
+        psig
+    );
+}
+
+
+function renderTechnicalSubcoolingTool(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    const gasOptions =
+        Object.entries(btRefrigerantPT)
+        .map(([key,gas]) =>
+            `<option value="${key}">${gas.label}</option>`
+        )
+        .join("");
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Sub-resfriamento</strong>
+                <span>Informe a pressão de alta e a temperatura real da linha de líquido.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label for="btTechSubcoolGas">Refrigerante</label>
+                <select id="btTechSubcoolGas">
+                    ${gasOptions}
+                </select>
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechSubcoolPressure">Pressão de alta</label>
+                <input
+                    id="btTechSubcoolPressure"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.1"
+                    placeholder="Ex.: 360"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechSubcoolPressureUnit">Unidade</label>
+                <select id="btTechSubcoolPressureUnit">
+                    <option value="psig">PSI (g)</option>
+                    <option value="barg">bar (g)</option>
+                    <option value="kpag">kPa (g)</option>
+                </select>
+            </div>
+
+            <div class="bt-tech-field full">
+                <label for="btTechSubcoolLineTemp">Temperatura da linha de líquido (°C)</label>
+                <input
+                    id="btTechSubcoolLineTemp"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.1"
+                    placeholder="Ex.: 35"
+                >
+            </div>
+        </div>
+
+        <button
+            id="btTechSubcoolCalculate"
+            class="bt-tech-calc-button"
+            type="button"
+        >CALCULAR SUB-RESFRIAMENTO</button>
+
+        <div
+            id="btTechSubcoolResult"
+            class="bt-tech-result"
+            style="display:none"
+        ></div>
+
+        <div class="bt-tech-info-note">
+            Fórmula: temperatura de saturação da condensação − temperatura real da linha de líquido. Em refrigerantes com glide, o BoraTec usa automaticamente o ponto <strong>Bubble / líquido</strong> para o cálculo.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    document
+    .getElementById(
+        "btTechSubcoolCalculate"
+    )
+    ?.addEventListener(
+        "click",
+        calculateTechnicalSubcooling
+    );
+}
+
+
+function calculateTechnicalSubcooling(){
+
+    const gasKey =
+        document.getElementById(
+            "btTechSubcoolGas"
+        )?.value;
+
+    const pressureRaw =
+        document.getElementById(
+            "btTechSubcoolPressure"
+        )?.value;
+
+    const pressureUnit =
+        document.getElementById(
+            "btTechSubcoolPressureUnit"
+        )?.value;
+
+    const lineTempRaw =
+        document.getElementById(
+            "btTechSubcoolLineTemp"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechSubcoolResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const pressure =
+        Number(
+            String(pressureRaw || "")
+            .replace(",",".")
+        );
+
+    const lineTemp =
+        Number(
+            String(lineTempRaw || "")
+            .replace(",",".")
+        );
+
+    if(
+        !Number.isFinite(pressure)
+        ||
+        pressure < 0
+        ||
+        !Number.isFinite(lineTemp)
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique os valores</div>
+            <div class="bt-tech-result-secondary">Informe uma pressão válida e a temperatura medida na linha de líquido.</div>
+        `;
+        return;
+    }
+
+    const gas =
+        btRefrigerantPT[gasKey];
+
+    if(!gas){
+        return;
+    }
+
+    const psig =
+        btPressureToPsig(
+            pressure,
+            pressureUnit
+        );
+
+    const saturation =
+        btGetSubcoolingSaturationC(
+            gasKey,
+            psig
+        );
+
+    result.style.display = "block";
+
+    if(saturation === null){
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Fora da faixa da tabela</div>
+            <div class="bt-tech-result-secondary">A pressão informada está fora da faixa P-T disponível para ${gas.label}.</div>
+        `;
+        return;
+    }
+
+    const subcooling =
+        saturation - lineTemp;
+
+    const blendText =
+        gas.kind === "blend"
+        ? " • saturação Bubble / líquido"
+        : "";
+
+    const negativeNote =
+        subcooling < 0
+        ? `<br><strong>Atenção:</strong> o resultado ficou negativo. Confira pressão, refrigerante selecionado e posição/contato do sensor de temperatura.`
+        : "";
+
+    result.innerHTML = `
+        <div class="bt-tech-result-label">${gas.label} • Sub-resfriamento</div>
+        <div class="bt-tech-result-value">${btFormatCelsius(subcooling)}</div>
+        <div class="bt-tech-result-secondary">
+            Temperatura de saturação: <strong>${btFormatCelsius(saturation)}</strong>${blendText}<br>
+            Temperatura da linha de líquido: <strong>${btFormatCelsius(lineTemp)}</strong><br>
+            Cálculo: ${saturation.toFixed(1).replace(".",",")} − ${lineTemp.toFixed(1).replace(".",",")} = <strong>${subcooling.toFixed(1).replace(".",",")} °C</strong>${negativeNote}
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
 
     if(type === "gases"){
@@ -15559,6 +15793,26 @@ function openTechnicalCalculator(type){
 
     if(type === "superaquecimento"){
         renderTechnicalSuperheatTool();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
+    if(type === "subresfriamento"){
+        renderTechnicalSubcoolingTool();
 
         window.setTimeout(
             () => {
