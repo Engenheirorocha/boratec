@@ -4116,6 +4116,12 @@ async function logoutBoraTec(){
 
     try{
 
+        try{
+            await stopBoraTecOnlinePresence();
+        }catch(error){
+            console.warn("BoraTec Presence: logout continuou sem encerrar presença.", error);
+        }
+
         await boraSupabase
         .auth
         .signOut();
@@ -12847,6 +12853,13 @@ window.toggleCommunityUseful =
 
 let btHomeOpened = false;
 
+/* =========================================================
+   PRESENÇA ONLINE BORATEC
+========================================================= */
+let btOnlinePresenceChannel = null;
+let btOnlinePresenceStarting = false;
+let btOnlinePresenceCount = 0;
+
 
 function setupBoraTecPWA(){
 
@@ -13317,6 +13330,48 @@ function createBoraTecHome(){
             line-height:1.45;
         }
 
+        .bt-home-online-wrap{
+            margin-top:12px;
+            display:flex;
+            align-items:center;
+        }
+
+        .bt-home-online-badge{
+            display:inline-flex;
+            align-items:center;
+            gap:7px;
+            min-height:30px;
+            padding:0 11px;
+            border:1px solid rgba(54,211,111,.24);
+            border-radius:999px;
+            background:rgba(30,151,78,.10);
+            color:#bfeccd;
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:.15px;
+            box-sizing:border-box;
+        }
+
+        .bt-home-online-dot{
+            width:8px;
+            height:8px;
+            border-radius:50%;
+            background:#35d36f;
+            box-shadow:0 0 10px rgba(53,211,111,.48);
+            flex:0 0 auto;
+        }
+
+        .bt-home-online-badge.loading{
+            border-color:rgba(119,151,178,.18);
+            background:rgba(119,151,178,.06);
+            color:#7f98ad;
+        }
+
+        .bt-home-online-badge.loading .bt-home-online-dot{
+            background:#6f8799;
+            box-shadow:none;
+        }
+
         .bt-v182-section-title{
             font-size:14px;
             font-weight:900;
@@ -13767,6 +13822,13 @@ function createBoraTecHome(){
 
                 <div class="bt-v182-subtitle">
                     Gere trabalho, encontre apoio e conecte-se com profissionais da rede.
+                </div>
+
+                <div class="bt-home-online-wrap">
+                    <div id="btHomeOnlineBadge" class="bt-home-online-badge loading" aria-live="polite">
+                        <span class="bt-home-online-dot"></span>
+                        <span id="btHomeOnlineText">Conectando à rede...</span>
+                    </div>
                 </div>
             </div>
 
@@ -14288,6 +14350,176 @@ function setupBoraTecHomeCarousel(){
 }
 
 
+function updateBoraTecOnlineBadge(count, status = "online") {
+
+    btOnlinePresenceCount = Number.isFinite(Number(count))
+        ? Math.max(0, Number(count))
+        : 0;
+
+    const badge = document.getElementById("btHomeOnlineBadge");
+    const textEl = document.getElementById("btHomeOnlineText");
+
+    if(!badge || !textEl){
+        return;
+    }
+
+    if(status === "loading"){
+        badge.classList.add("loading");
+        textEl.textContent = "Conectando à rede...";
+        return;
+    }
+
+    if(status === "offline"){
+        badge.classList.add("loading");
+        textEl.textContent = "Status online indisponível";
+        return;
+    }
+
+    badge.classList.remove("loading");
+
+    const total = btOnlinePresenceCount;
+    textEl.textContent = total === 1
+        ? "1 profissional online agora"
+        : `${total} profissionais online agora`;
+}
+
+
+function syncBoraTecOnlinePresence(){
+
+    try{
+        if(!btOnlinePresenceChannel){
+            return;
+        }
+
+        const state = btOnlinePresenceChannel.presenceState?.() || {};
+        const uniqueUsers = Object.keys(state).length;
+
+        updateBoraTecOnlineBadge(uniqueUsers, "online");
+
+    }catch(error){
+        console.warn("BoraTec Presence: não foi possível sincronizar a contagem.", error);
+        updateBoraTecOnlineBadge(0, "offline");
+    }
+}
+
+
+async function startBoraTecOnlinePresence(){
+
+    if(
+        btOnlinePresenceChannel
+        || btOnlinePresenceStarting
+        || !boraSupabase
+        || !boraUser?.id
+    ){
+        if(btOnlinePresenceChannel){
+            syncBoraTecOnlinePresence();
+        }
+        return;
+    }
+
+    btOnlinePresenceStarting = true;
+    updateBoraTecOnlineBadge(0, "loading");
+
+    try{
+        const userId = String(boraUser.id);
+
+        const channel = boraSupabase.channel(
+            "boratec-online-presence",
+            {
+                config:{
+                    presence:{
+                        key:userId
+                    }
+                }
+            }
+        );
+
+        channel.on(
+            "presence",
+            {event:"sync"},
+            () => {
+                syncBoraTecOnlinePresence();
+            }
+        );
+
+        channel.on(
+            "presence",
+            {event:"join"},
+            () => {
+                syncBoraTecOnlinePresence();
+            }
+        );
+
+        channel.on(
+            "presence",
+            {event:"leave"},
+            () => {
+                syncBoraTecOnlinePresence();
+            }
+        );
+
+        btOnlinePresenceChannel = channel;
+
+        channel.subscribe(async status => {
+
+            if(status === "SUBSCRIBED"){
+                try{
+                    await channel.track({
+                        online_at:new Date().toISOString()
+                    });
+                    syncBoraTecOnlinePresence();
+                }catch(error){
+                    console.warn("BoraTec Presence: falha ao registrar presença.", error);
+                    updateBoraTecOnlineBadge(0, "offline");
+                }
+                return;
+            }
+
+            if(
+                status === "CHANNEL_ERROR"
+                || status === "TIMED_OUT"
+                || status === "CLOSED"
+            ){
+                console.warn("BoraTec Presence: canal indisponível:", status);
+                updateBoraTecOnlineBadge(0, "offline");
+            }
+        });
+
+    }catch(error){
+        console.warn("BoraTec Presence: não foi possível iniciar.", error);
+        btOnlinePresenceChannel = null;
+        updateBoraTecOnlineBadge(0, "offline");
+    }finally{
+        btOnlinePresenceStarting = false;
+    }
+}
+
+
+async function stopBoraTecOnlinePresence(){
+
+    const channel = btOnlinePresenceChannel;
+    btOnlinePresenceChannel = null;
+    btOnlinePresenceStarting = false;
+    btOnlinePresenceCount = 0;
+
+    if(!channel || !boraSupabase){
+        return;
+    }
+
+    try{
+        await channel.untrack?.();
+    }catch(error){
+        console.warn("BoraTec Presence: falha ao remover presença.", error);
+    }
+
+    try{
+        await boraSupabase.removeChannel(channel);
+    }catch(error){
+        console.warn("BoraTec Presence: falha ao fechar canal.", error);
+    }
+}
+
+
 async function loadBoraTecHome(){
 
     const profile =
@@ -14481,6 +14713,10 @@ async function openBoraTecHome(){
 
     document.body.style.overflow =
         "hidden";
+
+    startBoraTecOnlinePresence().catch(error => {
+        console.warn("BoraTec Presence: inicialização ignorada.", error);
+    });
 
     try{
         if(typeof window.renderBoraTecV18Home === "function"){
