@@ -16250,7 +16250,308 @@ function calculateTechnicalTemperatureConversion(){
 }
 
 
+function renderTechnicalBTUCalculator(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Calculadora de BTU/h</strong>
+                <span>Estimativa prática para dimensionamento de ar-condicionado.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field">
+                <label for="btTechBTUWidth">Largura do ambiente (m)</label>
+                <input
+                    id="btTechBTUWidth"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.1"
+                    placeholder="Ex.: 4"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechBTULength">Comprimento (m)</label>
+                <input
+                    id="btTechBTULength"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.1"
+                    placeholder="Ex.: 5"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechBTUPeople">Pessoas no ambiente</label>
+                <input
+                    id="btTechBTUPeople"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    step="1"
+                    value="1"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechBTUElectronics">Eletrônicos ligados</label>
+                <input
+                    id="btTechBTUElectronics"
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    step="1"
+                    value="0"
+                >
+            </div>
+
+            <div class="bt-tech-field full">
+                <label for="btTechBTUSun">Incidência solar</label>
+                <select id="btTechBTUSun">
+                    <option value="normal">Pouco sol / sem sol direto</option>
+                    <option value="direct">Sol direto durante o dia</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+            id="btTechBTUCalculate"
+            class="bt-tech-calc-button"
+            type="button"
+        >CALCULAR BTU/H</button>
+
+        <div
+            id="btTechBTUResult"
+            class="bt-tech-result"
+            style="display:none"
+        ></div>
+
+        <div class="bt-tech-info-note">
+            Estimativa prática para ambientes com pé-direito convencional. O BoraTec usa 600 BTU/h por m², acrescenta 600 BTU/h por pessoa adicional a partir da segunda, 600 BTU/h por eletrônico ligado com frequência e 1.000 BTU/h quando há sol direto durante o dia. Para projetos críticos, comerciais, ambientes com grandes áreas envidraçadas, teto muito alto ou alta carga térmica, faça um cálculo de carga térmica completo.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    document
+    .getElementById(
+        "btTechBTUCalculate"
+    )
+    ?.addEventListener(
+        "click",
+        calculateTechnicalBTU
+    );
+}
+
+
+function btParsePositiveNumber(value){
+
+    const number =
+        Number(
+            String(value ?? "")
+            .replace(",",".")
+        );
+
+    return Number.isFinite(number)
+        ? number
+        : null;
+}
+
+
+function btFormatBTU(value){
+
+    if(!Number.isFinite(value)){
+        return "—";
+    }
+
+    return Math.round(value)
+        .toLocaleString("pt-BR");
+}
+
+
+function btRecommendedCommercialBTU(value){
+
+    const capacities = [
+        9000,
+        12000,
+        18000,
+        24000,
+        30000,
+        36000,
+        48000,
+        60000
+    ];
+
+    const found =
+        capacities.find(
+            capacity => capacity >= value
+        );
+
+    return found || null;
+}
+
+
+function calculateTechnicalBTU(){
+
+    const width =
+        btParsePositiveNumber(
+            document.getElementById(
+                "btTechBTUWidth"
+            )?.value
+        );
+
+    const length =
+        btParsePositiveNumber(
+            document.getElementById(
+                "btTechBTULength"
+            )?.value
+        );
+
+    const peopleRaw =
+        btParsePositiveNumber(
+            document.getElementById(
+                "btTechBTUPeople"
+            )?.value
+        );
+
+    const electronicsRaw =
+        btParsePositiveNumber(
+            document.getElementById(
+                "btTechBTUElectronics"
+            )?.value
+        );
+
+    const sun =
+        document.getElementById(
+            "btTechBTUSun"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechBTUResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    if(
+        width === null
+        || length === null
+        || width <= 0
+        || length <= 0
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique as medidas</div>
+            <div class="bt-tech-result-secondary">Informe largura e comprimento válidos, maiores que zero.</div>
+        `;
+        return;
+    }
+
+    const people =
+        Math.max(
+            1,
+            Math.floor(
+                peopleRaw ?? 1
+            )
+        );
+
+    const electronics =
+        Math.max(
+            0,
+            Math.floor(
+                electronicsRaw ?? 0
+            )
+        );
+
+    const area =
+        width * length;
+
+    const baseLoad =
+        area * 600;
+
+    const peopleLoad =
+        Math.max(
+            0,
+            people - 1
+        ) * 600;
+
+    const electronicsLoad =
+        electronics * 600;
+
+    const solarLoad =
+        sun === "direct"
+        ? 1000
+        : 0;
+
+    const total =
+        baseLoad
+        + peopleLoad
+        + electronicsLoad
+        + solarLoad;
+
+    const commercial =
+        btRecommendedCommercialBTU(
+            total
+        );
+
+    const commercialText =
+        commercial
+        ? `Capacidade comercial de referência: <strong>${btFormatBTU(commercial)} BTU/h</strong>.`
+        : `A estimativa ultrapassa 60.000 BTU/h. Considere cálculo de carga térmica e solução comercial adequada.`;
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <div class="bt-tech-result-label">Carga térmica estimada</div>
+        <div class="bt-tech-result-value">${btFormatBTU(total)} BTU/h</div>
+        <div class="bt-tech-result-secondary">
+            Área: <strong>${area.toLocaleString("pt-BR",{maximumFractionDigits:2})} m²</strong><br>
+            Base por área: ${btFormatBTU(baseLoad)} BTU/h<br>
+            Pessoas adicionais: ${btFormatBTU(peopleLoad)} BTU/h<br>
+            Eletrônicos: ${btFormatBTU(electronicsLoad)} BTU/h<br>
+            Incidência solar: ${btFormatBTU(solarLoad)} BTU/h<br><br>
+            ${commercialText}<br>
+            <span style="color:#7894a9">Use a capacidade nominal igual ou imediatamente acima da estimativa e confirme as condições reais do ambiente e o catálogo do fabricante.</span>
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
+
+    if(type === "btu"){
+        renderTechnicalBTUCalculator();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
 
     if(type === "gases"){
         renderTechnicalGasTool();
