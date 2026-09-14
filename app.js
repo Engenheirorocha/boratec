@@ -16635,7 +16635,232 @@ function calculateTechnicalBTU(){
 }
 
 
+function btFormatOhms(value){
+
+    if(!Number.isFinite(value)){
+        return "—";
+    }
+
+    return Number(value).toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits:0,
+            maximumFractionDigits:3
+        }
+    );
+}
+
+
+function renderTechnicalCompressorCRS(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.classList.add("show");
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>C-R-S do compressor</strong>
+                <span>Identificação dos terminais Comum, Marcha e Partida por resistência.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-info-note" style="margin-bottom:14px;">
+            Desligue a alimentação, descarregue o capacitor e isole os terminais do compressor antes de medir.
+            Identifique fisicamente os três pinos como <strong>A</strong>, <strong>B</strong> e <strong>C</strong> apenas para fazer as medições.
+        </div>
+
+        <div class="bt-tech-form-grid">
+            <label class="bt-tech-field">
+                <span>Resistência A ↔ B (Ω)</span>
+                <input id="btCrsAB" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 4,2">
+            </label>
+
+            <label class="bt-tech-field">
+                <span>Resistência A ↔ C (Ω)</span>
+                <input id="btCrsAC" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 7,8">
+            </label>
+
+            <label class="bt-tech-field">
+                <span>Resistência B ↔ C (Ω)</span>
+                <input id="btCrsBC" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 12,0">
+            </label>
+        </div>
+
+        <button class="bt-tech-primary-button" type="button" onclick="calculateTechnicalCompressorCRS()">
+            Identificar C-R-S
+        </button>
+
+        <div id="btCrsResult" class="bt-tech-result" style="display:none;"></div>
+
+        <div class="bt-tech-info-note" style="margin-top:14px;">
+            Regra usada para compressor monofásico com enrolamentos de partida e marcha: a maior leitura tende a ser <strong>R-S</strong>.
+            A partir do terminal comum, a menor leitura tende a ser <strong>C-R</strong> e a maior <strong>C-S</strong>.
+            O BoraTec também verifica se C-R + C-S está próximo de R-S.
+        </div>
+
+        <button class="bt-tech-secondary-button" type="button" onclick="renderTechnicalCompressorsArea()" style="margin-top:12px;">
+            ← Voltar para Compressores
+        </button>
+    `;
+}
+
+
+function calculateTechnicalCompressorCRS(){
+
+    const result =
+        document.getElementById(
+            "btCrsResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const ab = Number(
+        String(document.getElementById("btCrsAB")?.value || "").replace(",",".")
+    );
+    const ac = Number(
+        String(document.getElementById("btCrsAC")?.value || "").replace(",",".")
+    );
+    const bc = Number(
+        String(document.getElementById("btCrsBC")?.value || "").replace(",",".")
+    );
+
+    const values = [ab,ac,bc];
+
+    if(
+        values.some(value => !Number.isFinite(value) || value <= 0)
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Confira as medições</div>
+            <div class="bt-tech-result-secondary">Informe três resistências válidas e maiores que zero.</div>
+        `;
+        return;
+    }
+
+    const measurements = [
+        {pair:"AB", terminals:["A","B"], value:ab},
+        {pair:"AC", terminals:["A","C"], value:ac},
+        {pair:"BC", terminals:["B","C"], value:bc}
+    ].sort((a,b) => a.value - b.value);
+
+    const smallest = measurements[0];
+    const middle = measurements[1];
+    const largest = measurements[2];
+
+    const terminals = ["A","B","C"];
+    const common =
+        terminals.find(terminal => !largest.terminals.includes(terminal));
+
+    if(!common){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Não foi possível identificar</div>
+            <div class="bt-tech-result-secondary">Revise as três medições e tente novamente.</div>
+        `;
+        return;
+    }
+
+    const fromCommon =
+        measurements
+        .filter(item => item.terminals.includes(common))
+        .sort((a,b) => a.value - b.value);
+
+    if(fromCommon.length !== 2){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Medições incoerentes</div>
+            <div class="bt-tech-result-secondary">Não foi possível organizar as leituras a partir do terminal comum.</div>
+        `;
+        return;
+    }
+
+    const crMeasurement = fromCommon[0];
+    const csMeasurement = fromCommon[1];
+
+    const run =
+        crMeasurement.terminals.find(terminal => terminal !== common);
+    const start =
+        csMeasurement.terminals.find(terminal => terminal !== common);
+
+    const expectedRS =
+        crMeasurement.value + csMeasurement.value;
+
+    const difference =
+        Math.abs(largest.value - expectedRS);
+
+    const reference =
+        Math.max(largest.value, expectedRS, 0.001);
+
+    const differencePercent =
+        (difference / reference) * 100;
+
+    let coherenceTitle = "Medições coerentes";
+    let coherenceText =
+        `C-R + C-S = ${btFormatOhms(expectedRS)} Ω e R-S medido = ${btFormatOhms(largest.value)} Ω.`;
+
+    if(differencePercent > 10){
+        coherenceTitle = "⚠ Revise as medições";
+        coherenceText =
+            `A soma C-R + C-S (${btFormatOhms(expectedRS)} Ω) ficou diferente de R-S (${btFormatOhms(largest.value)} Ω) em aproximadamente ${differencePercent.toLocaleString("pt-BR",{maximumFractionDigits:1})}%. Confira contato das pontas, terminais isolados e repita a medição.`;
+    }
+
+    const separation =
+        largest.value > 0
+        ? (middle.value - smallest.value) / largest.value
+        : 0;
+
+    const closeReadingsWarning =
+        Math.abs(middle.value - smallest.value) <= Math.max(0.05, largest.value * 0.02)
+        ? `<br><br><span style="color:#f1b35d">⚠ As duas leituras menores estão muito próximas. A identificação de R e S pode ficar pouco confiável; repita a medição com boa resolução.</span>`
+        : "";
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <div class="bt-tech-result-label">Identificação C-R-S</div>
+        <div class="bt-tech-result-value">C = ${common} &nbsp;•&nbsp; R = ${run} &nbsp;•&nbsp; S = ${start}</div>
+        <div class="bt-tech-result-secondary">
+            <strong>Maior leitura (R-S):</strong> ${largest.pair} = ${btFormatOhms(largest.value)} Ω<br>
+            <strong>C-R / marcha:</strong> ${crMeasurement.pair} = ${btFormatOhms(crMeasurement.value)} Ω<br>
+            <strong>C-S / partida:</strong> ${csMeasurement.pair} = ${btFormatOhms(csMeasurement.value)} Ω<br><br>
+            <strong>${coherenceTitle}</strong><br>
+            ${coherenceText}
+            ${closeReadingsWarning}
+        </div>
+    `;
+}
+
+
 function openTechnicalCompressorTool(tool){
+
+    if(tool === "crs"){
+        renderTechnicalCompressorCRS();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
 
     const names = {
         crs:"C-R-S",
@@ -16887,6 +17112,12 @@ window.openTechnicalCalculator =
 
 window.openTechnicalCompressorTool =
     openTechnicalCompressorTool;
+
+window.renderTechnicalCompressorsArea =
+    renderTechnicalCompressorsArea;
+
+window.calculateTechnicalCompressorCRS =
+    calculateTechnicalCompressorCRS;
 
 
 /* =========================================================
