@@ -16014,6 +16014,242 @@ function calculateTechnicalPressureConversion(){
 }
 
 
+function renderTechnicalTemperatureConverter(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Conversão de temperatura</strong>
+                <span>Converta rapidamente entre °C, °F e K.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label for="btTechTempValue">Valor</label>
+                <input
+                    id="btTechTempValue"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    placeholder="Ex.: 25"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechTempFrom">De</label>
+                <select id="btTechTempFrom">
+                    <option value="c">°C</option>
+                    <option value="f">°F</option>
+                    <option value="k">K</option>
+                </select>
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechTempTo">Para</label>
+                <select id="btTechTempTo">
+                    <option value="f">°F</option>
+                    <option value="c">°C</option>
+                    <option value="k">K</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+            id="btTechTempConvert"
+            class="bt-tech-calc-button"
+            type="button"
+        >CONVERTER TEMPERATURA</button>
+
+        <div
+            id="btTechTempResult"
+            class="bt-tech-result"
+            style="display:none"
+        ></div>
+
+        <div class="bt-tech-info-note">
+            Conversão matemática direta entre Celsius, Fahrenheit e Kelvin. Valores abaixo do zero absoluto não são aceitos.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    document
+    .getElementById(
+        "btTechTempConvert"
+    )
+    ?.addEventListener(
+        "click",
+        calculateTechnicalTemperatureConversion
+    );
+}
+
+
+function btTemperatureToCelsius(value,unit){
+
+    if(unit === "c"){
+        return value;
+    }
+
+    if(unit === "f"){
+        return (value - 32) * 5 / 9;
+    }
+
+    if(unit === "k"){
+        return value - 273.15;
+    }
+
+    return null;
+}
+
+
+function btCelsiusToTemperature(valueC,unit){
+
+    if(unit === "c"){
+        return valueC;
+    }
+
+    if(unit === "f"){
+        return (valueC * 9 / 5) + 32;
+    }
+
+    if(unit === "k"){
+        return valueC + 273.15;
+    }
+
+    return null;
+}
+
+
+function btTemperatureUnitLabel(unit){
+
+    const labels = {
+        c:"°C",
+        f:"°F",
+        k:"K"
+    };
+
+    return labels[unit] || unit;
+}
+
+
+function btFormatTemperatureConversion(value){
+
+    if(!Number.isFinite(value)){
+        return "—";
+    }
+
+    return value.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits:0,
+            maximumFractionDigits:2
+        }
+    );
+}
+
+
+function calculateTechnicalTemperatureConversion(){
+
+    const rawValue =
+        document.getElementById(
+            "btTechTempValue"
+        )?.value;
+
+    const fromUnit =
+        document.getElementById(
+            "btTechTempFrom"
+        )?.value;
+
+    const toUnit =
+        document.getElementById(
+            "btTechTempTo"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechTempResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const value =
+        Number(
+            String(rawValue || "")
+            .replace(",",".")
+        );
+
+    if(!Number.isFinite(value)){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique o valor</div>
+            <div class="bt-tech-result-secondary">Informe uma temperatura válida para converter.</div>
+        `;
+        return;
+    }
+
+    const valueC =
+        btTemperatureToCelsius(
+            value,
+            fromUnit
+        );
+
+    if(
+        valueC === null
+        ||
+        !Number.isFinite(valueC)
+        ||
+        valueC < -273.15
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Temperatura inválida</div>
+            <div class="bt-tech-result-secondary">O valor informado está abaixo do zero absoluto.</div>
+        `;
+        return;
+    }
+
+    const converted =
+        btCelsiusToTemperature(
+            valueC,
+            toUnit
+        );
+
+    if(
+        converted === null
+        ||
+        !Number.isFinite(converted)
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Não foi possível converter</div>
+            <div class="bt-tech-result-secondary">Confira as unidades selecionadas.</div>
+        `;
+        return;
+    }
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <div class="bt-tech-result-label">Conversão de temperatura</div>
+        <div class="bt-tech-result-value">${btFormatTemperatureConversion(converted)} ${btTemperatureUnitLabel(toUnit)}</div>
+        <div class="bt-tech-result-secondary">
+            ${btFormatTemperatureConversion(value)} ${btTemperatureUnitLabel(fromUnit)} = <strong>${btFormatTemperatureConversion(converted)} ${btTemperatureUnitLabel(toUnit)}</strong>
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
 
     if(type === "gases"){
@@ -16078,6 +16314,27 @@ function openTechnicalCalculator(type){
 
     if(type === "pressao"){
         renderTechnicalPressureConverter();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
+
+    if(type === "temperatura"){
+        renderTechnicalTemperatureConverter();
 
         window.setTimeout(
             () => {
