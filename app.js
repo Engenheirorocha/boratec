@@ -15043,3 +15043,44 @@ window.openBoraTecHome = openBoraTecHome;
 
 })();
 
+
+(function(){
+    if(document.getElementById("btR11HomeAvatarOnlyStyle")) return;
+
+    const style = document.createElement("style");
+    style.id = "btR11HomeAvatarOnlyStyle";
+    style.textContent = `
+/* =========================================================
+   R11 - HOME: SOMENTE FOTO DO PERFIL
+   ALTERACAO VISUAL SOMENTE CSS
+   Nao remove elementos, IDs ou eventos.
+========================================================= */
+#btHomeScreen .bt-v182-user-data{
+    display:none !important;
+}
+
+#btHomeScreen .bt-v182-user-button{
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    padding:0 !important;
+    gap:0 !important;
+    border:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+#btHomeScreen .bt-v182-user-button:hover,
+#btHomeScreen .bt-v182-user-button:focus,
+#btHomeScreen .bt-v182-user-button:active{
+    background:transparent !important;
+    box-shadow:none !important;
+}
+
+#btHomeScreen .bt-v182-user-button .bt-v182-avatar{
+    margin:0 !important;
+}
+`;
+    document.head.appendChild(style);
+})();
+
