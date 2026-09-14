@@ -14228,7 +14228,7 @@ function openMyBoraTecProfileFromHome(){
 
 
 /* =========================================================
-   ÁREA TÉCNICA BORATEC R12.2
+   ÁREA TÉCNICA BORATEC R12.3
    MÓDULO ISOLADO - CARROSSEL HORIZONTAL NO PADRÃO DA HOME
 ========================================================= */
 
@@ -14468,6 +14468,140 @@ function createTechnicalArea(){
                 background:#5ecfff;
             }
 
+            .bt-tech-workspace{
+                display:none;
+                margin-top:8px;
+                border:1px solid rgba(94,207,255,.16);
+                border-radius:20px;
+                padding:18px;
+                background:linear-gradient(145deg,rgba(10,34,55,.96),rgba(7,27,46,.98));
+                box-shadow:0 14px 34px rgba(0,0,0,.18);
+            }
+
+            .bt-tech-workspace.show{ display:block; }
+
+            .bt-tech-workspace-title{
+                display:flex;
+                align-items:flex-start;
+                justify-content:space-between;
+                gap:12px;
+                margin-bottom:16px;
+            }
+
+            .bt-tech-workspace-title strong{
+                display:block;
+                font-size:18px;
+                font-weight:950;
+                line-height:1.1;
+            }
+
+            .bt-tech-workspace-title span{
+                display:block;
+                margin-top:5px;
+                color:#82a0b8;
+                font-size:11px;
+                line-height:1.4;
+            }
+
+            .bt-tech-gas-grid{
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:12px;
+            }
+
+            .bt-tech-field{ min-width:0; }
+
+            .bt-tech-field.full{ grid-column:1 / -1; }
+
+            .bt-tech-field label{
+                display:block;
+                margin-bottom:6px;
+                color:#b7cad9;
+                font-size:10px;
+                font-weight:900;
+                text-transform:uppercase;
+                letter-spacing:.45px;
+            }
+
+            .bt-tech-field input,
+            .bt-tech-field select{
+                width:100%;
+                min-height:48px;
+                box-sizing:border-box;
+                border:1px solid rgba(119,151,178,.24);
+                border-radius:13px;
+                background:#081f34;
+                color:#fff;
+                padding:0 13px;
+                font-size:16px;
+                outline:none;
+            }
+
+            .bt-tech-field input:focus,
+            .bt-tech-field select:focus{
+                border-color:rgba(94,207,255,.62);
+                box-shadow:0 0 0 3px rgba(94,207,255,.07);
+            }
+
+            .bt-tech-calc-button{
+                width:100%;
+                min-height:48px;
+                margin-top:14px;
+                border:1px solid rgba(94,207,255,.38);
+                border-radius:14px;
+                background:linear-gradient(145deg,rgba(0,146,215,.34),rgba(10,55,82,.96));
+                color:#fff;
+                font-size:13px;
+                font-weight:950;
+                cursor:pointer;
+            }
+
+            .bt-tech-result{
+                margin-top:14px;
+                padding:15px;
+                border-radius:15px;
+                border:1px solid rgba(94,207,255,.14);
+                background:rgba(3,19,32,.62);
+            }
+
+            .bt-tech-result-label{
+                color:#78a0bb;
+                font-size:9px;
+                font-weight:900;
+                text-transform:uppercase;
+                letter-spacing:.55px;
+            }
+
+            .bt-tech-result-value{
+                margin-top:5px;
+                font-size:30px;
+                line-height:1;
+                font-weight:950;
+                color:#fff;
+            }
+
+            .bt-tech-result-secondary{
+                margin-top:8px;
+                color:#a9c1d2;
+                font-size:12px;
+                line-height:1.5;
+            }
+
+            .bt-tech-info-note{
+                margin-top:12px;
+                padding:11px 12px;
+                border-radius:12px;
+                background:rgba(255,255,255,.035);
+                color:#7894a9;
+                font-size:10px;
+                line-height:1.5;
+            }
+
+            @media(max-width:420px){
+                .bt-tech-gas-grid{ grid-template-columns:1fr; }
+                .bt-tech-field.full{ grid-column:auto; }
+            }
+
             @media(min-width:760px){
                 .bt-tech-shell{ padding-top:28px; }
 
@@ -14513,6 +14647,12 @@ function createTechnicalArea(){
             </div>
 
             <div class="bt-tech-actions" id="btTechnicalCarousel">
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('gases')">
+                    <div class="bt-tech-card-icon">🧪</div>
+                    <strong>Gases e saturação</strong>
+                    <small>Consulte pressão e temperatura de saturação dos principais refrigerantes.</small>
+                </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('btu')">
                     <div class="bt-tech-card-icon">❄️</div>
@@ -14573,6 +14713,8 @@ function createTechnicalArea(){
                     aria-label="Próximo"
                 >›</button>
             </div>
+
+            <div id="btTechnicalWorkspace" class="bt-tech-workspace"></div>
 
         </div>
     `;
@@ -14832,7 +14974,371 @@ function closeTechnicalArea(){
 }
 
 
+const btRefrigerantPT = {
+    r410a:{
+        label:"R410A",
+        safety:"A1",
+        kind:"single",
+        sourceUnit:"barAbs",
+        data:[
+            [-40,1.74],[-30,2.68],[-20,3.98],[-10,5.72],[0,7.97],[10,10.85],
+            [15,12.55],[20,14.45],[25,16.56],[30,18.90],[35,21.47],[40,24.31],
+            [45,27.41],[50,30.79],[55,34.47],[60,38.44]
+        ]
+    },
+    r134a:{
+        label:"R134a",
+        safety:"A1",
+        kind:"single",
+        sourceUnit:"barAbs",
+        data:[
+            [-40,0.52],[-30,0.85],[-20,1.33],[-10,2.01],[0,2.93],[10,4.15],
+            [15,4.88],[20,5.72],[25,6.65],[30,7.70],[35,8.87],[40,10.16],
+            [45,11.59],[50,13.17],[55,14.91],[60,16.81]
+        ]
+    },
+    r22:{
+        label:"R22",
+        safety:"A1",
+        kind:"single",
+        sourceUnit:"barAbs",
+        data:[
+            [-40,1.05],[-30,1.64],[-20,2.46],[-10,3.55],[0,4.98],[10,6.80],
+            [15,7.88],[20,9.08],[25,10.41],[30,11.88],[35,13.50],[40,15.27],
+            [45,17.21],[50,19.33],[55,21.64],[60,24.15]
+        ]
+    },
+    r404a:{
+        label:"R404A",
+        safety:"A1",
+        kind:"blend",
+        sourceUnit:"barAbs",
+        bubble:[
+            [-40,1.37],[-30,2.10],[-20,3.09],[-10,4.40],[0,6.11],[10,8.28],
+            [15,9.56],[20,10.98],[25,12.55],[30,14.29],[35,16.20],[40,18.29],
+            [45,20.58],[50,23.08],[55,25.80],[60,28.75]
+        ],
+        dew:[
+            [-40,1.33],[-30,2.04],[-20,3.02],[-10,4.32],[0,6.01],[10,8.17],
+            [15,9.44],[20,10.85],[25,12.42],[30,14.15],[35,16.06],[40,18.15],
+            [45,20.44],[50,22.94],[55,25.66],[60,28.63]
+        ]
+    },
+    r32:{
+        label:"R32",
+        safety:"A2L",
+        kind:"single",
+        sourceUnit:"psig",
+        data:[
+            [-40,10.3],[-35,17.8],[-30,26.6],[-25,36.6],[-20,48.1],[-15,61.1],
+            [-10,75.7],[-5,92.1],[0,110.3],[5,130.5],[10,152.8],[15,177.3],
+            [20,204.1],[25,233.4],[30,265.3],[35,300.0],[40,337.5],[45,378.1],
+            [50,421.8],[55,468.9],[60,519.5],[65,573.9]
+        ]
+    }
+};
+
+
+function btPressureToPsig(value,unit){
+
+    if(unit === "psig"){
+        return value;
+    }
+
+    if(unit === "barg"){
+        return value * 14.5037738;
+    }
+
+    if(unit === "kpag"){
+        return value * 0.145037738;
+    }
+
+    return value;
+}
+
+
+function btDatasetPressurePsig(point,sourceUnit){
+
+    const temp = point[0];
+    const pressure = point[1];
+
+    if(sourceUnit === "barAbs"){
+        return [
+            temp,
+            (pressure - 1.01325) * 14.5037738
+        ];
+    }
+
+    return [temp,pressure];
+}
+
+
+function btInterpolateTempFromPressure(dataset,sourceUnit,psig){
+
+    const points = dataset
+        .map(point => btDatasetPressurePsig(point,sourceUnit))
+        .sort((a,b) => a[1] - b[1]);
+
+    if(psig < points[0][1] || psig > points[points.length - 1][1]){
+        return null;
+    }
+
+    for(let index = 0; index < points.length - 1; index++){
+
+        const a = points[index];
+        const b = points[index + 1];
+
+        if(psig >= a[1] && psig <= b[1]){
+
+            if(b[1] === a[1]){
+                return a[0];
+            }
+
+            const ratio =
+                (psig - a[1]) /
+                (b[1] - a[1]);
+
+            return a[0] + ratio * (b[0] - a[0]);
+        }
+    }
+
+    return null;
+}
+
+
+function btFormatCelsius(value){
+    return `${value.toFixed(1).replace(".",",")} °C`;
+}
+
+
+function btCelsiusToFahrenheit(value){
+    return (value * 9 / 5) + 32;
+}
+
+
+function renderTechnicalGasTool(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Gases • Temperatura de saturação</strong>
+                <span>Informe a pressão medida no manifold para consultar a temperatura de saturação.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label for="btTechGasSelect">Refrigerante</label>
+                <select id="btTechGasSelect">
+                    <option value="r410a">R410A</option>
+                    <option value="r32">R32</option>
+                    <option value="r22">R22</option>
+                    <option value="r134a">R134a</option>
+                    <option value="r404a">R404A</option>
+                </select>
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechGasPressure">Pressão</label>
+                <input
+                    id="btTechGasPressure"
+                    type="number"
+                    inputmode="decimal"
+                    step="0.1"
+                    placeholder="Ex.: 118"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechGasUnit">Unidade</label>
+                <select id="btTechGasUnit">
+                    <option value="psig">PSI (g)</option>
+                    <option value="barg">bar (g)</option>
+                    <option value="kpag">kPa (g)</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+            id="btTechGasCalculate"
+            class="bt-tech-calc-button"
+            type="button"
+        >CALCULAR SATURAÇÃO</button>
+
+        <div id="btTechGasResult" class="bt-tech-result" style="display:none"></div>
+
+        <div class="bt-tech-info-note">
+            Pressões de entrada são manométricas (gauge). Para misturas como R404A, o BoraTec mostra ponto de orvalho (dew) e ponto de bolha (bubble) separadamente.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    const button =
+        document.getElementById(
+            "btTechGasCalculate"
+        );
+
+    button?.addEventListener(
+        "click",
+        calculateTechnicalGasSaturation
+    );
+}
+
+
+function calculateTechnicalGasSaturation(){
+
+    const gasKey =
+        document.getElementById(
+            "btTechGasSelect"
+        )?.value;
+
+    const pressureRaw =
+        document.getElementById(
+            "btTechGasPressure"
+        )?.value;
+
+    const unit =
+        document.getElementById(
+            "btTechGasUnit"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechGasResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const pressure =
+        Number(
+            String(pressureRaw || "")
+            .replace(",",".")
+        );
+
+    if(!Number.isFinite(pressure) || pressure < 0){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique o valor</div>
+            <div class="bt-tech-result-secondary">Informe uma pressão válida e maior ou igual a zero.</div>
+        `;
+        return;
+    }
+
+    const gas =
+        btRefrigerantPT[gasKey];
+
+    if(!gas){
+        return;
+    }
+
+    const psig =
+        btPressureToPsig(
+            pressure,
+            unit
+        );
+
+    result.style.display = "block";
+
+    if(gas.kind === "blend"){
+
+        const dew =
+            btInterpolateTempFromPressure(
+                gas.dew,
+                gas.sourceUnit,
+                psig
+            );
+
+        const bubble =
+            btInterpolateTempFromPressure(
+                gas.bubble,
+                gas.sourceUnit,
+                psig
+            );
+
+        if(dew === null || bubble === null){
+            result.innerHTML = `
+                <div class="bt-tech-result-label">Fora da faixa da tabela</div>
+                <div class="bt-tech-result-secondary">A pressão informada está fora da faixa disponível nesta primeira versão.</div>
+            `;
+            return;
+        }
+
+        result.innerHTML = `
+            <div class="bt-tech-result-label">${gas.label} • Saturação</div>
+            <div class="bt-tech-result-value">${btFormatCelsius(dew)}</div>
+            <div class="bt-tech-result-secondary">
+                <strong>Dew / vapor:</strong> ${btFormatCelsius(dew)} (${btCelsiusToFahrenheit(dew).toFixed(1)} °F)<br>
+                <strong>Bubble / líquido:</strong> ${btFormatCelsius(bubble)} (${btCelsiusToFahrenheit(bubble).toFixed(1)} °F)<br>
+                Use <strong>dew</strong> para superaquecimento e <strong>bubble</strong> para sub-resfriamento.
+            </div>
+        `;
+
+        return;
+    }
+
+    const saturation =
+        btInterpolateTempFromPressure(
+            gas.data,
+            gas.sourceUnit,
+            psig
+        );
+
+    if(saturation === null){
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Fora da faixa da tabela</div>
+            <div class="bt-tech-result-secondary">A pressão informada está fora da faixa disponível nesta primeira versão.</div>
+        `;
+        return;
+    }
+
+    const safetyText =
+        gas.safety === "A2L"
+        ? " • A2L"
+        : "";
+
+    result.innerHTML = `
+        <div class="bt-tech-result-label">${gas.label}${safetyText} • Temperatura de saturação</div>
+        <div class="bt-tech-result-value">${btFormatCelsius(saturation)}</div>
+        <div class="bt-tech-result-secondary">
+            ${btCelsiusToFahrenheit(saturation).toFixed(1)} °F • pressão informada: ${pressure.toLocaleString("pt-BR")} ${unit === "psig" ? "PSI(g)" : unit === "barg" ? "bar(g)" : "kPa(g)"}
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
+
+    if(type === "gases"){
+        renderTechnicalGasTool();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
 
     const names = {
         btu:"Calculadora de BTU/h",
