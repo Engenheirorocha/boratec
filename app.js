@@ -6966,10 +6966,24 @@ function createBoraTecV1Interface(){
                     <button
                         class="bt-secondary"
                         type="button"
-                        style="width:100%;margin-bottom:12px;"
+                        style="width:100%;margin-bottom:8px;"
                         onclick="markAllNotificationsRead()"
                     >
                         ✓ Marcar todas como lidas
+                    </button>
+
+                    <button
+                        class="bt-secondary"
+                        type="button"
+                        style="
+                            width:100%;
+                            margin-bottom:12px;
+                            border-color:#7a3434;
+                            color:#ff8d88;
+                        "
+                        onclick="clearAllNotifications()"
+                    >
+                        🗑 Limpar notificações
                     </button>
 
                     <div id="btNotificationsBody">
@@ -8892,6 +8906,57 @@ async function markAllNotificationsRead(){
         );
     }
 }
+
+async function clearAllNotifications(){
+
+    if(!boraSupabase || !boraUser){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Apagar definitivamente todas as suas notificações?"
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc("clear_all_notifications");
+
+        if(error){
+            throw error;
+        }
+
+        await loadNotifications();
+        await refreshNotificationBadge();
+
+        showToast(
+            Number(data || 0) > 0
+            ? "Notificações apagadas"
+            : "Nenhuma notificação para apagar"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro limpar notificações:",
+            error
+        );
+
+        showToast(
+            "Não foi possível limpar as notificações"
+        );
+    }
+}
+
 
 async function openNotificationItem(
     notificationId,
@@ -14392,6 +14457,9 @@ window.closeNotifications =
 
 window.markAllNotificationsRead =
     markAllNotificationsRead;
+
+window.clearAllNotifications =
+    clearAllNotifications;
 
 window.openNotificationItem =
     openNotificationItem;
