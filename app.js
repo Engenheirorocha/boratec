@@ -17623,9 +17623,7 @@ function openTechnicalCompressorTool(tool){
 
     const names = {
         crs:"C-R-S",
-        enrolamentos:"Enrolamentos",
-        corrente:"Corrente x placa",
-        placa:"Dados da placa"
+        enrolamentos:"Enrolamentos"
     };
 
     if(typeof window.showToast === "function"){
@@ -17675,21 +17673,10 @@ function renderTechnicalCompressorsArea(){
                 <span>Organize e confira medições de resistência dos enrolamentos.</span>
             </button>
 
-            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('corrente')">
-                <div class="bt-tech-subarea-card-icon">⚡</div>
-                <strong>Corrente x placa</strong>
-                <span>Compare a corrente medida com os dados nominais do compressor.</span>
-            </button>
-
-            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('placa')">
-                <div class="bt-tech-subarea-card-icon">🏷️</div>
-                <strong>Dados da placa</strong>
-                <span>Organize tensão, fase, frequência, RLA, LRA e outros dados da placa.</span>
-            </button>
         </div>
 
         <div class="bt-tech-info-note">
-            Esta área está sendo estruturada por módulos. Nesta versão, a navegação de Compressores já está pronta; os cálculos serão adicionados card por card.
+            Ferramentas disponíveis nesta área: identificação C-R-S e conferência dos enrolamentos do compressor.
         </div>
     `;
 }
