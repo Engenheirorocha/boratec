@@ -14228,6 +14228,416 @@ function openMyBoraTecProfileFromHome(){
 
 
 /* =========================================================
+   ÁREA TÉCNICA BORATEC R12.1
+   MÓDULO ISOLADO - CARROSSEL VERTICAL DE CALCULADORAS
+========================================================= */
+
+function createTechnicalArea(){
+
+    if(document.getElementById("btTechnicalAreaScreen")){
+        return;
+    }
+
+    if(!document.getElementById("btTechnicalAreaStyle")){
+
+        const style = document.createElement("style");
+        style.id = "btTechnicalAreaStyle";
+
+        style.textContent = `
+            #btTechnicalAreaScreen{
+                position:fixed;
+                inset:0;
+                z-index:6500;
+                display:none;
+                overflow:hidden;
+                background:
+                    radial-gradient(circle at 82% -8%,rgba(0,188,255,.16),transparent 32%),
+                    linear-gradient(180deg,#06182b 0%,#071a2e 100%);
+                color:#fff;
+            }
+
+            #btTechnicalAreaScreen.show{
+                display:block;
+            }
+
+            .bt-tech-shell{
+                width:min(100%,680px);
+                height:100dvh;
+                margin:0 auto;
+                padding:18px 18px 22px;
+                box-sizing:border-box;
+                display:flex;
+                flex-direction:column;
+            }
+
+            .bt-tech-top{
+                display:flex;
+                align-items:center;
+                gap:12px;
+                flex:0 0 auto;
+                padding-bottom:14px;
+            }
+
+            .bt-tech-back{
+                width:42px;
+                height:42px;
+                border-radius:13px;
+                border:1px solid rgba(119,151,178,.22);
+                background:#0b243b;
+                color:#fff;
+                font-size:25px;
+                line-height:1;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                cursor:pointer;
+                flex:0 0 auto;
+            }
+
+            .bt-tech-heading{
+                min-width:0;
+            }
+
+            .bt-tech-heading small{
+                display:block;
+                color:#5ecfff;
+                font-size:9px;
+                font-weight:900;
+                text-transform:uppercase;
+                letter-spacing:.85px;
+                margin-bottom:4px;
+            }
+
+            .bt-tech-heading strong{
+                display:block;
+                font-size:22px;
+                line-height:1.05;
+                font-weight:950;
+                letter-spacing:-.45px;
+            }
+
+            .bt-tech-intro{
+                flex:0 0 auto;
+                margin:3px 0 12px;
+                padding:13px 15px;
+                border:1px solid rgba(94,207,255,.16);
+                border-radius:16px;
+                background:rgba(8,33,54,.70);
+            }
+
+            .bt-tech-intro strong{
+                display:block;
+                font-size:13px;
+                font-weight:950;
+                margin-bottom:3px;
+            }
+
+            .bt-tech-intro span{
+                display:block;
+                color:#86a0b5;
+                font-size:11px;
+                line-height:1.4;
+            }
+
+            .bt-tech-vertical-carousel{
+                flex:1 1 auto;
+                min-height:0;
+                overflow-y:auto;
+                overscroll-behavior:contain;
+                scroll-snap-type:y mandatory;
+                scroll-behavior:smooth;
+                scrollbar-width:none;
+                padding:7vh 5px 18vh;
+                box-sizing:border-box;
+                touch-action:pan-y;
+            }
+
+            .bt-tech-vertical-carousel::-webkit-scrollbar{
+                display:none;
+            }
+
+            .bt-tech-card{
+                width:100%;
+                min-height:188px;
+                margin:0 0 16px;
+                padding:22px 20px;
+                border:1px solid rgba(119,151,178,.18);
+                border-radius:22px;
+                background:linear-gradient(145deg,rgba(15,45,70,.98),rgba(9,35,58,.98));
+                color:#fff;
+                box-shadow:0 16px 38px rgba(0,0,0,.22);
+                box-sizing:border-box;
+                scroll-snap-align:center;
+                scroll-snap-stop:always;
+                display:flex;
+                align-items:center;
+                gap:18px;
+                text-align:left;
+                cursor:pointer;
+            }
+
+            .bt-tech-card:active{
+                transform:scale(.985);
+            }
+
+            .bt-tech-card-icon{
+                width:68px;
+                height:68px;
+                border-radius:18px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                flex:0 0 auto;
+                font-size:32px;
+                background:rgba(94,207,255,.08);
+                border:1px solid rgba(94,207,255,.12);
+            }
+
+            .bt-tech-card-copy{
+                min-width:0;
+            }
+
+            .bt-tech-card-copy strong{
+                display:block;
+                font-size:19px;
+                line-height:1.08;
+                font-weight:950;
+                margin-bottom:7px;
+            }
+
+            .bt-tech-card-copy small{
+                display:block;
+                color:#8199ad;
+                font-size:11px;
+                line-height:1.42;
+            }
+
+            .bt-tech-card-arrow{
+                margin-left:auto;
+                color:#5ecfff;
+                font-size:23px;
+                font-weight:900;
+                flex:0 0 auto;
+            }
+
+            .bt-tech-scroll-hint{
+                position:absolute;
+                left:50%;
+                bottom:14px;
+                transform:translateX(-50%);
+                z-index:2;
+                padding:6px 11px;
+                border-radius:999px;
+                background:rgba(5,20,34,.82);
+                border:1px solid rgba(119,151,178,.16);
+                color:#718ca2;
+                font-size:9px;
+                font-weight:850;
+                letter-spacing:.35px;
+                pointer-events:none;
+            }
+
+            @media(max-width:420px){
+                .bt-tech-shell{
+                    padding-left:14px;
+                    padding-right:14px;
+                }
+
+                .bt-tech-vertical-carousel{
+                    padding-top:5vh;
+                }
+
+                .bt-tech-card{
+                    min-height:174px;
+                    padding:19px 16px;
+                }
+
+                .bt-tech-card-icon{
+                    width:60px;
+                    height:60px;
+                    font-size:29px;
+                }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    const screen = document.createElement("section");
+    screen.id = "btTechnicalAreaScreen";
+
+    screen.innerHTML = `
+        <div class="bt-tech-shell">
+
+            <div class="bt-tech-top">
+                <button
+                    class="bt-tech-back"
+                    type="button"
+                    onclick="closeTechnicalArea()"
+                    aria-label="Voltar para a página inicial"
+                >‹</button>
+
+                <div class="bt-tech-heading">
+                    <small>BORATEC • FERRAMENTAS</small>
+                    <strong>Área Técnica</strong>
+                </div>
+            </div>
+
+            <div class="bt-tech-intro">
+                <strong>Calculadoras</strong>
+                <span>Deslize para cima ou para baixo e escolha a ferramenta.</span>
+            </div>
+
+            <div class="bt-tech-vertical-carousel" id="btTechnicalVerticalCarousel">
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('btu')">
+                    <span class="bt-tech-card-icon">❄️</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>BTU</strong>
+                        <small>Dimensionamento de capacidade para ambientes.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('superaquecimento')">
+                    <span class="bt-tech-card-icon">🌡️</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>Superaquecimento</strong>
+                        <small>Calcule o superaquecimento do sistema de refrigeração.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('subresfriamento')">
+                    <span class="bt-tech-card-icon">🧊</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>Sub-resfriamento</strong>
+                        <small>Calcule o sub-resfriamento para análise do sistema.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('pressao')">
+                    <span class="bt-tech-card-icon">⏱️</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>Conversão de pressão</strong>
+                        <small>Converta PSI, bar, kPa e outras unidades de pressão.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('temperatura')">
+                    <span class="bt-tech-card-icon">🌡</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>Conversão de temperatura</strong>
+                        <small>Converta Celsius, Fahrenheit e Kelvin rapidamente.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('eletrica')">
+                    <span class="bt-tech-card-icon">⚡</span>
+                    <span class="bt-tech-card-copy">
+                        <strong>Elétrica</strong>
+                        <small>Cálculos elétricos para uso técnico em campo.</small>
+                    </span>
+                    <span class="bt-tech-card-arrow">›</span>
+                </button>
+
+            </div>
+
+            <div class="bt-tech-scroll-hint">↕ DESLIZE</div>
+        </div>
+    `;
+
+    document.body.appendChild(screen);
+}
+
+
+function openTechnicalArea(){
+
+    createTechnicalArea();
+
+    const screen =
+        document.getElementById(
+            "btTechnicalAreaScreen"
+        );
+
+    if(!screen){
+        return;
+    }
+
+    screen.classList.add("show");
+    document.body.style.overflow = "hidden";
+
+    const carousel =
+        document.getElementById(
+            "btTechnicalVerticalCarousel"
+        );
+
+    if(carousel){
+        carousel.scrollTop = 0;
+    }
+}
+
+
+function closeTechnicalArea(){
+
+    document
+    .getElementById(
+        "btTechnicalAreaScreen"
+    )
+    ?.classList
+    .remove(
+        "show"
+    );
+
+    document.body.style.overflow = "";
+
+    if(
+        typeof window.openBoraTecHome
+        ===
+        "function"
+    ){
+        window.openBoraTecHome();
+    }
+}
+
+
+function openTechnicalCalculator(type){
+
+    const names = {
+        btu:"Calculadora de BTU",
+        superaquecimento:"Superaquecimento",
+        subresfriamento:"Sub-resfriamento",
+        pressao:"Conversão de pressão",
+        temperatura:"Conversão de temperatura",
+        eletrica:"Elétrica"
+    };
+
+    if(
+        typeof window.showToast
+        ===
+        "function"
+    ){
+        window.showToast(
+            `${names[type] || "Ferramenta"} em preparação`
+        );
+    }
+}
+
+
+window.openTechnicalArea =
+    openTechnicalArea;
+
+window.closeTechnicalArea =
+    closeTechnicalArea;
+
+window.openTechnicalCalculator =
+    openTechnicalCalculator;
+
+
+/* =========================================================
    INSTALAÇÃO DO APP
 ========================================================= */
 
