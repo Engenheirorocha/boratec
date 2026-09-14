@@ -14597,7 +14597,49 @@ function createTechnicalArea(){
                 line-height:1.5;
             }
 
+            .bt-tech-subarea-grid{
+                display:grid;
+                grid-template-columns:repeat(2,minmax(0,1fr));
+                gap:11px;
+                margin-top:4px;
+            }
+
+            .bt-tech-subarea-card{
+                min-height:126px;
+                border:1px solid rgba(119,151,178,.18);
+                border-radius:16px;
+                padding:16px 13px;
+                background:linear-gradient(145deg,rgba(15,45,70,.94),rgba(8,29,48,.98));
+                color:#fff;
+                text-align:left;
+                cursor:pointer;
+                box-sizing:border-box;
+            }
+
+            .bt-tech-subarea-card:active{ transform:scale(.985); }
+
+            .bt-tech-subarea-card-icon{
+                font-size:25px;
+                margin-bottom:10px;
+            }
+
+            .bt-tech-subarea-card strong{
+                display:block;
+                font-size:14px;
+                line-height:1.15;
+                font-weight:950;
+                margin-bottom:6px;
+            }
+
+            .bt-tech-subarea-card span{
+                display:block;
+                color:#829bb0;
+                font-size:10px;
+                line-height:1.4;
+            }
+
             @media(max-width:420px){
+                .bt-tech-subarea-grid{ grid-template-columns:1fr 1fr; }
                 .bt-tech-gas-grid{ grid-template-columns:1fr; }
                 .bt-tech-field.full{ grid-column:auto; }
             }
@@ -14682,6 +14724,12 @@ function createTechnicalArea(){
                     <div class="bt-tech-card-icon">🌡</div>
                     <strong>Conversão de temperatura</strong>
                     <small>Converta Celsius, Fahrenheit e Kelvin rapidamente.</small>
+                </button>
+
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('compressores')">
+                    <div class="bt-tech-card-icon">🧰</div>
+                    <strong>Compressores</strong>
+                    <small>Identificação elétrica, enrolamentos, corrente e dados de placa.</small>
                 </button>
 
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('eletrica')">
@@ -16531,6 +16579,77 @@ function calculateTechnicalBTU(){
 }
 
 
+function openTechnicalCompressorTool(tool){
+
+    const names = {
+        crs:"C-R-S",
+        enrolamentos:"Enrolamentos",
+        corrente:"Corrente x placa",
+        placa:"Dados da placa"
+    };
+
+    if(typeof window.showToast === "function"){
+        window.showToast(
+            `${names[tool] || "Ferramenta de compressores"} em preparação`
+        );
+    }
+}
+
+
+function renderTechnicalCompressorsArea(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.classList.add("show");
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Compressores</strong>
+                <span>Ferramentas para identificação e análise elétrica de compressores.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-subarea-grid">
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('crs')">
+                <div class="bt-tech-subarea-card-icon">🔌</div>
+                <strong>C-R-S</strong>
+                <span>Identifique comum, marcha e partida pelas medições entre terminais.</span>
+            </button>
+
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('enrolamentos')">
+                <div class="bt-tech-subarea-card-icon">🧲</div>
+                <strong>Enrolamentos</strong>
+                <span>Organize e confira medições de resistência dos enrolamentos.</span>
+            </button>
+
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('corrente')">
+                <div class="bt-tech-subarea-card-icon">⚡</div>
+                <strong>Corrente x placa</strong>
+                <span>Compare a corrente medida com os dados nominais do compressor.</span>
+            </button>
+
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('placa')">
+                <div class="bt-tech-subarea-card-icon">🏷️</div>
+                <strong>Dados da placa</strong>
+                <span>Organize tensão, fase, frequência, RLA, LRA e outros dados da placa.</span>
+            </button>
+        </div>
+
+        <div class="bt-tech-info-note">
+            Esta área está sendo estruturada por módulos. Nesta versão, a navegação de Compressores já está pronta; os cálculos serão adicionados card por card.
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
 
     if(type === "btu"){
@@ -16654,12 +16773,33 @@ function openTechnicalCalculator(type){
         return;
     }
 
+    if(type === "compressores"){
+        renderTechnicalCompressorsArea();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
     const names = {
         btu:"Calculadora de BTU/h",
         superaquecimento:"Superaquecimento",
         subresfriamento:"Sub-resfriamento",
         pressao:"Conversão de pressão",
         temperatura:"Conversão de temperatura",
+        compressores:"Compressores",
         eletrica:"Elétrica"
     };
 
@@ -16683,6 +16823,9 @@ window.closeTechnicalArea =
 
 window.openTechnicalCalculator =
     openTechnicalCalculator;
+
+window.openTechnicalCompressorTool =
+    openTechnicalCompressorTool;
 
 
 /* =========================================================
