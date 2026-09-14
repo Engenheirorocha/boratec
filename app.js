@@ -16836,10 +16836,167 @@ function calculateTechnicalCompressorCRS(){
 }
 
 
+function renderTechnicalCompressorWindings(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.classList.add("show");
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Enrolamentos do compressor</strong>
+                <span>Confira a coerência das resistências entre C-R, C-S e R-S.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-info-note" style="margin-bottom:14px;">
+            Faça a medição com o compressor desligado, capacitor descarregado e terminais isolados.
+            Esta ferramenta organiza as leituras e aponta incoerências; ela não condena o compressor sozinha.
+        </div>
+
+        <div class="bt-tech-form-grid">
+            <label class="bt-tech-field">
+                <span>C-R / marcha (Ω)</span>
+                <input id="btWindCR" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 3,2">
+            </label>
+
+            <label class="bt-tech-field">
+                <span>C-S / partida (Ω)</span>
+                <input id="btWindCS" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 6,8">
+            </label>
+
+            <label class="bt-tech-field">
+                <span>R-S (Ω)</span>
+                <input id="btWindRS" type="number" inputmode="decimal" step="0.001" min="0" placeholder="Ex.: 10,0">
+            </label>
+        </div>
+
+        <button class="bt-tech-calc-button" type="button" onclick="calculateTechnicalCompressorWindings()">
+            🧲 Analisar enrolamentos
+        </button>
+
+        <div id="btWindingsResult" class="bt-tech-result" style="display:none;"></div>
+
+        <div class="bt-tech-info-note" style="margin-top:14px;">
+            Em um compressor monofásico com dois enrolamentos, normalmente <strong>C-R + C-S ≈ R-S</strong>.
+            Leituras abertas, próximas de zero ou muito incoerentes precisam ser confirmadas com nova medição e, quando aplicável, teste de isolamento para carcaça.
+        </div>
+    `;
+}
+
+
+function calculateTechnicalCompressorWindings(){
+
+    const result =
+        document.getElementById(
+            "btWindingsResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const cr = Number(String(document.getElementById("btWindCR")?.value || "").replace(",","."));
+    const cs = Number(String(document.getElementById("btWindCS")?.value || "").replace(",","."));
+    const rs = Number(String(document.getElementById("btWindRS")?.value || "").replace(",","."));
+
+    const values = [cr,cs,rs];
+
+    if(values.some(value => !Number.isFinite(value) || value < 0)){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique os valores</div>
+            <div class="bt-tech-result-secondary">Informe três resistências válidas em ohms.</div>
+        `;
+        return;
+    }
+
+    if(values.some(value => value === 0)){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Possível anomalia</div>
+            <div class="bt-tech-result-value">Leitura próxima de zero</div>
+            <div class="bt-tech-result-secondary">
+                Uma das leituras ficou em 0 Ω. Confirme o contato das pontas e repita a medição.
+                Se o valor persistir, a leitura é incompatível com a resistência normal dos enrolamentos e merece investigação.
+            </div>
+        `;
+        return;
+    }
+
+    const expectedRS = cr + cs;
+    const difference = Math.abs(rs - expectedRS);
+    const reference = Math.max(rs, expectedRS, 0.001);
+    const differencePercent = (difference / reference) * 100;
+
+    let title = "Medições coerentes";
+    let main = "Relação esperada confirmada";
+    let detail = `C-R + C-S = ${btFormatOhms(expectedRS)} Ω e R-S medido = ${btFormatOhms(rs)} Ω.`;
+
+    if(differencePercent > 10){
+        title = "⚠ Revisar medição";
+        main = "Relação dos enrolamentos incoerente";
+        detail = `A soma C-R + C-S (${btFormatOhms(expectedRS)} Ω) ficou diferente de R-S (${btFormatOhms(rs)} Ω) em aproximadamente ${differencePercent.toLocaleString("pt-BR",{maximumFractionDigits:1})}%. Repita a medição com terminais isolados e bom contato.`;
+    }
+
+    const orderWarning =
+        cr >= cs
+        ? `<br><br><span style="color:#f1b35d">⚠ C-R ficou maior ou igual a C-S. Em muitos compressores monofásicos, o enrolamento de marcha apresenta resistência menor que o de partida. Confirme se C, R e S foram identificados corretamente.</span>`
+        : "";
+
+    const lowWarning =
+        Math.min(cr,cs,rs) < 0.05
+        ? `<br><br><span style="color:#f1b35d">⚠ Há uma leitura muito baixa. Verifique resolução do multímetro, resistência das pontas e repita a medição.</span>`
+        : "";
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <div class="bt-tech-result-label">${title}</div>
+        <div class="bt-tech-result-value">${main}</div>
+        <div class="bt-tech-result-secondary">
+            <strong>C-R:</strong> ${btFormatOhms(cr)} Ω<br>
+            <strong>C-S:</strong> ${btFormatOhms(cs)} Ω<br>
+            <strong>R-S:</strong> ${btFormatOhms(rs)} Ω<br><br>
+            ${detail}
+            ${orderWarning}
+            ${lowWarning}
+        </div>
+    `;
+}
+
+
 function openTechnicalCompressorTool(tool){
 
     if(tool === "crs"){
         renderTechnicalCompressorCRS();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
+    if(tool === "enrolamentos"){
+        renderTechnicalCompressorWindings();
 
         window.setTimeout(
             () => {
