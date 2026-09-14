@@ -4504,6 +4504,25 @@ function createMyJobsInterface(){
         </div>
 
         <div
+            style="
+                padding:10px 14px 0;
+            "
+        >
+            <button
+                type="button"
+                class="bt-secondary"
+                onclick="clearMyJobsHistory()"
+                style="
+                    width:100%;
+                    border-color:#7a3434;
+                    color:#ff8d88;
+                "
+            >
+                🗑 Limpar histórico concluído/cancelado
+            </button>
+        </div>
+
+        <div
             id="boratecMyJobsList"
             class="bt-jobs-list"
         ></div>
@@ -4603,7 +4622,33 @@ async function loadMyJobs(){
             throw error;
         }
 
-        if(!jobs || jobs.length === 0){
+        const {
+            data:hiddenRows,
+            error:hiddenError
+        } =
+        await boraSupabase
+        .from("job_hidden_history")
+        .select("job_id")
+        .eq(
+            "user_id",
+            boraUser.id
+        );
+
+        if(hiddenError){
+            throw hiddenError;
+        }
+
+        const hiddenIds =
+            new Set(
+                (hiddenRows || [])
+                .map(row => row.job_id)
+            );
+
+        const visibleJobs =
+            (jobs || [])
+            .filter(job => !hiddenIds.has(job.id));
+
+        if(visibleJobs.length === 0){
 
             list.innerHTML = `
                 <div class="bt-jobs-empty">
@@ -4620,7 +4665,7 @@ async function loadMyJobs(){
 
         const cards = [];
 
-        for(const job of jobs){
+        for(const job of visibleJobs){
 
             const details =
                 await getMyJobDetails(job);
@@ -4651,6 +4696,134 @@ async function loadMyJobs(){
         );
     }
 }
+
+
+/* =========================================================
+   OCULTAR / LIMPAR HISTORICO DE MEUS SERVICOS
+   - nao apaga jobs
+   - nao altera avaliacao/reputacao
+   - somente completed/cancelled
+========================================================= */
+
+async function hideMyJobForMe(jobId){
+
+    if(
+        !boraSupabase
+        ||
+        !boraUser
+        ||
+        !jobId
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Ocultar este serviço do seu histórico?"
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "hide_job_for_me",
+            {
+                p_job_id:jobId
+            }
+        );
+
+        if(error){
+            throw error;
+        }
+
+        await loadMyJobs();
+
+        showToast(
+            "Serviço removido do seu histórico"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro ao ocultar serviço:",
+            error
+        );
+
+        showToast(
+            "Não foi possível ocultar este serviço"
+        );
+    }
+}
+
+
+async function clearMyJobsHistory(){
+
+    if(
+        !boraSupabase
+        ||
+        !boraUser
+    ){
+        return;
+    }
+
+    const confirmed =
+        window.confirm(
+            "Ocultar todos os serviços concluídos e cancelados do seu histórico?"
+        );
+
+    if(!confirmed){
+        return;
+    }
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await boraSupabase
+        .rpc(
+            "hide_finished_jobs_for_me"
+        );
+
+        if(error){
+            throw error;
+        }
+
+        await loadMyJobs();
+
+        showToast(
+            Number(data || 0) > 0
+            ? "Histórico limpo"
+            : "Nenhum serviço concluído/cancelado para limpar"
+        );
+
+    }catch(error){
+
+        console.error(
+            "Erro ao limpar histórico de serviços:",
+            error
+        );
+
+        showToast(
+            "Não foi possível limpar o histórico"
+        );
+    }
+}
+
+
+window.hideMyJobForMe =
+    hideMyJobForMe;
+
+window.clearMyJobsHistory =
+    clearMyJobsHistory;
 
 
 /* =========================================================
@@ -4824,9 +4997,48 @@ function myJobCardHTML(job){
                 </div>
 
                 <div
-                    class="bt-job-badge ${escapeHtml(job.status)}"
+                    style="
+                        display:flex;
+                        align-items:center;
+                        gap:8px;
+                    "
                 >
-                    ${escapeHtml(statusText)}
+                    ${
+                        (
+                            job.status === "completed"
+                            ||
+                            job.status === "cancelled"
+                        )
+                        ?
+                        `
+                        <button
+                            type="button"
+                            title="Ocultar este serviço"
+                            aria-label="Ocultar este serviço"
+                            onclick="hideMyJobForMe('${escapeHtml(job.id)}')"
+                            style="
+                                width:34px;
+                                height:34px;
+                                border-radius:8px;
+                                border:1px solid #6b3434;
+                                background:#241516;
+                                color:#ff8d88;
+                                cursor:pointer;
+                                font-size:14px;
+                            "
+                        >
+                            🗑
+                        </button>
+                        `
+                        :
+                        ""
+                    }
+
+                    <div
+                        class="bt-job-badge ${escapeHtml(job.status)}"
+                    >
+                        ${escapeHtml(statusText)}
+                    </div>
                 </div>
 
             </div>
