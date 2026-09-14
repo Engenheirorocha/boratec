@@ -16694,8 +16694,8 @@ function renderTechnicalCompressorCRS(){
             </label>
         </div>
 
-        <button class="bt-tech-primary-button" type="button" onclick="calculateTechnicalCompressorCRS()">
-            Identificar C-R-S
+        <button class="bt-tech-calc-button" type="button" onclick="calculateTechnicalCompressorCRS()">
+            🔎 Identificar terminais C-R-S
         </button>
 
         <div id="btCrsResult" class="bt-tech-result" style="display:none;"></div>
@@ -16705,10 +16705,6 @@ function renderTechnicalCompressorCRS(){
             A partir do terminal comum, a menor leitura tende a ser <strong>C-R</strong> e a maior <strong>C-S</strong>.
             O BoraTec também verifica se C-R + C-S está próximo de R-S.
         </div>
-
-        <button class="bt-tech-secondary-button" type="button" onclick="renderTechnicalCompressorsArea()" style="margin-top:12px;">
-            ← Voltar para Compressores
-        </button>
     `;
 }
 
