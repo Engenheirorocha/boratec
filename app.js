@@ -13637,6 +13637,16 @@ function createBoraTecHome(){
                     <small>Troque dúvidas, dicas e informações com profissionais da rede.</small>
                 </button>
 
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="openTechnicalAreaFromHome()"
+                >
+                    <div class="bt-v182-action-icon">🛠️</div>
+                    <strong>Área Técnica</strong>
+                    <small>Gases, calculadoras, códigos de erro, manuais e ferramentas técnicas.</small>
+                </button>
+
             </div>
 
             <div class="bt-home-carousel-controls">
@@ -14174,6 +14184,33 @@ function openCommunityFromHome(){
     closeBoraTecHome();
 
     openCommunity();
+}
+
+
+function openTechnicalAreaFromHome(){
+
+    if(
+        typeof window.openTechnicalArea
+        ===
+        "function"
+    ){
+
+        closeBoraTecHome();
+
+        window.openTechnicalArea();
+        return;
+    }
+
+    if(
+        typeof window.showToast
+        ===
+        "function"
+    ){
+
+        window.showToast(
+            "Área Técnica em preparação"
+        );
+    }
 }
 
 
