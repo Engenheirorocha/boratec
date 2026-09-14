@@ -13634,8 +13634,8 @@ function setupBoraTecHomeCarousel(){
 async function loadBoraTecHome(){
 
     const profile =
-        btCurrentProfile ||
         boraProfile ||
+        window.btCurrentProfile ||
         {};
 
     const displayName =
