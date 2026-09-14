@@ -15769,6 +15769,251 @@ function calculateTechnicalSubcooling(){
 }
 
 
+function renderTechnicalPressureConverter(){
+
+    const workspace =
+        document.getElementById(
+            "btTechnicalWorkspace"
+        );
+
+    if(!workspace){
+        return;
+    }
+
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Conversão de pressão</strong>
+                <span>Converta rapidamente entre PSI, bar, kPa e MPa.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label for="btTechPressureValue">Valor</label>
+                <input
+                    id="btTechPressureValue"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    placeholder="Ex.: 120"
+                >
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechPressureFrom">De</label>
+                <select id="btTechPressureFrom">
+                    <option value="psi">PSI</option>
+                    <option value="bar">bar</option>
+                    <option value="kpa">kPa</option>
+                    <option value="mpa">MPa</option>
+                </select>
+            </div>
+
+            <div class="bt-tech-field">
+                <label for="btTechPressureTo">Para</label>
+                <select id="btTechPressureTo">
+                    <option value="bar">bar</option>
+                    <option value="psi">PSI</option>
+                    <option value="kpa">kPa</option>
+                    <option value="mpa">MPa</option>
+                </select>
+            </div>
+        </div>
+
+        <button
+            id="btTechPressureConvert"
+            class="bt-tech-calc-button"
+            type="button"
+        >CONVERTER PRESSÃO</button>
+
+        <div
+            id="btTechPressureResult"
+            class="bt-tech-result"
+            style="display:none"
+        ></div>
+
+        <div class="bt-tech-info-note">
+            Conversão matemática direta entre unidades de pressão. Esta ferramenta converte o valor informado e não altera entre pressão absoluta e pressão manométrica.
+        </div>
+    `;
+
+    workspace.classList.add("show");
+
+    document
+    .getElementById(
+        "btTechPressureConvert"
+    )
+    ?.addEventListener(
+        "click",
+        calculateTechnicalPressureConversion
+    );
+}
+
+
+function btPressureUnitToPa(value,unit){
+
+    const factors = {
+        psi:6894.757293168,
+        bar:100000,
+        kpa:1000,
+        mpa:1000000
+    };
+
+    const factor =
+        factors[unit];
+
+    if(!factor){
+        return null;
+    }
+
+    return value * factor;
+}
+
+
+function btPressurePaToUnit(valuePa,unit){
+
+    const factors = {
+        psi:6894.757293168,
+        bar:100000,
+        kpa:1000,
+        mpa:1000000
+    };
+
+    const factor =
+        factors[unit];
+
+    if(!factor){
+        return null;
+    }
+
+    return valuePa / factor;
+}
+
+
+function btPressureUnitLabel(unit){
+
+    const labels = {
+        psi:"PSI",
+        bar:"bar",
+        kpa:"kPa",
+        mpa:"MPa"
+    };
+
+    return labels[unit] || unit;
+}
+
+
+function btFormatPressureConversion(value){
+
+    if(!Number.isFinite(value)){
+        return "—";
+    }
+
+    const absolute =
+        Math.abs(value);
+
+    let decimals = 3;
+
+    if(absolute >= 1000){
+        decimals = 1;
+    }
+    else if(absolute >= 100){
+        decimals = 2;
+    }
+    else if(absolute < 1){
+        decimals = 4;
+    }
+
+    return value.toLocaleString(
+        "pt-BR",
+        {
+            minimumFractionDigits:0,
+            maximumFractionDigits:decimals
+        }
+    );
+}
+
+
+function calculateTechnicalPressureConversion(){
+
+    const rawValue =
+        document.getElementById(
+            "btTechPressureValue"
+        )?.value;
+
+    const fromUnit =
+        document.getElementById(
+            "btTechPressureFrom"
+        )?.value;
+
+    const toUnit =
+        document.getElementById(
+            "btTechPressureTo"
+        )?.value;
+
+    const result =
+        document.getElementById(
+            "btTechPressureResult"
+        );
+
+    if(!result){
+        return;
+    }
+
+    const value =
+        Number(
+            String(rawValue || "")
+            .replace(",",".")
+        );
+
+    if(!Number.isFinite(value)){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Verifique o valor</div>
+            <div class="bt-tech-result-secondary">Informe uma pressão válida para converter.</div>
+        `;
+        return;
+    }
+
+    const valuePa =
+        btPressureUnitToPa(
+            value,
+            fromUnit
+        );
+
+    const converted =
+        btPressurePaToUnit(
+            valuePa,
+            toUnit
+        );
+
+    if(
+        valuePa === null
+        ||
+        converted === null
+        ||
+        !Number.isFinite(converted)
+    ){
+        result.style.display = "block";
+        result.innerHTML = `
+            <div class="bt-tech-result-label">Não foi possível converter</div>
+            <div class="bt-tech-result-secondary">Confira as unidades selecionadas.</div>
+        `;
+        return;
+    }
+
+    result.style.display = "block";
+    result.innerHTML = `
+        <div class="bt-tech-result-label">Conversão de pressão</div>
+        <div class="bt-tech-result-value">${btFormatPressureConversion(converted)} ${btPressureUnitLabel(toUnit)}</div>
+        <div class="bt-tech-result-secondary">
+            ${btFormatPressureConversion(value)} ${btPressureUnitLabel(fromUnit)} = <strong>${btFormatPressureConversion(converted)} ${btPressureUnitLabel(toUnit)}</strong>
+        </div>
+    `;
+}
+
+
 function openTechnicalCalculator(type){
 
     if(type === "gases"){
@@ -15813,6 +16058,26 @@ function openTechnicalCalculator(type){
 
     if(type === "subresfriamento"){
         renderTechnicalSubcoolingTool();
+
+        window.setTimeout(
+            () => {
+                document
+                .getElementById(
+                    "btTechnicalWorkspace"
+                )
+                ?.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            },
+            40
+        );
+
+        return;
+    }
+
+    if(type === "pressao"){
+        renderTechnicalPressureConverter();
 
         window.setTimeout(
             () => {
