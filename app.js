@@ -13504,6 +13504,193 @@ function createBoraTecHome(){
 
         #btInstallAppButton.show{ display:block; }
 
+        .bt-home-help-row{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:10px;
+            margin-top:4px;
+        }
+
+        .bt-home-help-button{
+            min-height:54px;
+            border:1px solid rgba(119,151,178,.22);
+            border-radius:14px;
+            background:linear-gradient(145deg,rgba(14,42,65,.96),rgba(8,29,47,.98));
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:flex-start;
+            gap:10px;
+            padding:10px 12px;
+            cursor:pointer;
+            text-align:left;
+            box-shadow:0 8px 20px rgba(0,0,0,.14);
+        }
+
+        .bt-home-help-button:active{ transform:scale(.985); }
+
+        .bt-home-help-button.support{
+            border-color:rgba(37,211,102,.28);
+            background:linear-gradient(145deg,rgba(37,211,102,.10),rgba(8,29,47,.98));
+        }
+
+        .bt-home-help-icon{
+            width:34px;
+            height:34px;
+            flex:0 0 34px;
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,255,255,.055);
+            font-size:18px;
+        }
+
+        .bt-home-help-copy strong{
+            display:block;
+            font-size:11px;
+            font-weight:950;
+            line-height:1.1;
+        }
+
+        .bt-home-help-copy small{
+            display:block;
+            margin-top:4px;
+            color:#7f98ad;
+            font-size:9px;
+            line-height:1.25;
+        }
+
+        #btHowItWorksScreen{
+            position:fixed;
+            inset:0;
+            z-index:6700;
+            display:none;
+            overflow-y:auto;
+            background:
+                radial-gradient(circle at 85% -10%,rgba(19,120,190,.18),transparent 34%),
+                linear-gradient(180deg,#06182b 0%,#071a2e 100%);
+            color:#fff;
+        }
+
+        #btHowItWorksScreen.show{ display:block; }
+
+        .bt-how-shell{
+            width:min(100%,680px);
+            margin:0 auto;
+            padding:18px 18px 72px;
+            box-sizing:border-box;
+        }
+
+        .bt-how-top{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        .bt-how-back{
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            border:1px solid rgba(119,151,178,.20);
+            background:#0b243b;
+            color:#fff;
+            font-size:22px;
+            cursor:pointer;
+        }
+
+        .bt-how-kicker{
+            color:#5ecfff;
+            font-size:10px;
+            font-weight:900;
+            letter-spacing:.7px;
+            text-transform:uppercase;
+        }
+
+        .bt-how-title{
+            margin:5px 0 0;
+            font-size:25px;
+            font-weight:950;
+            line-height:1.08;
+        }
+
+        .bt-how-lead{
+            margin:9px 0 20px;
+            color:#91a9bb;
+            font-size:12px;
+            line-height:1.55;
+        }
+
+        .bt-how-section{
+            margin-top:14px;
+            padding:16px;
+            border:1px solid rgba(94,207,255,.14);
+            border-radius:17px;
+            background:linear-gradient(145deg,rgba(11,36,58,.96),rgba(7,26,44,.98));
+        }
+
+        .bt-how-section h3{
+            margin:0 0 9px;
+            font-size:15px;
+            font-weight:950;
+        }
+
+        .bt-how-section p{
+            margin:0;
+            color:#91a9bb;
+            font-size:11px;
+            line-height:1.55;
+        }
+
+        .bt-how-list{
+            display:grid;
+            gap:9px;
+            margin-top:10px;
+        }
+
+        .bt-how-item{
+            display:flex;
+            gap:10px;
+            align-items:flex-start;
+            padding:10px;
+            border-radius:12px;
+            background:rgba(255,255,255,.025);
+            border:1px solid rgba(119,151,178,.10);
+        }
+
+        .bt-how-item b{
+            color:#fff;
+            font-size:11px;
+        }
+
+        .bt-how-item span{
+            display:block;
+            margin-top:3px;
+            color:#829caf;
+            font-size:10px;
+            line-height:1.4;
+        }
+
+        .bt-how-number{
+            width:27px;
+            height:27px;
+            flex:0 0 27px;
+            border-radius:9px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(94,207,255,.10);
+            color:#5ecfff;
+            font-size:11px;
+            font-weight:950;
+        }
+
+        @media(max-width:420px){
+            .bt-home-help-row{ grid-template-columns:1fr; }
+        }
+
         html.bt-standalone #btInstallAppButton,
         body.bt-standalone #btInstallAppButton{
             display:none !important;
@@ -13671,6 +13858,32 @@ function createBoraTecHome(){
                 >›</button>
             </div>
 
+            <div class="bt-home-help-row">
+                <button
+                    class="bt-home-help-button support"
+                    type="button"
+                    onclick="openBoraTecSupportWhatsApp()"
+                >
+                    <span class="bt-home-help-icon">💬</span>
+                    <span class="bt-home-help-copy">
+                        <strong>Suporte BoraTec</strong>
+                        <small>Fale direto pelo WhatsApp</small>
+                    </span>
+                </button>
+
+                <button
+                    class="bt-home-help-button"
+                    type="button"
+                    onclick="openBoraTecHowItWorks()"
+                >
+                    <span class="bt-home-help-icon">?</span>
+                    <span class="bt-home-help-copy">
+                        <strong>Como funciona o BoraTec</strong>
+                        <small>Veja recursos e como usar</small>
+                    </span>
+                </button>
+            </div>
+
             <button id="btInstallAppButton" type="button">
                 📲 Instalar BoraTec
             </button>
@@ -13707,6 +13920,163 @@ function createBoraTecHome(){
         });
     }
 }
+
+
+function openBoraTecSupportWhatsApp(){
+
+    const phone = "5521964547473";
+    const message = encodeURIComponent(
+        "Olá! Preciso de suporte no BoraTec."
+    );
+
+    const url =
+        `https://wa.me/${phone}?text=${message}`;
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+
+
+function createBoraTecHowItWorks(){
+
+    if(document.getElementById("btHowItWorksScreen")){
+        return;
+    }
+
+    const screen = document.createElement("section");
+    screen.id = "btHowItWorksScreen";
+
+    screen.innerHTML = `
+        <div class="bt-how-shell">
+            <div class="bt-how-top">
+                <div>
+                    <div class="bt-how-kicker">Conheça o BoraTec</div>
+                    <h2 class="bt-how-title">Como funciona</h2>
+                </div>
+
+                <button
+                    class="bt-how-back"
+                    type="button"
+                    onclick="closeBoraTecHowItWorks()"
+                    aria-label="Fechar"
+                >×</button>
+            </div>
+
+            <p class="bt-how-lead">
+                O BoraTec foi criado para conectar profissionais de refrigeração e facilitar o dia a dia em campo. Você pode gerar oportunidades, encontrar apoio, conversar com outros profissionais e acessar ferramentas técnicas no mesmo aplicativo.
+            </p>
+
+            <section class="bt-how-section">
+                <h3>🤝 Rede de trabalho</h3>
+                <div class="bt-how-list">
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">1</div>
+                        <div><b>Repassar serviço</b><span>Publique um atendimento que você não consegue realizar e encontre outro profissional da rede.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">2</div>
+                        <div><b>Preciso de ajudante</b><span>Peça apoio para instalação, manutenção, obra ou atendimento em dupla.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">3</div>
+                        <div><b>Estou disponível</b><span>Avise à rede que você está disponível para receber oportunidades.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">4</div>
+                        <div><b>Encontrar profissional</b><span>Procure técnicos e ajudantes que estejam disponíveis na rede BoraTec.</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bt-how-section">
+                <h3>💬 Conversa, comunidade e confiança</h3>
+                <p>
+                    Converse de forma privada com profissionais, participe da Comunidade para trocar dúvidas e experiências e, quando um serviço for fechado pelo BoraTec, acompanhe as etapas até a conclusão. Ao final, as avaliações ajudam a construir a reputação dos participantes da rede.
+                </p>
+            </section>
+
+            <section class="bt-how-section">
+                <h3>🛠 Área Técnica</h3>
+                <p>
+                    A Área Técnica reúne ferramentas rápidas para o trabalho de campo. Hoje ela já inclui cálculo de saturação de refrigerantes, superaquecimento, sub-resfriamento, conversão de pressão, conversão de temperatura e dimensionamento prático de BTU/h.
+                </p>
+            </section>
+
+            <section class="bt-how-section">
+                <h3>⚙ Compressores</h3>
+                <p>
+                    A área de Compressores está sendo construída como uma central de apoio ao diagnóstico. Já conta com identificação C-R-S por resistência e verificação de coerência dos enrolamentos. Novas ferramentas de corrente, placa e partida serão adicionadas progressivamente.
+                </p>
+            </section>
+
+            <section class="bt-how-section">
+                <h3>📱 Como começar</h3>
+                <div class="bt-how-list">
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">1</div>
+                        <div><b>Complete seu perfil</b><span>Use seu nome profissional e foto para ser reconhecido pela rede.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">2</div>
+                        <div><b>Escolha o que precisa</b><span>Na tela inicial, toque em uma das opções de acesso rápido.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">3</div>
+                        <div><b>Conecte-se</b><span>Publique, encontre profissionais, converse e combine o atendimento.</span></div>
+                    </div>
+                    <div class="bt-how-item">
+                        <div class="bt-how-number">4</div>
+                        <div><b>Use as ferramentas técnicas</b><span>Quando estiver em campo, abra a Área Técnica para fazer cálculos e consultas rápidas.</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bt-how-section">
+                <h3>🧭 Proposta do BoraTec</h3>
+                <p>
+                    Centralizar em um só lugar conexão entre profissionais, geração de trabalho, suporte entre técnicos, reputação e ferramentas práticas de refrigeração. O objetivo é reduzir tempo perdido e facilitar decisões do dia a dia sem substituir procedimentos do fabricante ou medições corretas em campo.
+                </p>
+            </section>
+        </div>
+    `;
+
+    document.body.appendChild(screen);
+}
+
+
+function openBoraTecHowItWorks(){
+
+    createBoraTecHowItWorks();
+
+    document
+    .getElementById("btHowItWorksScreen")
+    ?.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+}
+
+
+function closeBoraTecHowItWorks(){
+
+    document
+    .getElementById("btHowItWorksScreen")
+    ?.classList.remove("show");
+
+    document.body.style.overflow = "hidden";
+}
+
+
+window.openBoraTecSupportWhatsApp =
+    openBoraTecSupportWhatsApp;
+
+window.openBoraTecHowItWorks =
+    openBoraTecHowItWorks;
+
+window.closeBoraTecHowItWorks =
+    closeBoraTecHowItWorks;
 
 
 function setupBoraTecHomeCarousel(){
