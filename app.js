@@ -17705,28 +17705,27 @@ function searchTechnicalCompressorModel(){
     }
 
     const item=brand.models[foundKey];
+    const notInformed = "Não informado";
     const rows=[
-        ["Modelo",foundKey],
-        ["Código",item.code],
-        ["Aplicação",item.application],
-        ["Tensão",item.voltage],
-        ["Fase",item.phase],
-        ["Frequência",item.frequency],
-        ["Potência comercial",item.hp],
-        ["Refrigerante",item.refrigerant],
-        ["Deslocamento",item.displacement],
-        ["RLA",item.rla],
-        ["LRA",item.lra]
-    ].filter(row=>row[1]);
+        ["Marca",brand.label || notInformed],
+        ["Modelo",foundKey || notInformed],
+        ["Aplicação",item.application || notInformed],
+        ["Refrigerante",item.refrigerant || notInformed],
+        ["Potência / HP",item.hp || notInformed],
+        ["Deslocamento",item.displacement || notInformed],
+        ["Tensão",item.voltage || notInformed],
+        ["Frequência",item.frequency || notInformed],
+        ["Fase",item.phase || notInformed],
+        ["RLA",item.rla || notInformed],
+        ["LRA",item.lra || notInformed]
+    ];
 
     result.style.display="block";
     result.innerHTML=`
         <div class="bt-tech-result-label">Compressor identificado</div>
         <div class="bt-tech-result-value" style="font-size:24px;">${foundKey}</div>
-        <div class="bt-tech-result-secondary" style="line-height:1.75;">
-            <strong>${brand.label}</strong><br>
+        <div class="bt-tech-result-secondary" style="line-height:1.8;">
             ${rows.map(row=>`${row[0]}: <strong>${row[1]}</strong>`).join("<br>")}
-            <br><br><span style="color:#7894a9">Fonte cadastrada: ${item.source || "catálogo técnico"}</span>
         </div>`;
 }
 
