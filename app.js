@@ -17597,18 +17597,54 @@ const btCompressorCatalog = {
             "AE2410Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-134a / R-513A",displacement:"9,39 cm³",rla:"3,11 A",lra:"28,5 A",source:"Tecumseh — catálogo oficial"},
             "AE2410Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"9,39 cm³",rla:"1,4 A",lra:"9 A",source:"Tecumseh — catálogo oficial"},
             "AE2410Z-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-404A / R-407A / R-448A / R-449A / R-452A",displacement:"5,02 cm³",source:"Tecumseh — catálogo oficial"}
+            ,"TC1370U-DS6B":{application:"LBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-290",displacement:"3,79 cm³",rla:"1,9 A",lra:"20 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TC1410U-DS7C":{application:"LBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-290",displacement:"6,06 cm³",rla:"1,7 A",lra:"23,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TC1410Y-ES8A":{application:"LBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1/3 HP",refrigerant:"R-134a",displacement:"10,87 cm³",rla:"1,93 A",lra:"10,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TC1413U-DS7C":{application:"LBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/3 HP",refrigerant:"R-290",displacement:"6,93 cm³",rla:"2,13 A",lra:"23,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
+            ,"TYA2431ZES":{application:"LBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1 HP",refrigerant:"R-404A",displacement:"18,8 cm³",rla:"3,65 A",lra:"29 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TYA2431ZKS":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1 HP",refrigerant:"R-404A",displacement:"18,8 cm³",rla:"3,62 A",lra:"26 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TYA2438ZES":{application:"LBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1 1/4 HP",refrigerant:"R-404A",displacement:"22,33 cm³",rla:"4,59 A",lra:"34,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TYA2438ZKS":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1 1/4 HP",refrigerant:"R-404A",displacement:"22,33 cm³",rla:"4,0 A",lra:"24,1 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TYA2446ZES":{application:"LBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1 1/2 HP",refrigerant:"R-404A",displacement:"26 cm³",rla:"5,21 A",lra:"31,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"TYA2446ZKS":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1 1/4 HP",refrigerant:"R-404A",displacement:"26 cm³",rla:"4,48 A",lra:"30 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
+            ,"AJA4492YXA":{application:"HBP",voltage:"100 V (50 Hz) / 115 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"3/4 HP",refrigerant:"R-134a / R-513A",displacement:"25,95 cm³",rla:"13 A (60 Hz)",lra:"69 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AJA4512YXD":{application:"HBP",voltage:"200 V (50 Hz) / 208-230 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"1 HP",refrigerant:"R-134a / R-513A",displacement:"34,366 cm³",rla:"7 A (60 Hz)",lra:"41 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AJA7461YXD":{application:"MBP",voltage:"200 V (50 Hz) / 208-230 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"3/4 HP",refrigerant:"R-134a / R-513A",displacement:"32,678 cm³",rla:"6,4 A (60 Hz)",lra:"46 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AJA7465AXA":{application:"MBP",voltage:"100 V (50 Hz) / 115 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"3/4 HP",refrigerant:"R-12",displacement:"32,678 cm³",rla:"11,6 A (60 Hz)",lra:"68 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AJA7461YXA":{application:"MBP",voltage:"100 V (50 Hz) / 115 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"3/4 HP",refrigerant:"R-134a / R-513A",displacement:"32,678 cm³",rla:"10,1 A (60 Hz)",lra:"68 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
+            ,"AK2447U-AA3C":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1 1/4 HP",refrigerant:"R-290",displacement:"25,6 cm³",rla:"7,6 A",lra:"67,8 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"FH2511U-XC3A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1 1/4 HP",refrigerant:"R-290",displacement:"68 cm³",rla:"6,0 A",lra:"68 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AE4435U-AA1A":{application:"CBP / HBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/3 HP",refrigerant:"R-290",displacement:"6,91 cm³",rla:"4,98 A",lra:"30,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AE4460U-AA1C":{application:"CBP / HBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/2 HP",refrigerant:"R-290",displacement:"12,01 cm³",rla:"8,9 A",lra:"43,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
+            ,"AZA0340YRS":{application:"CBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1/12 HP",refrigerant:"R-134a",displacement:"2,23 cm³",rla:"0,79 A",lra:"7 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0345YAS":{application:"CBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/12 HP",refrigerant:"R-134a",displacement:"2,23 cm³",rla:"1,32 A",lra:"11 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0345YES":{application:"CBP",voltage:"220 V",phase:"1 fase",frequency:"60 Hz",hp:"1/12 HP",refrigerant:"R-134a",displacement:"2,23 cm³",rla:"0,71 A",lra:"7 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0370YXA":{application:"CBP",voltage:"100 V (50 Hz) / 115 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"1/10 HP",refrigerant:"R-134a",displacement:"3,999 cm³",rla:"2,20 A (50 Hz) / 2,22 A (60 Hz)",lra:"18,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0387YAS":{application:"CBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/6 HP",refrigerant:"R-134a",displacement:"4 cm³",rla:"2,25 A",lra:"18,5 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0395YXA":{application:"CBP",voltage:"100 V (50 Hz) / 115 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"1/9 HP",refrigerant:"R-134a",displacement:"5,588 cm³",rla:"2,9 A (60 Hz)",lra:"28 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0395YXC":{application:"CBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/9 HP",refrigerant:"R-134a",displacement:"5,59 cm³",rla:"1,55 A",lra:"12,4 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AZA0411YAS":{application:"CBP",voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"5,59 cm³",rla:"3,43 A",lra:"25,3 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
+            ,"AWA5535EGH":{application:"AC / HBP",voltage:"230 V",phase:"1 fase",frequency:"50 Hz",hp:"3 HP",refrigerant:"R-22",displacement:"59 cm³",rla:"13,2 A",lra:"85 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AWA7512ZXD":{application:"MBP",voltage:"200 V (50 Hz) / 208-230 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"1 HP",refrigerant:"R-404A / R-407A / R-448A / R-449A / R-452A",displacement:"43,1 cm³",rla:"9,55 A (60 Hz)",lra:"73 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+            ,"AWA9512ZXN":{application:"CBP",voltage:"200-220 V (50 Hz) / 208-230 V (60 Hz)",phase:"1 fase",frequency:"50/60 Hz",hp:"1 1/2 HP",refrigerant:"R-404A / R-407A / R-448A / R-449A / R-452A",displacement:"43,1 cm³",rla:"8,9 A (60 Hz)",lra:"60 A",source:"Tecumseh — catálogo e ficha técnica oficiais"}
+
         }
     },
     secop:{
         label:"Secop",
         models:{
-            "PL20F":{code:"101G0100",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"1,41 cm³",source:"Secop — Product Selector oficial"},
+            "PL20F":{code:"101G0100",application:"MBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"1,41 cm³",lra:"1,2 A",source:"Secop — datasheet oficial"},
             "PL35F":{code:"101G0202",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,00 cm³",rla:"0,42 A",lra:"1,78 A",source:"Secop — Product Selector oficial"},
-            "PL50F":{code:"101G0220",application:"MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,50 cm³",source:"Secop — Product Selector oficial"},
-            "NL8F":{code:"105G6822",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"7,95 cm³",source:"Secop — Product Selector oficial"},
+            "PL50F":{code:"101G0220",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,50 cm³",lra:"2,2 A",source:"Secop — datasheet oficial"},
+            "NL8F":{code:"105G6822",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"7,95 cm³",lra:"8,7 A (CSIR) / 7,9 A (RSIR)",source:"Secop — datasheet oficial"},
             "SC12FT":{code:"104G8205",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"12,87 cm³",rla:"4,3 A",lra:"23,4 A",source:"Secop — datasheet oficial"},
-            "SC21F":{code:"104G8100",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"20,95 cm³",source:"Secop — datasheet oficial"},
-            "TLS4FT":{code:"102G4424",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",source:"Secop — datasheet oficial"}
+            "SC21F":{code:"104G8100",application:"LBP / MBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"20,95 cm³",source:"Secop — datasheet oficial"},
+            "TLS4FT":{code:"102G4424",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"3,86 cm³",lra:"5,8 A (HST) / 4,9 A (LST)",source:"Secop — datasheet oficial"}
         }
     },
     embraco:{
@@ -17641,7 +17677,7 @@ function renderTechnicalCompressorIdentifier(){
         </div>
 
         <div class="bt-tech-info-note" style="margin-bottom:14px;">
-            Selecione a marca e digite o <strong>modelo exato da etiqueta</strong>. O BoraTec só mostra informações que estão cadastradas e confirmadas; se não encontrar, não tenta adivinhar pela máscara. Para RLA/LRA, o valor só aparece quando a versão elétrica cadastrada está confirmada.
+            Selecione a marca e digite o <strong>modelo exato da etiqueta</strong>. O BoraTec só mostra informações que estão cadastradas e confirmadas; se não encontrar, não tenta adivinhar pela máscara. Para RLA/LRA, o valor só aparece quando a versão elétrica/configuração cadastrada está confirmada. Quando o fabricante publica mais de uma configuração, o BoraTec mostra as opções em vez de escolher uma por conta própria.
         </div>
 
         <div class="bt-tech-gas-grid">
