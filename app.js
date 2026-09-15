@@ -17585,17 +17585,17 @@ const btCompressorCatalog = {
     tecumseh:{
         label:"Tecumseh",
         models:{
-            "AE1345A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/6 HP",refrigerant:"R-401A",displacement:"4,24 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1345A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/6 HP",refrigerant:"R-401A",displacement:"4,24 cm³",rla:"0,94 A",lra:"9 A",source:"Tecumseh — catálogo oficial"},
             "AE1360A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-401A",displacement:"6,12 cm³",source:"Tecumseh — catálogo oficial"},
             "AE1370A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-401A",displacement:"6,69 cm³",source:"Tecumseh — catálogo oficial"},
-            "AE1390Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/5 HP",refrigerant:"R-134a / R-513A",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
-            "AE1390Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
-            "AE1420Z-FZ1B":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/2 HP",refrigerant:"R-404A",displacement:"9,35 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1390Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/5 HP",refrigerant:"R-134a / R-513A",displacement:"8,02 cm³",rla:"2,74 A",lra:"26,5 A",source:"Tecumseh — catálogo oficial"},
+            "AE1390Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"8,02 cm³",rla:"1,4 A",lra:"15 A",source:"Tecumseh — catálogo oficial"},
+            "AE1420Z-FZ1B":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/2 HP",refrigerant:"R-404A",displacement:"9,35 cm³",rla:"2,55 A",lra:"18,5 A",source:"Tecumseh — catálogo oficial"},
             "AE2390Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
             "AE2410P-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-404A / R-452A / R-454C / R-455A",displacement:"5,02 cm³",source:"Tecumseh — catálogo oficial"},
             "AE2410U-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-290",displacement:"6,12 cm³",source:"Tecumseh — catálogo oficial"},
-            "AE2410Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-134a / R-513A",displacement:"9,39 cm³",source:"Tecumseh — catálogo oficial"},
-            "AE2410Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"9,39 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-134a / R-513A",displacement:"9,39 cm³",rla:"3,11 A",lra:"28,5 A",source:"Tecumseh — catálogo oficial"},
+            "AE2410Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"9,39 cm³",rla:"1,4 A",lra:"9 A",source:"Tecumseh — catálogo oficial"},
             "AE2410Z-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-404A / R-407A / R-448A / R-449A / R-452A",displacement:"5,02 cm³",source:"Tecumseh — catálogo oficial"}
         }
     },
@@ -17603,10 +17603,10 @@ const btCompressorCatalog = {
         label:"Secop",
         models:{
             "PL20F":{code:"101G0100",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"1,41 cm³",source:"Secop — Product Selector oficial"},
-            "PL35F":{code:"101G0202",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,00 cm³",source:"Secop — Product Selector oficial"},
+            "PL35F":{code:"101G0202",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,00 cm³",rla:"0,42 A",lra:"1,78 A",source:"Secop — Product Selector oficial"},
             "PL50F":{code:"101G0220",application:"MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,50 cm³",source:"Secop — Product Selector oficial"},
             "NL8F":{code:"105G6822",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"7,95 cm³",source:"Secop — Product Selector oficial"},
-            "SC12FT":{code:"104G8205",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"12,87 cm³",source:"Secop — datasheet oficial"},
+            "SC12FT":{code:"104G8205",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"12,87 cm³",rla:"4,3 A",lra:"23,4 A",source:"Secop — datasheet oficial"},
             "SC21F":{code:"104G8100",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"20,95 cm³",source:"Secop — datasheet oficial"},
             "TLS4FT":{code:"102G4424",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",source:"Secop — datasheet oficial"}
         }
@@ -17641,7 +17641,7 @@ function renderTechnicalCompressorIdentifier(){
         </div>
 
         <div class="bt-tech-info-note" style="margin-bottom:14px;">
-            Selecione a marca e digite o <strong>modelo exato da etiqueta</strong>. O BoraTec só mostra informações que estão cadastradas e confirmadas; se não encontrar, não tenta adivinhar pela máscara.
+            Selecione a marca e digite o <strong>modelo exato da etiqueta</strong>. O BoraTec só mostra informações que estão cadastradas e confirmadas; se não encontrar, não tenta adivinhar pela máscara. Para RLA/LRA, o valor só aparece quando a versão elétrica cadastrada está confirmada.
         </div>
 
         <div class="bt-tech-gas-grid">
