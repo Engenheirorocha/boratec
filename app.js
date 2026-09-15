@@ -17661,7 +17661,7 @@ function btNormalizeCompressorModel(value){
     return String(value || "")
         .trim()
         .toUpperCase()
-        .replace(/\s+/g,"");
+        .replace(/[^A-Z0-9]/g,"");
 }
 
 function renderTechnicalCompressorIdentifier(){
@@ -17705,7 +17705,7 @@ function renderTechnicalCompressorIdentifier(){
     `;
 }
 
-function searchTechnicalCompressorModel(){
+async function searchTechnicalCompressorModel(){
     const brandKey=document.getElementById("btCompressorBrand")?.value || "";
     const rawModel=document.getElementById("btCompressorModel")?.value || "";
     const result=document.getElementById("btCompressorIdentifierResult");
@@ -17720,31 +17720,81 @@ function searchTechnicalCompressorModel(){
         return;
     }
 
-    let foundKey=null;
-    Object.keys(brand.models || {}).some(key=>{
-        if(btNormalizeCompressorModel(key)===normalized){foundKey=key;return true;}
-        const item=brand.models[key];
-        if(item?.code && btNormalizeCompressorModel(item.code)===normalized){foundKey=key;return true;}
-        return false;
-    });
+    result.style.display="block";
+    result.innerHTML=`
+        <div class="bt-tech-result-label">Consultando base técnica</div>
+        <div class="bt-tech-result-secondary">Buscando <strong>${rawModel.replace(/[<>]/g,"")}</strong>...</div>
+    `;
 
-    if(!foundKey){
-        result.style.display="block";
+    let dbItem=null;
+
+    try{
+        if(boraSupabase){
+            const {data,error}=await boraSupabase
+                .from("compressors")
+                .select("brand,model,application,refrigerant,hp,displacement,voltage,frequency,phase,rla,lra,official_url")
+                .eq("brand_key",brandKey)
+                .eq("model_normalized",normalized)
+                .maybeSingle();
+
+            if(!error && data){
+                dbItem=data;
+            }else if(error){
+                console.warn("BoraTec: consulta de compressor no Supabase falhou; usando base local.",error);
+            }
+        }
+    }catch(error){
+        console.warn("BoraTec: erro ao consultar compressor no Supabase; usando base local.",error);
+    }
+
+    let displayBrand=brand.label;
+    let displayModel=null;
+    let item=null;
+
+    if(dbItem){
+        displayBrand=dbItem.brand || brand.label;
+        displayModel=dbItem.model;
+        item=dbItem;
+    }else{
+        let foundKey=null;
+
+        Object.keys(brand.models || {}).some(key=>{
+            if(btNormalizeCompressorModel(key)===normalized){
+                foundKey=key;
+                return true;
+            }
+
+            const localItem=brand.models[key];
+
+            if(localItem?.code && btNormalizeCompressorModel(localItem.code)===normalized){
+                foundKey=key;
+                return true;
+            }
+
+            return false;
+        });
+
+        if(foundKey){
+            displayModel=foundKey;
+            item=brand.models[foundKey];
+        }
+    }
+
+    if(!item || !displayModel){
         result.innerHTML=`
             <div class="bt-tech-result-label">Modelo ainda não cadastrado</div>
             <div class="bt-tech-result-value" style="font-size:20px;">${brand.label}</div>
             <div class="bt-tech-result-secondary">
-                Não encontramos <strong>${rawModel.replace(/[<>]/g,"")}</strong> na base local atual.<br><br>
+                Não encontramos <strong>${rawModel.replace(/[<>]/g,"")}</strong> na base técnica atual.<br><br>
                 Isso não significa que o modelo seja inválido. Apenas indica que ele ainda não foi incluído na base do BoraTec.
             </div>`;
         return;
     }
 
-    const item=brand.models[foundKey];
-    const notInformed = "Não informado";
+    const notInformed="Não informado";
     const rows=[
-        ["Marca",brand.label || notInformed],
-        ["Modelo",foundKey || notInformed],
+        ["Marca",displayBrand || notInformed],
+        ["Modelo",displayModel || notInformed],
         ["Aplicação",item.application || notInformed],
         ["Refrigerante",item.refrigerant || notInformed],
         ["Potência / HP",item.hp || notInformed],
@@ -17756,10 +17806,9 @@ function searchTechnicalCompressorModel(){
         ["LRA",item.lra || notInformed]
     ];
 
-    result.style.display="block";
     result.innerHTML=`
         <div class="bt-tech-result-label">Compressor identificado</div>
-        <div class="bt-tech-result-value" style="font-size:24px;">${foundKey}</div>
+        <div class="bt-tech-result-value" style="font-size:24px;">${displayModel}</div>
         <div class="bt-tech-result-secondary" style="line-height:1.8;">
             ${rows.map(row=>`${row[0]}: <strong>${row[1]}</strong>`).join("<br>")}
         </div>`;
