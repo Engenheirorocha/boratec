@@ -14070,7 +14070,7 @@ function createBoraTecHowItWorks(){
             <section class="bt-how-section">
                 <h3>⚙ Compressores</h3>
                 <p>
-                    A área de Compressores está sendo construída como uma central de apoio ao diagnóstico. Já conta com identificação C-R-S por resistência e verificação de coerência dos enrolamentos. Novas ferramentas de corrente, placa e partida serão adicionadas progressivamente.
+                    A área de Compressores funciona como uma central de apoio técnico. Já conta com identificação de modelos cadastrados, identificação C-R-S por resistência e verificação de coerência dos enrolamentos.
                 </p>
             </section>
 
@@ -17579,7 +17579,166 @@ function calculateTechnicalCompressorWindings(){
 }
 
 
+
+
+const btCompressorCatalog = {
+    tecumseh:{
+        label:"Tecumseh",
+        models:{
+            "AE1345A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/6 HP",refrigerant:"R-401A",displacement:"4,24 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1360A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-401A",displacement:"6,12 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1370A-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-401A",displacement:"6,69 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1390Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/5 HP",refrigerant:"R-134a / R-513A",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1390Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE1420Z-FZ1B":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/2 HP",refrigerant:"R-404A",displacement:"9,35 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2390Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"8,02 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410P-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-404A / R-452A / R-454C / R-455A",displacement:"5,02 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410U-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/4 HP",refrigerant:"R-290",displacement:"6,12 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410Y-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-134a / R-513A",displacement:"9,39 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410Y-FZ1A":{application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",hp:"1/5 HP",refrigerant:"R-134a",displacement:"9,39 cm³",source:"Tecumseh — catálogo oficial"},
+            "AE2410Z-AA1A":{application:"LBP",voltage:"115 V",phase:"1 fase",frequency:"60 Hz",hp:"1/4 HP",refrigerant:"R-404A / R-407A / R-448A / R-449A / R-452A",displacement:"5,02 cm³",source:"Tecumseh — catálogo oficial"}
+        }
+    },
+    secop:{
+        label:"Secop",
+        models:{
+            "PL20F":{code:"101G0100",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"1,41 cm³",source:"Secop — Product Selector oficial"},
+            "PL35F":{code:"101G0202",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,00 cm³",source:"Secop — Product Selector oficial"},
+            "PL50F":{code:"101G0220",application:"MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"2,50 cm³",source:"Secop — Product Selector oficial"},
+            "NL8F":{code:"105G6822",application:"HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"7,95 cm³",source:"Secop — Product Selector oficial"},
+            "SC12FT":{code:"104G8205",application:"LBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"12,87 cm³",source:"Secop — datasheet oficial"},
+            "SC21F":{code:"104G8100",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",displacement:"20,95 cm³",source:"Secop — datasheet oficial"},
+            "TLS4FT":{code:"102G4424",application:"LBP / MBP / HBP",voltage:"220-240 V",phase:"1 fase",frequency:"50 Hz",refrigerant:"R-134a",source:"Secop — datasheet oficial"}
+        }
+    },
+    embraco:{
+        label:"Embraco / Nidec",
+        models:{
+            "FFI12HBX":{voltage:"115-127 V",phase:"1 fase",frequency:"60 Hz",refrigerant:"R-134a",lra:"43,0 A",source:"Embraco — documentação técnica oficial (exemplo de etiqueta)"}
+        }
+    },
+    danfoss:{label:"Danfoss / Maneurop",models:{}},
+    copeland:{label:"Copeland",models:{}}
+};
+
+function btNormalizeCompressorModel(value){
+    return String(value || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g,"");
+}
+
+function renderTechnicalCompressorIdentifier(){
+    const workspace=document.getElementById("btTechnicalWorkspace");
+    if(!workspace){return;}
+    workspace.classList.add("show");
+    workspace.innerHTML=`
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Identificar compressor</strong>
+                <span>Consulte dados técnicos cadastrados a partir de catálogos oficiais.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-info-note" style="margin-bottom:14px;">
+            Selecione a marca e digite o <strong>modelo exato da etiqueta</strong>. O BoraTec só mostra informações que estão cadastradas e confirmadas; se não encontrar, não tenta adivinhar pela máscara.
+        </div>
+
+        <div class="bt-tech-gas-grid">
+            <div class="bt-tech-field full">
+                <label>Marca</label>
+                <select id="btCompressorBrand">
+                    <option value="embraco">Embraco / Nidec</option>
+                    <option value="tecumseh">Tecumseh</option>
+                    <option value="secop">Secop</option>
+                    <option value="danfoss">Danfoss / Maneurop</option>
+                    <option value="copeland">Copeland</option>
+                </select>
+            </div>
+            <div class="bt-tech-field full">
+                <label>Modelo / código da etiqueta</label>
+                <input id="btCompressorModel" type="text" autocomplete="off" placeholder="Ex.: AE2410Y-FZ1A">
+            </div>
+        </div>
+
+        <button class="bt-tech-calc-button" type="button" onclick="searchTechnicalCompressorModel()">
+            🔎 Identificar compressor
+        </button>
+
+        <div id="btCompressorIdentifierResult" class="bt-tech-result" style="display:none;"></div>
+    `;
+}
+
+function searchTechnicalCompressorModel(){
+    const brandKey=document.getElementById("btCompressorBrand")?.value || "";
+    const rawModel=document.getElementById("btCompressorModel")?.value || "";
+    const result=document.getElementById("btCompressorIdentifierResult");
+    if(!result){return;}
+
+    const brand=btCompressorCatalog[brandKey];
+    const normalized=btNormalizeCompressorModel(rawModel);
+
+    if(!brand || !normalized){
+        result.style.display="block";
+        result.innerHTML=`<div class="bt-tech-result-label">Verifique os dados</div><div class="bt-tech-result-secondary">Selecione a marca e informe o modelo exato do compressor.</div>`;
+        return;
+    }
+
+    let foundKey=null;
+    Object.keys(brand.models || {}).some(key=>{
+        if(btNormalizeCompressorModel(key)===normalized){foundKey=key;return true;}
+        const item=brand.models[key];
+        if(item?.code && btNormalizeCompressorModel(item.code)===normalized){foundKey=key;return true;}
+        return false;
+    });
+
+    if(!foundKey){
+        result.style.display="block";
+        result.innerHTML=`
+            <div class="bt-tech-result-label">Modelo ainda não cadastrado</div>
+            <div class="bt-tech-result-value" style="font-size:20px;">${brand.label}</div>
+            <div class="bt-tech-result-secondary">
+                Não encontramos <strong>${rawModel.replace(/[<>]/g,"")}</strong> na base local atual.<br><br>
+                Isso não significa que o modelo seja inválido. Apenas indica que ele ainda não foi incluído na base do BoraTec.
+            </div>`;
+        return;
+    }
+
+    const item=brand.models[foundKey];
+    const rows=[
+        ["Modelo",foundKey],
+        ["Código",item.code],
+        ["Aplicação",item.application],
+        ["Tensão",item.voltage],
+        ["Fase",item.phase],
+        ["Frequência",item.frequency],
+        ["Potência comercial",item.hp],
+        ["Refrigerante",item.refrigerant],
+        ["Deslocamento",item.displacement],
+        ["RLA",item.rla],
+        ["LRA",item.lra]
+    ].filter(row=>row[1]);
+
+    result.style.display="block";
+    result.innerHTML=`
+        <div class="bt-tech-result-label">Compressor identificado</div>
+        <div class="bt-tech-result-value" style="font-size:24px;">${foundKey}</div>
+        <div class="bt-tech-result-secondary" style="line-height:1.75;">
+            <strong>${brand.label}</strong><br>
+            ${rows.map(row=>`${row[0]}: <strong>${row[1]}</strong>`).join("<br>")}
+            <br><br><span style="color:#7894a9">Fonte cadastrada: ${item.source || "catálogo técnico"}</span>
+        </div>`;
+}
+
 function openTechnicalCompressorTool(tool){
+
+    if(tool === "identificar"){
+        renderTechnicalCompressorIdentifier();
+        window.setTimeout(()=>{
+            document.getElementById("btTechnicalWorkspace")?.scrollIntoView({behavior:"smooth",block:"start"});
+        },40);
+        return;
+    }
 
     if(tool === "crs"){
         renderTechnicalCompressorCRS();
@@ -17622,6 +17781,7 @@ function openTechnicalCompressorTool(tool){
     }
 
     const names = {
+        identificar:"Identificar compressor",
         crs:"C-R-S",
         enrolamentos:"Enrolamentos"
     };
@@ -17661,6 +17821,12 @@ function renderTechnicalCompressorsArea(){
         </div>
 
         <div class="bt-tech-subarea-grid">
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('identificar')">
+                <div class="bt-tech-subarea-card-icon">🔎</div>
+                <strong>Identificar compressor</strong>
+                <span>Consulte modelo, tensão, refrigerante, aplicação e outros dados cadastrados.</span>
+            </button>
+
             <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalCompressorTool('crs')">
                 <div class="bt-tech-subarea-card-icon">🔌</div>
                 <strong>C-R-S</strong>
@@ -17676,7 +17842,7 @@ function renderTechnicalCompressorsArea(){
         </div>
 
         <div class="bt-tech-info-note">
-            Ferramentas disponíveis nesta área: identificação C-R-S e conferência dos enrolamentos do compressor.
+            Ferramentas disponíveis nesta área: identificação de modelos, C-R-S e conferência dos enrolamentos do compressor.
         </div>
     `;
 }
@@ -17861,6 +18027,12 @@ window.openTechnicalCompressorTool =
 
 window.renderTechnicalCompressorsArea =
     renderTechnicalCompressorsArea;
+
+window.renderTechnicalCompressorIdentifier =
+    renderTechnicalCompressorIdentifier;
+
+window.searchTechnicalCompressorModel =
+    searchTechnicalCompressorModel;
 
 window.calculateTechnicalCompressorCRS =
     calculateTechnicalCompressorCRS;
