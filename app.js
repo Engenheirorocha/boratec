@@ -15644,7 +15644,7 @@ function createTechnicalArea(){
 
             <div class="bt-tech-stage">
             <div class="bt-tech-intro">
-                <strong>Calculadoras</strong>
+                <strong>Área Técnica</strong>
                 <span>Deslize para os lados e escolha a ferramenta.</span>
             </div>
 
