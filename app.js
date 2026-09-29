@@ -17972,13 +17972,17 @@ const btLGErrorCodes = {
             "Falha temporária de alimentação ou outra anomalia elétrica."
         ],
         "steps": [
-            "Desligue no disjuntor por cerca de 5 minutos e religue; observe se o erro retorna.",
-            "Se surgiu após a instalação, confira com o circuito desligado os bornes e o cabo de comunicação conforme o esquema do modelo.",
-            "Se persistir, verifique alimentação e comunicação das unidades pelo manual de serviço antes de condenar placas."
+            "Desligue a alimentação por cerca de 5 minutos, religue e observe se o código retorna.",
+            "Se apareceu após instalação ou mudança de local, registre isso para conferir a instalação."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
-        ]
+        ],
+        "technicalChecks": [
+            "Com o circuito desenergizado, confronte bornes, cabo de comunicação e alimentação com o esquema do modelo.",
+            "Se persistir, siga o procedimento de comunicação do manual de serviço antes de atribuir a falha a uma placa."
+        ],
+        "priority": true
     },
     "CH10": {
         "code": "CH10",
@@ -17989,13 +17993,18 @@ const btLGErrorCodes = {
             "Falha no motor, conexões ou circuito de acionamento, a confirmar por teste."
         ],
         "steps": [
-            "Desligue a alimentação e procure obstruções visíveis no ventilador; remova resíduos com segurança.",
-            "Se a hélice está livre e o erro continua, confira motor, conectores e acionamento conforme o manual do modelo."
+            "Com o aparelho desligado, observe se há obstrução visível no ventilador interno, sem desmontar o equipamento.",
+            "Removida uma obstrução acessível com segurança, religue e veja se o código retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306",
-            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
-        ]
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
+            "https://www.lg.com/us/support/help-library/how-to-troubleshoot-error-codes-ch10-ch67-e6-and-ef-on-your-lg-air-conditioner-CT10000014-20155396792105"
+        ],
+        "technicalChecks": [
+            "Persistindo a falha, confira motor, conexões e acionamento segundo o manual de serviço do modelo."
+        ],
+        "priority": true
     },
     "CH26": {
         "code": "CH26",
@@ -18007,14 +18016,19 @@ const btLGErrorCodes = {
             "Condição de sobrecarga ou falha no circuito frigorífico, a investigar."
         ],
         "steps": [
-            "Faça um único ciclo de desligamento no disjuntor por cerca de 5 minutos e veja se o código retorna.",
-            "Com o equipamento desenergizado e seguindo o tempo de descarga do manual, confira conectores e cabos do compressor.",
-            "Se persistir, compare medições do compressor e do acionamento com o manual específico; não substitua compressor ou placa apenas pelo código."
+            "Desligue a alimentação por cerca de 5 minutos, religue uma vez e observe se o código retorna.",
+            "Se reaparecer, interrompa o funcionamento e registre quando ocorre a falha de partida."
         ],
         "sources": [
             "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
-            "https://www.lg.com/africa/support/product-help/CT20080061-20155399529373"
-        ]
+            "https://www.lg.com/africa/support/product-help/CT20080061-20155399529373",
+            "https://www.lg.com/us/support/help-library/how-to-troubleshoot-error-codes-ch01-ch02-ch06-ch12-ch41-ch42-ch43-ch44-ch45-ch46-ch47-ch48-e1-e2-e3-e7-e8-f2-f3-ch21-ch23-ch26-ch29-and-e9-on-your-lg-air-conditioner-CT10000014-20155399529696"
+        ],
+        "technicalChecks": [
+            "Com o equipamento desenergizado e respeitando o tempo de descarga indicado no manual, confira cabos e conectores do compressor.",
+            "Compare os testes de compressor e acionamento com o manual de serviço do modelo; o código isolado não define qual peça trocar."
+        ],
+        "priority": true
     },
     "CH38": {
         "code": "CH38",
@@ -18025,13 +18039,17 @@ const btLGErrorCodes = {
             "Problema na conexão das tubulações; em uso normal, também pode haver falha elétrica temporária."
         ],
         "steps": [
-            "Se surgiu após instalação, inspecione conexões e tubulações e confirme a carga conforme a especificação do equipamento.",
-            "Se surgiu durante o uso, desligue por cerca de 5 minutos e confira se retorna.",
-            "Persistindo, investigue a causa da perda antes de corrigir a carga; não acrescente refrigerante apenas pelo código."
+            "O código indica proteção associada à indicação de pouco refrigerante; anote se surgiu após instalação ou durante o uso.",
+            "Se apareceu durante o uso, desligue por cerca de 5 minutos, religue e observe se retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
-        ]
+        ],
+        "technicalChecks": [
+            "Se apareceu após instalação, confira conexões e tubulações e compare a carga com a especificação do equipamento.",
+            "Se persistir, investigue a causa da perda e o circuito frigorífico conforme o manual; não complete a carga apenas com base no código."
+        ],
+        "priority": true
     },
     "CH61": {
         "code": "CH61",
@@ -18042,13 +18060,17 @@ const btLGErrorCodes = {
             "Em aquecimento: entrada de ar restrita, inclusive por filtro interno sujo."
         ],
         "steps": [
-            "Em refrigeração, libere a ventilação da condensadora e remova obstáculos ao redor.",
-            "Em aquecimento, confira e limpe o filtro da unidade interna.",
-            "Após corrigir a condição, desligue no disjuntor por cerca de 5 minutos; se persistir, faça inspeção técnica."
+            "Em refrigeração, confira se há obstáculos e recirculação de ar quente ao redor da unidade externa.",
+            "Em aquecimento, confira se o filtro e a entrada de ar da unidade interna estão obstruídos.",
+            "Após corrigir uma obstrução visível, desligue por cerca de 5 minutos, religue e observe se retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
-        ]
+        ],
+        "technicalChecks": [
+            "Se persistir, identifique se a proteção é da unidade interna ou externa e siga o diagnóstico de temperatura e ventilação do modelo."
+        ],
+        "priority": true
     },
     "CH66": {
         "code": "CH66",
@@ -18059,13 +18081,17 @@ const btLGErrorCodes = {
             "Falha elétrica temporária durante o uso."
         ],
         "steps": [
-            "Se apareceu logo após instalar, confronte cabos e tubulações com o diagrama do modelo, com a alimentação desligada.",
-            "Se apareceu durante o uso, desligue no disjuntor por cerca de 5 minutos e observe se retorna.",
-            "Persistindo, teste o circuito de comunicação e confira a instalação antes de trocar componentes."
+            "Se apareceu após instalação ou mudança de local, registre a situação para conferir as ligações.",
+            "Se surgiu durante o uso, desligue a alimentação por cerca de 5 minutos, religue e veja se retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
-        ]
+        ],
+        "technicalChecks": [
+            "Confronte fiação de comunicação e ligação das tubulações com o diagrama do modelo.",
+            "Se persistir, siga o procedimento de teste do manual de serviço antes de trocar componentes."
+        ],
+        "priority": true
     },
     "CH67": {
         "code": "CH67",
@@ -18076,13 +18102,18 @@ const btLGErrorCodes = {
             "Falha no motor ou acionamento a confirmar por diagnóstico."
         ],
         "steps": [
-            "Desligue a alimentação e confira se há obstrução visível no ventilador externo.",
-            "Remova resíduos com segurança; se o erro continuar, teste motor, conectores e acionamento segundo o manual específico."
+            "Com o aparelho desligado, observe se há resíduos ou obstrução visível no ventilador externo.",
+            "Removida uma obstrução acessível com segurança, religue e veja se o código retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306",
-            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
-        ]
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
+            "https://www.lg.com/us/support/help-library/how-to-troubleshoot-error-codes-ch10-ch67-e6-and-ef-on-your-lg-air-conditioner-CT10000014-20155396792105"
+        ],
+        "technicalChecks": [
+            "Persistindo a falha, confira motor, conexões e acionamento segundo o manual de serviço do modelo."
+        ],
+        "priority": true
     },
     "CH93": {
         "code": "CH93",
@@ -18093,13 +18124,17 @@ const btLGErrorCodes = {
             "Conexões ou comunicação entre unidades com falha."
         ],
         "steps": [
-            "Confira disjuntor e alimentação das duas unidades; em modelos com alimentação separada, confirme ambos os circuitos.",
-            "Se surgiu após instalação, confira as conexões de comunicação pelo esquema do modelo.",
-            "Desligue no disjuntor por cerca de 5 minutos; persistindo, faça diagnóstico técnico da alimentação e comunicação."
+            "Confira se há alimentação nas unidades e se os disjuntores estão ligados; alguns modelos têm alimentação separada na unidade externa.",
+            "Desligue a alimentação por cerca de 5 minutos, religue e observe se o código retorna."
         ],
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
-        ]
+        ],
+        "technicalChecks": [
+            "Se apareceu após instalação, confira as ligações entre as unidades pelo esquema do modelo.",
+            "Persistindo, diagnostique alimentação e comunicação conforme o manual de serviço específico."
+        ],
+        "priority": true
     },
     "CH01": {
         "code": "CH01",
@@ -18109,12 +18144,18 @@ const btLGErrorCodes = {
             "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
         ],
         "steps": [
-            "Com a alimentação desligada, confira encaixe do conector, chicote e posição do sensor indicado.",
-            "Meça o sensor e compare os valores com o manual de serviço do modelo; verifique a placa somente após conferir o circuito."
+            "Desligue a alimentação por cerca de 5 minutos, religue e observe se o código retorna.",
+            "Se persistir, registre o modelo completo da unidade interna para identificar o sensor correto."
         ],
         "sources": [
-            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
-        ]
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
+            "https://www.lg.com/us/support/help-library/how-to-troubleshoot-error-codes-ch01-ch02-ch06-ch12-ch41-ch42-ch43-ch44-ch45-ch46-ch47-ch48-e1-e2-e3-e7-e8-f2-f3-ch21-ch23-ch26-ch29-and-e9-on-your-lg-air-conditioner-CT10000014-20155399529696"
+        ],
+        "technicalChecks": [
+            "Com o circuito desenergizado, confira conector e chicote do sensor indicado pelo manual.",
+            "Compare a medição do sensor com a tabela de resistência e temperatura do modelo antes de avaliar a placa."
+        ],
+        "priority": true
     },
     "CH02": {
         "code": "CH02",
@@ -18199,12 +18240,18 @@ const btLGErrorCodes = {
             "Sobrecorrente, problema de alimentação, compressor ou acionamento inverter; a causa exata exige medições."
         ],
         "steps": [
-            "Registre quando a proteção atua e confira alimentação, conectores e cabos com o sistema desenergizado.",
-            "Siga o fluxograma do manual do modelo para testar compressor e placa inverter; não condene uma peça apenas pelo código."
+            "Desligue a alimentação por cerca de 5 minutos, religue uma vez e observe se a proteção retorna.",
+            "Se reaparecer, interrompa o funcionamento e registre em que momento a proteção atua."
         ],
         "sources": [
-            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
-        ]
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
+            "https://www.lg.com/us/support/help-library/how-to-troubleshoot-error-codes-ch01-ch02-ch06-ch12-ch41-ch42-ch43-ch44-ch45-ch46-ch47-ch48-e1-e2-e3-e7-e8-f2-f3-ch21-ch23-ch26-ch29-and-e9-on-your-lg-air-conditioner-CT10000014-20155399529696"
+        ],
+        "technicalChecks": [
+            "Confira a alimentação e siga o fluxograma do manual de serviço para compressor, cabos e placa inverter.",
+            "Respeite a descarga do barramento antes de inspecionar o circuito; não substitua peça apenas pelo código."
+        ],
+        "priority": true
     },
     "CH22": {
         "code": "CH22",
@@ -18605,11 +18652,14 @@ function searchTechnicalLGErrorCode(){
             <div style="margin-top:14px;"><strong>Causas possíveis</strong>
                 <ul style="padding-left:20px;line-height:1.55;">${entry.causes.map(item=>`<li>${item}</li>`).join("")}</ul>
             </div>
-            <div style="margin-top:14px;"><strong>O que verificar / como corrigir</strong>
+            <div style="margin-top:14px;"><strong>${entry.priority ? "Orientação inicial" : "Verificações iniciais"}</strong>
                 <ol style="padding-left:20px;line-height:1.55;">${entry.steps.map(item=>`<li>${item}</li>`).join("")}</ol>
             </div>
-            <div class="bt-tech-result-secondary">O código orienta a inspeção; não identifica sozinho uma peça defeituosa.</div>
-            <div class="bt-tech-result-secondary" style="margin-top:12px;">Resumo em português baseado em documentação técnica da LG. Confira a aplicação e as medições no manual do modelo.</div>
+            ${entry.technicalChecks ? `<div style="margin-top:14px;"><strong>Pontos para diagnóstico técnico (dependem do manual do modelo)</strong>
+                <ul style="padding-left:20px;line-height:1.55;">${entry.technicalChecks.map(item=>`<li>${item}</li>`).join("")}</ul>
+            </div>` : ""}
+            <div class="bt-tech-result-secondary">O código não identifica sozinho a família nem uma peça defeituosa. Para aplicar testes específicos, confira o modelo completo da etiqueta.</div>
+            <div class="bt-tech-result-secondary" style="margin-top:12px;">Significado do código baseado em materiais LG. Causas e verificações são orientação inicial; confirme o procedimento no manual do modelo.</div>
         </div>
     `;
 }
