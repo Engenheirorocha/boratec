@@ -15180,7 +15180,7 @@ function createTechnicalArea(){
             .bt-tech-actions{
                 position:relative;
                 height:246px;
-                margin:0 -18px 8px;
+                margin:clamp(28px,6vh,64px) -18px 8px;
                 overflow:hidden;
                 touch-action:pan-y;
                 user-select:none;
