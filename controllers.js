@@ -1,12 +1,10 @@
-/* BoraTec — módulo isolado de controladores para a Área Técnica. */
+/* BoraTec — Controladores: busca + carrossel + manual embutido. */
 (function(){
     "use strict";
 
     const families = [
         {
-            id:"fg-mt512",
-            brand:"Full Gauge",
-            family:"MT-512",
+            id:"fg-mt512", brand:"Full Gauge", family:"MT-512",
             use:"Resfriados, controle de temperatura e degelo natural.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
@@ -18,9 +16,7 @@
             ]
         },
         {
-            id:"fg-mt516",
-            brand:"Full Gauge",
-            family:"MT-516",
+            id:"fg-mt516", brand:"Full Gauge", family:"MT-516",
             use:"Controle de temperatura em refrigeração ou aquecimento.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
@@ -31,9 +27,7 @@
             ]
         },
         {
-            id:"fg-tc900",
-            brand:"Full Gauge",
-            family:"TC-900",
+            id:"fg-tc900", brand:"Full Gauge", family:"TC-900",
             use:"Congelados, compressor, ventilação e degelo.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
@@ -45,45 +39,37 @@
             ]
         },
         {
-            id:"dixell-xr-basic",
-            brand:"Dixell / Copeland",
-            family:"XR básica",
+            id:"dixell-xr-basic", brand:"Dixell / Copeland", family:"XR básica",
             use:"Termostatos e controladores compactos para refrigeração comercial.",
             source:"https://www.copeland.com/en-us/brands/dixell",
             models:[
                 {name:"XR02CX",note:"Controlador compacto para aplicações básicas de refrigeração."},
                 {name:"XR03CX",note:"Controlador para refrigeração com recursos de degelo."},
-                {name:"XR06CX",note:"Controle de compressor, ventilador e degelo com duas sondas."}
+                {name:"XR06CX",note:"Controle de compressor, ventilador e degelo com duas sondas.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/E-CLASS/XR06CX/XR06CX-GB.pdf"}
             ]
         },
         {
-            id:"dixell-xr-advanced",
-            brand:"Dixell / Copeland",
-            family:"XR avançada",
+            id:"dixell-xr-advanced", brand:"Dixell / Copeland", family:"XR avançada",
             use:"Refrigeração comercial com múltiplas saídas e funções de degelo.",
             source:"https://www.copeland.com/en-us/brands/dixell",
             models:[
-                {name:"XR60CX",note:"Controlador universal para média e baixa temperatura."},
+                {name:"XR60CX",note:"Controlador universal para média e baixa temperatura.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/XR-CX/XR60CX/XR60CX-PT.pdf"},
                 {name:"XR70CX",note:"Família com recursos adicionais de saídas e controle."},
                 {name:"XR75CX",note:"Versão mais completa da linha XR para aplicações comerciais."}
             ]
         },
         {
-            id:"danfoss-erc21x",
-            brand:"Danfoss",
-            family:"ERC 21x",
+            id:"danfoss-erc21x", brand:"Danfoss", family:"ERC 21x",
             use:"Refrigeradores, expositores e aplicações comerciais.",
             source:"https://assets.danfoss.com/documents/latest/354499/BC194286421698pt-BR1001.pdf",
             models:[
-                {name:"ERC 211",note:"Controle eletrônico para aplicações comerciais simples."},
-                {name:"ERC 213",note:"Versão com mais recursos de controle e degelo."},
-                {name:"ERC 214",note:"Versão com maior número de entradas/saídas para aplicações completas."}
+                {name:"ERC 211",note:"Controle eletrônico para aplicações comerciais simples.",manualUrl:"https://assets.danfoss.com/documents/latest/354499/BC194286421698pt-BR1001.pdf"},
+                {name:"ERC 213",note:"Versão com mais recursos de controle e degelo.",manualUrl:"https://assets.danfoss.com/documents/latest/354499/BC194286421698pt-BR1001.pdf"},
+                {name:"ERC 214",note:"Versão com maior número de entradas/saídas para aplicações completas.",manualUrl:"https://assets.danfoss.com/documents/latest/354499/BC194286421698pt-BR1001.pdf"}
             ]
         },
         {
-            id:"carel-easy",
-            brand:"CAREL",
-            family:"easy / PJEZ",
+            id:"carel-easy", brand:"CAREL", family:"easy / PJEZ",
             use:"Vitrines, balcões, unidades estáticas e ventiladas.",
             source:"https://www.carel.com/product/easy",
             models:[
@@ -94,9 +80,7 @@
             ]
         },
         {
-            id:"carel-ir33",
-            brand:"CAREL",
-            family:"IR33",
+            id:"carel-ir33", brand:"CAREL", family:"IR33",
             use:"Refrigeração comercial e controle eletrônico de unidades frigoríficas.",
             source:"https://www.carel.com/ir33",
             models:[
@@ -106,9 +90,7 @@
             ]
         },
         {
-            id:"elitech-ecs",
-            brand:"Elitech",
-            family:"ECS",
+            id:"elitech-ecs", brand:"Elitech", family:"ECS",
             use:"Câmaras, balcões, ilhas e equipamentos de resfriados/congelados.",
             source:"https://www.elitechbrasil.com.br/ecs-974-neo-controlador-digital-temperatura-para-congelados-110v",
             models:[
@@ -118,9 +100,7 @@
             ]
         },
         {
-            id:"coel-k49",
-            brand:"COEL",
-            family:"K49",
+            id:"coel-k49", brand:"COEL", family:"K49",
             use:"Controle de temperatura e processos térmicos, inclusive refrigeração.",
             source:"https://www.coel.com.br/produto/k49e-controlador-de-temperatura/manuais/",
             models:[
@@ -129,6 +109,16 @@
             ]
         }
     ];
+
+    const models = families.flatMap(f => f.models.map((m,index) => ({
+        ...m,
+        index,
+        familyId:f.id,
+        brand:f.brand,
+        family:f.family,
+        use:f.use,
+        source:f.source
+    })));
 
     const esc = value => String(value ?? "")
         .replace(/&/g,"&amp;")
@@ -142,129 +132,195 @@
         const style = document.createElement("style");
         style.id = "btControllersStyle";
         style.textContent = `
-            .bt-ctrl-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
-            .bt-ctrl-head strong{display:block;font-size:19px;font-weight:950}.bt-ctrl-head span{display:block;color:#88a4b8;font-size:11px;line-height:1.45;margin-top:5px}
-            .bt-ctrl-back{border:1px solid rgba(94,207,255,.25);background:#0d2a43;color:#fff;border-radius:10px;padding:9px 11px;font-weight:900;cursor:pointer}
-            .bt-ctrl-search{width:100%;height:46px;border-radius:12px;border:1px solid rgba(119,151,178,.25);background:#081f34;color:#fff;padding:0 13px;box-sizing:border-box;margin:0 0 13px}
-            .bt-ctrl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bt-ctrl-card{border:1px solid rgba(94,207,255,.15);border-radius:14px;background:linear-gradient(145deg,#123752,#0a263f);color:#fff;padding:14px;text-align:left;cursor:pointer}
-            .bt-ctrl-card b{display:block;font-size:13px}.bt-ctrl-card small{display:block;color:#87a5ba;font-size:10px;line-height:1.4;margin-top:5px}.bt-ctrl-brand{color:#5ecfff!important;font-weight:900;text-transform:uppercase;letter-spacing:.45px}
-            .bt-ctrl-model{width:100%;display:block;margin:8px 0;border:1px solid rgba(119,151,178,.20);border-radius:12px;background:#0b2740;color:#fff;padding:13px;text-align:left;cursor:pointer}.bt-ctrl-model b{display:block}.bt-ctrl-model span{display:block;color:#88a3b7;font-size:10px;line-height:1.4;margin-top:4px}
-            .bt-ctrl-detail h3{font-size:20px;margin:0 0 4px}.bt-ctrl-detail .maker{color:#5ecfff;font-size:10px;font-weight:900;text-transform:uppercase}.bt-ctrl-section{margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.08)}.bt-ctrl-section b{display:block;font-size:12px;margin-bottom:7px}.bt-ctrl-section p,.bt-ctrl-section li{color:#a9bfce;font-size:11px;line-height:1.55}.bt-ctrl-section ul{padding-left:18px;margin:0}
-            .bt-ctrl-official{display:block;margin-top:18px;padding:13px;border-radius:12px;text-align:center;text-decoration:none;background:linear-gradient(145deg,#0ca9dd,#087da9);color:#fff;font-size:12px;font-weight:950;border:1px solid rgba(94,207,255,.45)}
-            .bt-ctrl-note{margin-top:12px;padding:11px;border-radius:11px;background:rgba(255,255,255,.035);color:#7894a9;font-size:10px;line-height:1.5}
-            @media(max-width:420px){.bt-ctrl-grid{grid-template-columns:1fr}}
+            #btControllersScreen{position:fixed;inset:0;z-index:6700;display:none;overflow:auto;background:radial-gradient(circle at 50% 38%,rgba(13,125,178,.16),transparent 38%),linear-gradient(180deg,#070d11,#0a1116);color:#fff;font-family:inherit}
+            #btControllersScreen.show{display:block}
+            .bt-ctrl-shell{width:min(100%,760px);margin:auto;min-height:100dvh;padding:calc(18px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box}
+            .bt-ctrl-top{display:flex;align-items:center;gap:12px}.bt-ctrl-back{width:44px;height:44px;display:grid;place-items:center;border:1px solid #3c4b54;border-radius:10px;background:#151e23;color:#fff;font-size:25px;cursor:pointer}
+            .bt-ctrl-heading small{display:block;color:#37c7ef;font-size:9px;font-weight:900;letter-spacing:.8px;text-transform:uppercase}.bt-ctrl-heading strong{display:block;font-size:22px;font-weight:950;margin-top:3px}
+            .bt-ctrl-search-wrap{margin:22px 0 16px;position:relative}.bt-ctrl-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:#7e919d}.bt-ctrl-search{width:100%;height:52px;border-radius:12px;border:1px solid #3e4d56;background:#10181d;color:#fff;padding:0 44px 0 44px;box-sizing:border-box;font-size:16px;outline:none}.bt-ctrl-search:focus{border-color:#25bce8;box-shadow:0 0 0 3px rgba(37,188,232,.08)}.bt-ctrl-clear{position:absolute;right:8px;top:8px;width:36px;height:36px;border:0;border-radius:8px;background:#1a252b;color:#9dafb9;font-size:18px;cursor:pointer}
+            .bt-ctrl-result{color:#8fa1ab;font-size:11px;margin-bottom:9px}
+            .bt-ctrl-carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:12px max(0px,calc(50% - 132px)) 20px;scrollbar-width:none;overscroll-behavior-x:contain}.bt-ctrl-carousel::-webkit-scrollbar{display:none}
+            .bt-ctrl-card{scroll-snap-align:center;flex:0 0 264px;min-height:245px;border:1px solid #3d4d56;border-radius:13px;padding:20px;background:linear-gradient(145deg,#1a242a,#0e1519);color:#fff;text-align:left;box-sizing:border-box;cursor:pointer;box-shadow:0 14px 30px rgba(0,0,0,.28);position:relative}
+            .bt-ctrl-card:before{content:"";position:absolute;left:18px;top:0;width:72px;height:3px;background:linear-gradient(90deg,#08baf0,transparent)}.bt-ctrl-card .brand{color:#35c9f1;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}.bt-ctrl-card h3{font-size:24px;line-height:1.05;margin:20px 0 8px}.bt-ctrl-card .family{color:#a8b6bd;font-size:11px}.bt-ctrl-card p{color:#8e9da5;font-size:11px;line-height:1.5;margin-top:24px}.bt-ctrl-card .open{display:block;margin-top:20px;color:#dff8ff;font-size:11px;font-weight:900}
+            .bt-ctrl-controls{display:flex;justify-content:center;align-items:center;gap:12px;margin:0 0 18px}.bt-ctrl-arrow{width:42px;height:42px;border:1px solid #3f4d55;border-radius:9px;background:#172126;color:#fff;font-size:23px;cursor:pointer}.bt-ctrl-count{min-width:90px;text-align:center;color:#84949d;font-size:11px}
+            .bt-ctrl-empty{padding:55px 20px;text-align:center;color:#7f919c}.bt-ctrl-empty strong{display:block;color:#dce5e9;margin-bottom:7px}
+            .bt-ctrl-detail{display:none}.bt-ctrl-detail.show{display:block}.bt-ctrl-list-view.hidden{display:none}
+            .bt-ctrl-detail-head{display:flex;align-items:flex-start;gap:12px;margin:20px 0}.bt-ctrl-detail-title{flex:1}.bt-ctrl-detail-title small{display:block;color:#39c9ef;font-size:9px;font-weight:900;text-transform:uppercase}.bt-ctrl-detail-title h2{font-size:27px;line-height:1.05;margin:5px 0}.bt-ctrl-detail-title span{color:#91a2ab;font-size:12px}
+            .bt-ctrl-detail-box{border:1px solid #39474f;border-radius:12px;background:#11191e;padding:15px;margin:12px 0}.bt-ctrl-detail-box b{display:block;font-size:12px;margin-bottom:7px}.bt-ctrl-detail-box p,.bt-ctrl-detail-box li{color:#a9b6bd;font-size:12px;line-height:1.55}.bt-ctrl-detail-box ul{margin:0;padding-left:18px}
+            .bt-ctrl-manual-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 9px}.bt-ctrl-manual-title strong{font-size:15px}.bt-ctrl-pdf{width:100%;height:62vh;min-height:520px;border:1px solid #41515a;border-radius:12px;background:#fff;overflow:hidden}.bt-ctrl-pdf iframe{width:100%;height:100%;border:0;background:#fff}.bt-ctrl-manual-fallback{padding:22px;border:1px dashed #44545d;border-radius:12px;text-align:center;color:#96a6af;font-size:12px;line-height:1.5;background:#11191e}.bt-ctrl-official{display:block;margin-top:12px;padding:13px;border-radius:10px;text-align:center;text-decoration:none;background:linear-gradient(180deg,#0aaee0,#087fae);color:#fff;font-size:12px;font-weight:950;border:1px solid #22c9f6}
+            .bt-ctrl-note{margin-top:11px;color:#73848e;font-size:10px;line-height:1.5}
+            @media(max-width:520px){.bt-ctrl-card{flex-basis:250px}.bt-ctrl-carousel{padding-left:max(0px,calc(50% - 125px));padding-right:max(0px,calc(50% - 125px))}.bt-ctrl-pdf{height:68vh;min-height:460px}}
         `;
         document.head.appendChild(style);
     }
 
-    function workspace(){ return document.getElementById("btTechnicalWorkspace"); }
-
-    function showFamilies(filter=""){
+    function createScreen(){
         ensureStyle();
-        const box = workspace();
-        if(!box) return;
-        const term = String(filter || "").trim().toLowerCase();
-        const visible = families.filter(f => !term || `${f.brand} ${f.family} ${f.models.map(m=>m.name).join(" ")}`.toLowerCase().includes(term));
-        box.innerHTML = `
-            <div class="bt-ctrl-head"><div><strong>Controladores</strong><span>Escolha a família ou pesquise pelo modelo.</span></div></div>
-            <input id="btCtrlSearch" class="bt-ctrl-search" placeholder="Ex.: MT-512, TC-900, XR60..." value="${esc(filter)}">
-            <div class="bt-ctrl-grid">${visible.map(f=>`
-                <button class="bt-ctrl-card" type="button" onclick="openBoraTecControllerFamily('${f.id}')">
-                    <small class="bt-ctrl-brand">${esc(f.brand)}</small><b>${esc(f.family)}</b><small>${esc(f.use)}</small><small>${f.models.length} modelos</small>
-                </button>`).join("")}</div>
-            <div class="bt-ctrl-note">Base inicial com 10 famílias prioritárias. Confirme sempre a identificação completa do modelo e a tensão antes de ligar ou alterar parâmetros.</div>`;
-        box.classList.add("show");
-        document.getElementById("btCtrlSearch")?.addEventListener("input",e=>showFamilies(e.target.value));
-    }
-
-    function openFamily(id){
-        ensureStyle();
-        const f = families.find(item=>item.id===id); const box = workspace();
-        if(!f || !box) return;
-        box.innerHTML = `
-            <div class="bt-ctrl-head"><div><strong>${esc(f.family)}</strong><span>${esc(f.brand)} • ${esc(f.use)}</span></div><button class="bt-ctrl-back" type="button" onclick="openBoraTecControllers()">‹ Voltar</button></div>
-            ${f.models.map((m,i)=>`<button class="bt-ctrl-model" type="button" onclick="openBoraTecControllerModel('${f.id}',${i})"><b>${esc(m.name)}</b><span>${esc(m.note)}</span></button>`).join("")}`;
-        box.classList.add("show"); box.scrollIntoView({behavior:"smooth",block:"start"});
-    }
-
-    function openModel(id,index){
-        ensureStyle();
-        const f = families.find(item=>item.id===id); const m = f?.models?.[index]; const box = workspace();
-        if(!f || !m || !box) return;
-        box.innerHTML = `
-            <div class="bt-ctrl-head"><div><span class="bt-ctrl-brand">${esc(f.brand)}</span><strong>${esc(m.name)}</strong><span>${esc(f.family)}</span></div><button class="bt-ctrl-back" type="button" onclick="openBoraTecControllerFamily('${f.id}')">‹ Voltar</button></div>
-            <div class="bt-ctrl-detail">
-                <h3>${esc(m.name)}</h3><div class="maker">${esc(f.brand)}</div>
-                <div class="bt-ctrl-section"><b>Aplicação</b><p>${esc(m.note)} ${esc(f.use)}</p></div>
-                <div class="bt-ctrl-section"><b>Instruções rápidas de campo</b><ul>
-                    <li>Confirme o sufixo completo do modelo, alimentação e diagrama correspondente antes da ligação.</li>
-                    <li>Desenergize o equipamento antes de alterar cabeamento, sensor ou saída de relé.</li>
-                    <li>Confira o tipo e a posição dos sensores antes de concluir que há falha no controlador.</li>
-                    <li>Registre o set point e os parâmetros existentes antes de fazer alterações.</li>
-                    <li>Para degelo, ventilação, alarmes e parâmetros avançados, siga a revisão do manual correspondente ao modelo.</li>
-                </ul></div>
-                <div class="bt-ctrl-section"><b>Importante</b><p>Os bornes, limites de corrente, sensores aceitos e códigos de parâmetros mudam entre versões da mesma família. Não use o diagrama de outro modelo apenas por ter aparência semelhante.</p></div>
-                <a class="bt-ctrl-official" href="${esc(f.source)}" target="_blank" rel="noopener noreferrer">Abrir manual / fonte oficial ↗</a>
-                <div class="bt-ctrl-note">O BoraTec mostra um resumo para consulta rápida. O documento oficial do fabricante é a referência para instalação, ligação elétrica e parametrização.</div>
+        if(document.getElementById("btControllersScreen")) return;
+        const screen = document.createElement("section");
+        screen.id = "btControllersScreen";
+        screen.innerHTML = `
+            <div class="bt-ctrl-shell">
+                <div class="bt-ctrl-top">
+                    <button id="btCtrlMainBack" class="bt-ctrl-back" type="button" aria-label="Voltar">‹</button>
+                    <div class="bt-ctrl-heading"><small>BORATEC • ÁREA TÉCNICA</small><strong>Controladores</strong></div>
+                </div>
+                <div id="btCtrlListView" class="bt-ctrl-list-view">
+                    <div class="bt-ctrl-search-wrap">
+                        <span class="bt-ctrl-search-icon">⌕</span>
+                        <input id="btCtrlSearch" class="bt-ctrl-search" autocomplete="off" placeholder="Digite o modelo: MT-512, XR60, ERC 214...">
+                        <button id="btCtrlClear" class="bt-ctrl-clear" type="button" aria-label="Limpar busca">×</button>
+                    </div>
+                    <div id="btCtrlResult" class="bt-ctrl-result"></div>
+                    <div id="btCtrlCarousel" class="bt-ctrl-carousel"></div>
+                    <div class="bt-ctrl-controls">
+                        <button id="btCtrlPrev" class="bt-ctrl-arrow" type="button" aria-label="Anterior">‹</button>
+                        <div id="btCtrlCount" class="bt-ctrl-count"></div>
+                        <button id="btCtrlNext" class="bt-ctrl-arrow" type="button" aria-label="Próximo">›</button>
+                    </div>
+                </div>
+                <div id="btCtrlDetail" class="bt-ctrl-detail"></div>
             </div>`;
-        box.classList.add("show"); box.scrollIntoView({behavior:"smooth",block:"start"});
+        document.body.appendChild(screen);
+        document.getElementById("btCtrlMainBack").addEventListener("click",backMain);
+        document.getElementById("btCtrlSearch").addEventListener("input",event=>renderCarousel(event.target.value));
+        document.getElementById("btCtrlClear").addEventListener("click",()=>{
+            const input=document.getElementById("btCtrlSearch"); if(input){input.value=""; input.focus();} renderCarousel("");
+        });
+        document.getElementById("btCtrlPrev").addEventListener("click",()=>moveCarousel(-1));
+        document.getElementById("btCtrlNext").addEventListener("click",()=>moveCarousel(1));
+        document.getElementById("btCtrlCarousel").addEventListener("scroll",updateCounter,{passive:true});
+    }
+
+    function filteredModels(term=""){
+        const q=String(term||"").trim().toLowerCase().replace(/\s+/g,"");
+        if(!q) return models;
+        return models.filter(m=>`${m.brand}${m.family}${m.name}`.toLowerCase().replace(/\s+/g,"").includes(q));
+    }
+
+    function renderCarousel(term=""){
+        createScreen();
+        const carousel=document.getElementById("btCtrlCarousel");
+        const result=document.getElementById("btCtrlResult");
+        const list=filteredModels(term);
+        carousel.dataset.visibleCount=String(list.length);
+        carousel.innerHTML=list.length ? list.map(m=>`
+            <button class="bt-ctrl-card" type="button" data-family="${esc(m.familyId)}" data-index="${m.index}">
+                <span class="brand">${esc(m.brand)}</span>
+                <h3>${esc(m.name)}</h3>
+                <span class="family">Família ${esc(m.family)}</span>
+                <p>${esc(m.note)}</p>
+                <span class="open">ABRIR CONTROLADOR →</span>
+            </button>`).join("") : `<div class="bt-ctrl-empty"><strong>Modelo não encontrado</strong>Tente parte do código ou o nome da marca.</div>`;
+        carousel.querySelectorAll(".bt-ctrl-card").forEach(card=>card.addEventListener("click",()=>openModel(card.dataset.family,Number(card.dataset.index))));
+        result.textContent=list.length===1 ? "1 controlador encontrado" : `${list.length} controladores encontrados`;
+        requestAnimationFrame(()=>{carousel.scrollLeft=0;updateCounter();});
+    }
+
+    function visibleCards(){ return Array.from(document.querySelectorAll("#btCtrlCarousel .bt-ctrl-card")); }
+
+    function centeredIndex(){
+        const carousel=document.getElementById("btCtrlCarousel"); const cards=visibleCards();
+        if(!carousel||!cards.length) return 0;
+        const center=carousel.scrollLeft+carousel.clientWidth/2;
+        let best=0,dist=Infinity;
+        cards.forEach((card,i)=>{const c=card.offsetLeft+card.offsetWidth/2;const d=Math.abs(c-center);if(d<dist){dist=d;best=i;}});
+        return best;
+    }
+
+    function updateCounter(){
+        const cards=visibleCards(); const count=document.getElementById("btCtrlCount");
+        if(!count) return; count.textContent=cards.length ? `${centeredIndex()+1} / ${cards.length}` : "0 / 0";
+    }
+
+    function moveCarousel(direction){
+        const cards=visibleCards(); const carousel=document.getElementById("btCtrlCarousel");
+        if(!cards.length||!carousel) return;
+        const next=Math.max(0,Math.min(cards.length-1,centeredIndex()+direction));
+        cards[next].scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
+    }
+
+    function openControllers(){
+        createScreen();
+        if(typeof window.closeTechnicalArea==="function") window.closeTechnicalArea();
+        const screen=document.getElementById("btControllersScreen");
+        screen.classList.add("show"); document.body.style.overflow="hidden";
+        document.getElementById("btCtrlDetail").classList.remove("show");
+        document.getElementById("btCtrlListView").classList.remove("hidden");
+        const input=document.getElementById("btCtrlSearch"); if(input) input.value="";
+        renderCarousel("");
+        screen.scrollTo(0,0);
+    }
+
+    function backMain(){
+        const detail=document.getElementById("btCtrlDetail");
+        if(detail?.classList.contains("show")){ showList(); return; }
+        document.getElementById("btControllersScreen")?.classList.remove("show");
+        document.body.style.overflow="";
+        if(typeof window.openTechnicalArea==="function") window.openTechnicalArea();
+    }
+
+    function showList(){
+        document.getElementById("btCtrlDetail")?.classList.remove("show");
+        document.getElementById("btCtrlListView")?.classList.remove("hidden");
+        document.getElementById("btControllersScreen")?.scrollTo(0,0);
+    }
+
+    function openModel(familyId,index){
+        const f=families.find(item=>item.id===familyId); const m=f?.models?.[index]; if(!f||!m) return;
+        const list=document.getElementById("btCtrlListView"); const detail=document.getElementById("btCtrlDetail");
+        list.classList.add("hidden"); detail.classList.add("show");
+        const manual=m.manualUrl||null;
+        detail.innerHTML=`
+            <div class="bt-ctrl-detail-head">
+                <button class="bt-ctrl-back" type="button" onclick="openBoraTecControllersList()" aria-label="Voltar">‹</button>
+                <div class="bt-ctrl-detail-title"><small>${esc(f.brand)}</small><h2>${esc(m.name)}</h2><span>${esc(f.family)}</span></div>
+            </div>
+            <div class="bt-ctrl-detail-box"><b>Aplicação</b><p>${esc(m.note)} ${esc(f.use)}</p></div>
+            <div class="bt-ctrl-detail-box"><b>Antes de alterar parâmetros</b><ul><li>Confirme o modelo e o sufixo completos.</li><li>Confira alimentação, sensores e diagrama correspondente.</li><li>Registre set point e parâmetros atuais antes de modificar.</li><li>Desenergize o equipamento antes de qualquer alteração de cabeamento.</li></ul></div>
+            <div class="bt-ctrl-manual-title"><strong>Manual do fabricante</strong></div>
+            ${manual ? `<div class="bt-ctrl-pdf"><iframe src="${esc(manual)}#view=FitH" title="Manual ${esc(m.name)}" loading="lazy"></iframe></div><div class="bt-ctrl-note">Se o fabricante bloquear a visualização dentro do app, use o botão abaixo.</div>` : `<div class="bt-ctrl-manual-fallback">Ainda não temos um PDF direto deste modelo para exibir dentro do BoraTec. O botão abaixo leva à fonte oficial do fabricante para escolher a revisão correta.</div>`}
+            <a class="bt-ctrl-official" href="${esc(manual||f.source)}" target="_blank" rel="noopener noreferrer">ABRIR FONTE OFICIAL ↗</a>`;
+        document.getElementById("btControllersScreen")?.scrollTo(0,0);
     }
 
     function rebuildCarouselAfterAddingCard(){
-        const rail = document.getElementById("btTechnicalCarousel");
-        const prev = document.getElementById("btTechnicalCarouselPrev");
-        const next = document.getElementById("btTechnicalCarouselNext");
-        const dots = document.getElementById("btTechnicalCarouselDots");
-        if(!rail || !prev || !next || !dots) return;
-        const railClone = rail.cloneNode(true); rail.replaceWith(railClone);
-        const prevClone = prev.cloneNode(true); prev.replaceWith(prevClone);
-        const nextClone = next.cloneNode(true); next.replaceWith(nextClone);
-        const dotsClone = dots.cloneNode(true); dots.replaceWith(dotsClone);
-        if(typeof window.setupTechnicalAreaCarousel === "function") window.setupTechnicalAreaCarousel();
+        const rail=document.getElementById("btTechnicalCarousel");
+        const prev=document.getElementById("btTechnicalCarouselPrev");
+        const next=document.getElementById("btTechnicalCarouselNext");
+        const dots=document.getElementById("btTechnicalCarouselDots");
+        if(!rail||!prev||!next||!dots) return;
+        const railClone=rail.cloneNode(true);rail.replaceWith(railClone);
+        const prevClone=prev.cloneNode(true);prev.replaceWith(prevClone);
+        const nextClone=next.cloneNode(true);next.replaceWith(nextClone);
+        const dotsClone=dots.cloneNode(true);dots.replaceWith(dotsClone);
+        if(typeof window.setupTechnicalAreaCarousel==="function") window.setupTechnicalAreaCarousel();
     }
 
     function installCard(){
-        const rail = document.getElementById("btTechnicalCarousel");
-        if(!rail || document.getElementById("btControllersTechnicalCard")) return;
-        const card = document.createElement("button");
-        card.id = "btControllersTechnicalCard";
-        card.className = "bt-tech-card";
-        card.type = "button";
+        const rail=document.getElementById("btTechnicalCarousel");
+        if(!rail||document.getElementById("btControllersTechnicalCard")) return;
+        const card=document.createElement("button");
+        card.id="btControllersTechnicalCard"; card.className="bt-tech-card"; card.type="button";
         card.setAttribute("onclick","openTechnicalCalculator('controladores')");
-        card.innerHTML = `<div class="bt-tech-card-icon">🎛️</div><strong>Controladores</strong><small>Manuais rápidos e links oficiais dos controladores mais usados.</small>`;
-        rail.appendChild(card);
-        rebuildCarouselAfterAddingCard();
+        card.innerHTML=`<div class="bt-tech-card-icon">🎛️</div><strong>Controladores</strong><small>Pesquise modelos, navegue no carrossel e consulte manuais.</small>`;
+        rail.appendChild(card); rebuildCarouselAfterAddingCard();
     }
 
     function hook(){
-        if(typeof window.openTechnicalArea !== "function" || typeof window.openTechnicalCalculator !== "function") return false;
-        if(window.__btControllersHooked) return true;
-        window.__btControllersHooked = true;
-        const originalOpen = window.openTechnicalArea;
-        const originalCalc = window.openTechnicalCalculator;
-        window.openTechnicalArea = function(){
-            const result = originalOpen.apply(this,arguments);
-            window.setTimeout(installCard,0);
-            return result;
-        };
-        window.openTechnicalCalculator = function(type){
-            if(type === "controladores"){
-                showFamilies();
-                window.setTimeout(()=>workspace()?.scrollIntoView({behavior:"smooth",block:"start"}),40);
-                return;
-            }
-            return originalCalc.apply(this,arguments);
-        };
+        if(typeof window.openTechnicalArea!=="function"||typeof window.openTechnicalCalculator!=="function") return false;
+        if(window.__btControllersHookedV2) return true;
+        window.__btControllersHookedV2=true;
+        const originalOpen=window.openTechnicalArea; const originalCalc=window.openTechnicalCalculator;
+        window.openTechnicalArea=function(){const r=originalOpen.apply(this,arguments);window.setTimeout(installCard,0);return r;};
+        window.openTechnicalCalculator=function(type){if(type==="controladores"){openControllers();return;}return originalCalc.apply(this,arguments);};
         return true;
     }
 
-    window.openBoraTecControllers = showFamilies;
-    window.openBoraTecControllerFamily = openFamily;
-    window.openBoraTecControllerModel = openModel;
+    window.openBoraTecControllers=openControllers;
+    window.openBoraTecControllersList=showList;
+    window.openBoraTecControllerModel=openModel;
 
-    let attempts = 0;
-    const timer = window.setInterval(()=>{
-        attempts++;
-        if(hook() || attempts > 80) window.clearInterval(timer);
-    },100);
+    let attempts=0;
+    const timer=window.setInterval(()=>{attempts++;if(hook()||attempts>80) window.clearInterval(timer);},100);
 })();
