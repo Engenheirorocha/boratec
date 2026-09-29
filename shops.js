@@ -113,3 +113,13 @@
     window.openNearbyShops = openNearbyShops;
     window.closeNearbyShops = closeNearbyShops;
 })();
+
+/* Carrega o módulo isolado de Controladores. O módulo aguarda app.js ficar pronto. */
+(function(){
+    if(document.querySelector('script[data-boratec-controllers]')) return;
+    const script = document.createElement('script');
+    script.src = './controllers.js?v=1';
+    script.async = true;
+    script.dataset.boratecControllers = 'true';
+    document.head.appendChild(script);
+})();
