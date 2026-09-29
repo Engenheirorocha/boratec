@@ -6,6 +6,18 @@
     const cache = new Map();
     let activeRequest = 0;
     const geocodeCache = new Map();
+    let locationWatch = null;
+    let lastGpsSearch = null;
+    let gpsGeneration = 0;
+
+    function stopGps(){
+        gpsGeneration++;
+        if(locationWatch !== null && navigator.geolocation){
+            navigator.geolocation.clearWatch(locationWatch);
+            locationWatch = null;
+        }
+        lastGpsSearch = null;
+    }
 
     function escapeHTML(value){
         return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -90,7 +102,7 @@
         const box = document.getElementById("btShopResults");
         if(!box){ return; }
         if(!stores.length){
-            box.innerHTML = `<p>Nenhuma loja cadastrada nesta região na base consultada. Você pode procurar outras no mapa.</p>
+            box.innerHTML = `<p>Nenhuma loja de refrigeração cadastrada a até 15 km deste ponto na base consultada.</p>
                 <a class="bt-shop-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Procurar lojas no mapa</a>`;
             return;
         }
@@ -106,7 +118,9 @@
                 </div>
                 ${!tel && !store.whatsapp ? `<small>Contato não cadastrado. Confira a loja antes de sair.</small>` : ""}
             </article>`;
-        }).join("");
+        }).join("") + (stores.length < 3
+            ? `<p class="bt-shop-note">Estas são as lojas cadastradas a até 15 km. <a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Ver mais opções no mapa</a></p>`
+            : "");
     }
 
     function setStatus(message){
@@ -114,13 +128,19 @@
         if(box){ box.textContent = message; }
     }
 
-    async function searchAt(lat,lon,label,request){
-        document.getElementById("btShopLocation").textContent = "Buscando perto de: "+label;
+    function showSearchPoint(lat,lon,label,accuracy){
+        const box = document.getElementById("btShopLocation");
+        const point = lat.toFixed(5)+", "+lon.toFixed(5);
+        const precision = Number.isFinite(accuracy) ? " • precisão aproximada: "+Math.round(accuracy)+" m" : "";
+        box.innerHTML = "Buscando perto de: "+escapeHTML(label)+precision+
+            `<br><a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat+","+lon)}">Conferir ponto no mapa: ${point}</a>`;
+    }
+
+    async function searchAt(lat,lon,label,request,accuracy){
+        showSearchPoint(lat,lon,label,accuracy);
         setStatus("Buscando lojas próximas…");
         try{
-            let stores = await findStores(lat,lon,15000);
-            if(request !== activeRequest){ return; }
-            if(stores.length < 3){ stores = await findStores(lat,lon,50000); }
+            const stores = await findStores(lat,lon,15000);
             if(request === activeRequest){ render(stores,lat,lon); }
         }catch(error){
             if(request === activeRequest){
@@ -131,6 +151,7 @@
 
     async function searchManual(event){
         event.preventDefault();
+        stopGps();
         const input = document.getElementById("btShopAddress");
         const query = input.value.trim();
         if(!query){ input.focus(); return; }
@@ -166,6 +187,7 @@
 
     function showManualLocation(){
         activeRequest++;
+        stopGps();
         cache.clear();
         const form = document.getElementById("btShopForm");
         form.hidden = false;
@@ -174,22 +196,45 @@
         document.getElementById("btShopAddress").focus();
     }
 
-    async function loadNearbyShops(){
-        const request = ++activeRequest;
+    function loadNearbyShops(){
+        stopGps();
+        const generation = gpsGeneration;
+        ++activeRequest;
         cache.clear();
         document.getElementById("btShopForm").hidden = true;
         document.getElementById("btShopLocation").textContent = "";
         if(!navigator.geolocation){ setStatus("Este dispositivo não oferece localização. Digite outra localização abaixo."); return; }
-        setStatus("Obtendo sua localização atual…");
-        navigator.geolocation.getCurrentPosition(position=>{
-            if(request !== activeRequest){ return; }
+        setStatus("Aguardando uma posição atual e precisa do GPS…");
+        locationWatch = navigator.geolocation.watchPosition(position=>{
+            if(generation !== gpsGeneration ||
+                !document.getElementById("btNearbyShopsScreen")?.classList.contains("show")){ return; }
             const {latitude:lat,longitude:lon} = position.coords;
-            searchAt(lat,lon,"GPS atual",request);
+            const accuracy = position.coords.accuracy;
+            if(!Number.isFinite(lat) || !Number.isFinite(lon) ||
+                Date.now()-position.timestamp > 60000 ||
+                !Number.isFinite(accuracy) || accuracy > 1000){
+                ++activeRequest;
+                lastGpsSearch = null;
+                document.getElementById("btShopLocation").textContent = "";
+                setStatus("Aguardando GPS preciso. Ative a localização precisa no celular ou digite o local.");
+                return;
+            }
+            const now = Date.now();
+            if(lastGpsSearch &&
+                distanceKm(lastGpsSearch.lat,lastGpsSearch.lon,lat,lon) < 0.5 &&
+                now-lastGpsSearch.time < 5*60*1000){ return; }
+            lastGpsSearch = {lat,lon,time:now};
+            const request = ++activeRequest;
+            cache.clear();
+            searchAt(lat,lon,"GPS atual (atualizado "+new Date(position.timestamp).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+")",request,accuracy);
         },error=>{
-            if(request !== activeRequest){ return; }
+            if(generation !== gpsGeneration){ return; }
+            ++activeRequest;
+            lastGpsSearch = null;
+            document.getElementById("btShopLocation").textContent = "";
             setStatus(error.code === 1
                 ? "Permita o acesso à localização ou digite um bairro ou cidade."
-                : "Não foi possível obter sua localização. Digite um bairro ou cidade.");
+                : "Não foi possível atualizar o GPS. Digite um bairro ou cidade.");
         },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     }
 
@@ -203,7 +248,7 @@
                 .bt-shop-top strong{font-size:22px}.bt-shop-card{display:block;margin:12px 0;padding:16px;border-radius:16px;background:#10283e;border:1px solid #36556b}
                 .bt-shop-card strong,.bt-shop-card span,.bt-shop-card small{display:block}.bt-shop-card span,.bt-shop-card small{color:#a9c1d2;margin-top:8px;line-height:1.5}
                 .bt-shop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-links a,.bt-shop-link,.bt-shop-actions button,#btShopForm button{display:inline-block;background:#087fae;color:white;border:0;border-radius:9px;padding:10px 13px;text-decoration:none;font-weight:700}
-                .bt-shop-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-actions button{cursor:pointer}.bt-shop-actions button.secondary{background:#0b243b;border:1px solid #47717f}.bt-shop-location{color:#a9c1d2;line-height:1.5;overflow-wrap:anywhere}.bt-shop-form{margin-top:14px}.bt-shop-form[hidden]{display:none}.bt-shop-form label{display:block;margin-bottom:7px}.bt-shop-form input{width:100%;box-sizing:border-box;background:#10283e;color:#fff;border:1px solid #47717f;border-radius:9px;padding:12px;font-size:16px}.bt-shop-form button{margin-top:9px}.bt-shop-form button:disabled{opacity:.55}.bt-shop-foot{color:#829bb0;font-size:12px;line-height:1.5;margin-top:22px}.bt-shop-foot a{color:#5ecfff}`;
+                .bt-shop-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-actions button{cursor:pointer}.bt-shop-actions button.secondary{background:#0b243b;border:1px solid #47717f}.bt-shop-location,.bt-shop-note{color:#a9c1d2;line-height:1.5;overflow-wrap:anywhere}.bt-shop-location a,.bt-shop-note a{color:#5ecfff}.bt-shop-form{margin-top:14px}.bt-shop-form[hidden]{display:none}.bt-shop-form label{display:block;margin-bottom:7px}.bt-shop-form input{width:100%;box-sizing:border-box;background:#10283e;color:#fff;border:1px solid #47717f;border-radius:9px;padding:12px;font-size:16px}.bt-shop-form button{margin-top:9px}.bt-shop-form button:disabled{opacity:.55}.bt-shop-foot{color:#829bb0;font-size:12px;line-height:1.5;margin-top:22px}.bt-shop-foot a{color:#5ecfff}`;
             document.head.appendChild(style);
             screen = document.createElement("section");
             screen.id = "btNearbyShopsScreen";
@@ -224,6 +269,7 @@
 
     function closeNearbyShops(){
         activeRequest++;
+        stopGps();
         document.getElementById("btNearbyShopsScreen")?.classList.remove("show");
         document.body.style.overflow = "";
         if(typeof window.openBoraTecHome === "function"){
