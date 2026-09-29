@@ -13896,6 +13896,16 @@ function createBoraTecHome(){
                     <small>Gases, calculadoras, manuais e ferramentas técnicas.</small>
                 </button>
 
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="openBoraTecNorms()"
+                >
+                    <div class="bt-v182-action-icon">📘</div>
+                    <strong>Normas</strong>
+                    <small>PMOC, NR-10, NR-35 e referências para o trabalho em campo.</small>
+                </button>
+
             </div>
 
             <div class="bt-home-carousel-controls">
@@ -14818,6 +14828,177 @@ function openTechnicalAreaFromHome(){
         );
     }
 }
+
+
+/* =========================================================
+   NORMAS - GUIA DE REFERÊNCIAS PARA O CAMPO
+   Resumos autorais; o texto e a edição vigentes ficam na fonte.
+========================================================= */
+
+const btNormsCatalog = [
+    {
+        id:"pmoc", icon:"🏢", title:"PMOC",
+        subtitle:"Plano de Manutenção, Operação e Controle",
+        scope:"Edifícios de uso público e coletivo com ambientes climatizados; ambientes de uso restrito observam regras específicas.",
+        guide:"Identifique a instalação, os equipamentos, as atividades previstas, a periodicidade e os registros de execução. A elaboração e a execução precisam observar a legislação e a responsabilidade técnica cabível.",
+        note:"Um modelo de documento preenchido não comprova, sozinho, a execução contínua do plano.",
+        sources:[
+            {label:"Lei 13.589/2018 — Planalto",url:"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13589.htm"},
+            {label:"Portaria GM/MS 3.523/1998 — Ministério da Saúde",url:"https://bvsms.saude.gov.br/bvs/saudelegis/gm/1998/prt3523_28_08_1998.html"}
+        ]
+    },
+    {
+        id:"nr10", icon:"⚡", title:"NR-10",
+        subtitle:"Segurança em instalações e serviços em eletricidade",
+        scope:"Serviços que envolvem instalações elétricas e exposição aos riscos da eletricidade.",
+        guide:"Consulte as medidas de controle e os requisitos de segurança antes de intervir na alimentação ou nos componentes elétricos do equipamento.",
+        note:"A nova redação publicada em 2026 tem vigência prevista para 01/06/2027. Confira a versão vigente na página do MTE.",
+        sources:[
+            {label:"NR-10 e versões vigentes — MTE",url:"https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-10-nr-10"}
+        ]
+    },
+    {
+        id:"nr35", icon:"🪜", title:"NR-35",
+        subtitle:"Trabalho em altura",
+        scope:"Atividades com diferença de nível acima de 2 m e risco de queda, como determinadas instalações de unidades externas.",
+        guide:"Confira planejamento, análise dos riscos, condições de acesso e medidas de proteção exigidas para a atividade.",
+        sources:[
+            {label:"NR-35 — MTE",url:"https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-35-nr-35"}
+        ]
+    },
+    {
+        id:"nbr16655", icon:"❄️", title:"ABNT NBR 16655",
+        subtitle:"Instalação residencial de split e compacto",
+        scope:"Projeto e instalação, ensaio de estanqueidade, desidratação, carga de fluido e cálculo de carga térmica residencial, conforme as três partes da norma.",
+        guide:"Comece pela parte correspondente à tarefa e confira também o manual do modelo instalado.",
+        note:"O link apresenta a identificação das partes; o texto integral da norma deve ser consultado pelos canais da ABNT.",
+        sources:[
+            {label:"Partes 1, 2 e 3 — comissão técnica ABRAVA",url:"https://abrava.com.br/normalizacao/ce-055002-005-comissao-de-estudos-de-equipamentos-de-expansao-direta-divididos-e-compactos/"},
+            {label:"Catálogo de normas — ABNT",url:"https://www.abntcatalogo.com.br/"}
+        ]
+    },
+    {
+        id:"nr6", icon:"🦺", title:"NR-6",
+        subtitle:"Equipamentos de proteção individual",
+        scope:"Seleção, fornecimento e utilização de EPI conforme os riscos do trabalho.",
+        guide:"Verifique os riscos da atividade e a proteção necessária antes de iniciar o atendimento.",
+        sources:[
+            {label:"NR-6 — MTE",url:"https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-6-nr-6"}
+        ]
+    },
+    {
+        id:"nbr5410", icon:"🔌", title:"ABNT NBR 5410",
+        subtitle:"Instalações elétricas de baixa tensão",
+        scope:"Referência para a instalação elétrica de baixa tensão que alimenta o equipamento.",
+        guide:"Na preparação da instalação, confira as condições do circuito elétrico e as exigências do projeto e do fabricante.",
+        note:"Consulte o texto integral e a edição aplicável no catálogo da ABNT.",
+        sources:[
+            {label:"Catálogo de normas — ABNT",url:"https://www.abntcatalogo.com.br/"}
+        ]
+    }
+];
+
+function createBoraTecNorms(){
+    if(document.getElementById("btNormsScreen")) return;
+
+    if(!document.getElementById("btNormsStyles")){
+        const style = document.createElement("style");
+        style.id = "btNormsStyles";
+        style.textContent = `
+            #btNormsScreen{display:none;position:fixed;inset:0;z-index:1200;overflow-y:auto;
+                background:#071a2d;color:#f5f8fc;overscroll-behavior:contain}
+            #btNormsScreen.show{display:block}
+            .bt-norm-shell{max-width:760px;margin:auto;padding:22px 17px 100px}
+            .bt-norm-top{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+            .bt-norm-back{width:42px;height:42px;border:1px solid #314c64;border-radius:12px;
+                background:#102f50;color:white;font-size:26px;cursor:pointer}
+            .bt-norm-top small{display:block;color:#5ecfff;font-size:10px;font-weight:900;letter-spacing:.8px}
+            .bt-norm-top strong{display:block;font-size:22px}
+            .bt-norm-lead{color:#a9bdce;font-size:13px;line-height:1.55;margin-bottom:20px}
+            .bt-norm-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+            .bt-norm-card{width:100%;padding:18px;text-align:left;border-radius:17px;
+                border:1px solid #284861;background:#102e4b;color:white;cursor:pointer}
+            .bt-norm-card:focus-visible,.bt-norm-back:focus-visible,.bt-norm-link:focus-visible{
+                outline:2px solid #5ecfff;outline-offset:2px}
+            .bt-norm-card-icon{font-size:25px;display:block;margin-bottom:10px}
+            .bt-norm-card strong{display:block;font-size:16px;margin-bottom:6px}
+            .bt-norm-card span:last-child{display:block;color:#a9bdce;font-size:12px;line-height:1.4}
+            .bt-norm-detail h2{font-size:22px;margin-bottom:5px}
+            .bt-norm-detail h3{font-size:13px;color:#5ecfff;margin:19px 0 6px}
+            .bt-norm-detail p{color:#d2dfeb;font-size:13px;line-height:1.65}
+            .bt-norm-note{margin:20px 0;padding:13px;border-radius:12px;
+                border:1px solid #36526a;background:#0e2a44;color:#bbccdc;font-size:12px;line-height:1.5}
+            .bt-norm-link{display:block;padding:13px;margin-top:8px;border-radius:12px;
+                background:#123c5b;color:#84ddff;font-size:12px;font-weight:700;text-decoration:none}
+        `;
+        document.head.appendChild(style);
+    }
+
+    const screen = document.createElement("section");
+    screen.id = "btNormsScreen";
+    screen.setAttribute("aria-label", "Normas para o técnico");
+    screen.innerHTML = `
+        <div class="bt-norm-shell">
+            <div class="bt-norm-top">
+                <button class="bt-norm-back" type="button" onclick="backBoraTecNorms()" aria-label="Voltar">‹</button>
+                <div><small>BORATEC • REFERÊNCIAS</small><strong>Normas</strong></div>
+            </div>
+            <div id="btNormsContent"></div>
+        </div>`;
+    document.body.appendChild(screen);
+}
+
+function renderBoraTecNorms(id){
+    const content = document.getElementById("btNormsContent");
+    if(!content) return;
+    const item = btNormsCatalog.find(entry => entry.id === id);
+    if(!item){
+        content.innerHTML = `
+            <p class="bt-norm-lead">Referências iniciais para consulta em campo. Escolha um assunto:</p>
+            <div class="bt-norm-list">${btNormsCatalog.map(entry => `
+                <button class="bt-norm-card" type="button" onclick="renderBoraTecNorms('${entry.id}')">
+                    <span class="bt-norm-card-icon" aria-hidden="true">${entry.icon}</span>
+                    <strong>${entry.title}</strong><span>${entry.subtitle}</span>
+                </button>`).join("")}</div>
+            <p class="bt-norm-note">Resumo para orientação inicial. Consulte a edição vigente da norma e o manual do equipamento para executar o serviço.</p>`;
+    }else{
+        content.innerHTML = `
+            <div class="bt-norm-detail">
+                <h2>${item.icon} ${item.title}</h2><p>${item.subtitle}</p>
+                <h3>Quando consultar</h3><p>${item.scope}</p>
+                <h3>O que observar</h3><p>${item.guide}</p>
+                ${item.note ? `<div class="bt-norm-note">${item.note}</div>` : ""}
+                <h3>Fontes</h3>
+                ${item.sources.map(source => `<a class="bt-norm-link" href="${source.url}"
+                    target="_blank" rel="noopener noreferrer">${source.label} ↗</a>`).join("")}
+            </div>`;
+    }
+    document.getElementById("btNormsScreen")?.scrollTo(0,0);
+    document.querySelector("#btNormsScreen .bt-norm-top strong").textContent = item ? item.title : "Normas";
+    window.btCurrentNormId = item ? item.id : null;
+}
+
+function openBoraTecNorms(){
+    createBoraTecNorms();
+    closeBoraTecHome();
+    renderBoraTecNorms();
+    document.getElementById("btNormsScreen").classList.add("show");
+    document.body.style.overflow = "hidden";
+}
+
+function backBoraTecNorms(){
+    if(window.btCurrentNormId){
+        renderBoraTecNorms();
+        return;
+    }
+    document.getElementById("btNormsScreen")?.classList.remove("show");
+    document.body.style.overflow = "";
+    openBoraTecHome();
+}
+
+window.openBoraTecNorms = openBoraTecNorms;
+window.renderBoraTecNorms = renderBoraTecNorms;
+window.backBoraTecNorms = backBoraTecNorms;
 
 
 function openMyBoraTecProfileFromHome(){
