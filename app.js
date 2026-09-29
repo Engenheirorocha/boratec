@@ -13899,6 +13899,16 @@ function createBoraTecHome(){
                 <button
                     class="bt-v182-action"
                     type="button"
+                    onclick="openNearbyShopsFromHome()"
+                >
+                    <div class="bt-v182-action-icon">📍</div>
+                    <strong>Lojas perto de mim</strong>
+                    <small>Veja lojas de refrigeração, contatos disponíveis e rota.</small>
+                </button>
+
+                <button
+                    class="bt-v182-action"
+                    type="button"
                     onclick="openBoraTecNorms()"
                 >
                     <div class="bt-v182-action-icon">📘</div>
@@ -14812,6 +14822,17 @@ function openCommunityFromHome(){
     openCommunity();
 }
 
+
+function openNearbyShopsFromHome(){
+    if(typeof window.openNearbyShops !== "function"){
+        if(typeof window.showToast === "function"){
+            window.showToast("Busca de lojas indisponível");
+        }
+        return;
+    }
+    closeBoraTecHome();
+    window.openNearbyShops();
+}
 
 function openTechnicalAreaFromHome(){
 
