@@ -15394,6 +15394,12 @@ function createTechnicalArea(){
                     <small>Identificação elétrica, enrolamentos, corrente e dados de placa.</small>
                 </button>
 
+                <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('codigos')">
+                    <div class="bt-tech-card-icon">🛠️</div>
+                    <strong>Códigos de erro</strong>
+                    <small>Escolha a marca para consultar códigos e orientações técnicas.</small>
+                </button>
+
                 <button class="bt-tech-card" type="button" onclick="openTechnicalCalculator('eletrica')">
                     <div class="bt-tech-card-icon">⚡</div>
                     <strong>Elétrica</strong>
@@ -17932,6 +17938,53 @@ function renderTechnicalCompressorsArea(){
 }
 
 
+function renderTechnicalErrorCodesArea(){
+
+    const workspace = document.getElementById("btTechnicalWorkspace");
+    if(!workspace){ return; }
+
+    workspace.classList.add("show");
+    workspace.innerHTML = `
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>Códigos de erro</strong>
+                <span>Escolha a marca do equipamento.</span>
+            </div>
+        </div>
+
+        <div class="bt-tech-subarea-grid">
+            <button class="bt-tech-subarea-card" type="button" onclick="openTechnicalErrorCodeBrand('lg')">
+                <div class="bt-tech-subarea-card-icon">❄️</div>
+                <strong>LG</strong>
+                <span>Área de códigos de erro dos equipamentos LG.</span>
+            </button>
+        </div>
+    `;
+}
+
+function openTechnicalErrorCodeBrand(brand){
+
+    if(brand !== "lg"){ return; }
+
+    const workspace = document.getElementById("btTechnicalWorkspace");
+    if(!workspace){ return; }
+
+    workspace.classList.add("show");
+    workspace.innerHTML = `
+        <button class="bt-tech-back" type="button" onclick="renderTechnicalErrorCodesArea()"
+            aria-label="Voltar para as marcas" style="margin-bottom:16px;">‹</button>
+        <div class="bt-tech-workspace-title">
+            <div>
+                <strong>LG • Códigos de erro</strong>
+                <span>Consulta técnica para equipamentos LG.</span>
+            </div>
+        </div>
+        <div class="bt-tech-info-note">
+            A base de códigos LG está em preparação. Os diagnósticos aparecerão aqui após a conferência das fontes técnicas.
+        </div>
+    `;
+}
+
 function openTechnicalCalculator(type){
 
     if(type === "btu"){
@@ -18055,6 +18108,18 @@ function openTechnicalCalculator(type){
         return;
     }
 
+    if(type === "codigos"){
+        renderTechnicalErrorCodesArea();
+
+        window.setTimeout(
+            () => document.getElementById("btTechnicalWorkspace")
+                ?.scrollIntoView({behavior:"smooth",block:"start"}),
+            40
+        );
+
+        return;
+    }
+
     if(type === "compressores"){
         renderTechnicalCompressorsArea();
 
@@ -18108,6 +18173,12 @@ window.openTechnicalCalculator =
 
 window.openTechnicalCompressorTool =
     openTechnicalCompressorTool;
+
+window.openTechnicalErrorCodeBrand =
+    openTechnicalErrorCodeBrand;
+
+window.renderTechnicalErrorCodesArea =
+    renderTechnicalErrorCodesArea;
 
 window.renderTechnicalCompressorsArea =
     renderTechnicalCompressorsArea;
