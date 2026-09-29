@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Eletrofrigor — Bonsucesso",
+    "address": "Av. Guilherme Maxwell, 375, Bonsucesso, Rio de Janeiro - RJ",
+    "latitude": -22.8647720,
+    "longitude": -43.2541172,
+    "phone": "2138031400",
+    "whatsapp": "552138031400",
+    "source": "https://www.eletrofrigor.com.br/institucional/nossas-lojas"
+  },
+  {
+    "name": "Dufrio — Rio de Janeiro",
+    "address": "Av. Guilherme Maxwell, 356, Bonsucesso, Rio de Janeiro - RJ",
+    "latitude": -22.8647720,
+    "longitude": -43.2541172,
+    "phone": "2132829600",
+    "source": "https://www.dufrio.com.br/nossas-lojas"
+  },
+  {
+    "name": "M.T.F Refrigeração",
+    "address": "Av. Brasil, 6818, Rio de Janeiro - RJ",
+    "latitude": -22.8476339,
+    "longitude": -43.2480526,
+    "phone": "21971538839",
+    "whatsapp": "5521971538839",
+    "source": "https://mtfrefrigeracao.com.br/"
+  },
+  {
+    "name": "AJA Refrigeração — Cocotá",
+    "address": "Av. Paranapuã, 2145, Cocotá, Rio de Janeiro - RJ",
+    "latitude": -22.8018247,
+    "longitude": -43.1819430,
+    "phone": "2134399312",
+    "whatsapp": "5521971370682",
+    "source": "https://ajarefrigeracao.com.br/"
+  }
+]
