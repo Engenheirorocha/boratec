@@ -18609,7 +18609,8 @@ function searchTechnicalLGErrorCode(){
                 <ol style="padding-left:20px;line-height:1.55;">${entry.steps.map(item=>`<li>${item}</li>`).join("")}</ol>
             </div>
             <div class="bt-tech-result-secondary">O código orienta a inspeção; não identifica sozinho uma peça defeituosa.</div>
-            <div style="margin-top:12px;">${entry.sources.map((url,index)=>`<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#5ecfff;margin-right:12px;">Fonte LG ${index+1}</a>`).join("")}</div>
+            <div class="bt-tech-result-secondary" style="margin-top:12px;">Resumo em português baseado em documentação técnica da LG. Confira a aplicação e as medições no manual do modelo.</div>
+            <div style="margin-top:12px;"><a href="https://www.lg.com/br/suporte/suporte-ao-producto/manuais/" target="_blank" rel="noopener noreferrer" style="color:#5ecfff;">Buscar manual do modelo na LG Brasil</a></div>
         </div>
     `;
 }
