@@ -139,17 +139,20 @@
             .bt-ctrl-heading small{display:block;color:#37c7ef;font-size:9px;font-weight:900;letter-spacing:.8px;text-transform:uppercase}.bt-ctrl-heading strong{display:block;font-size:22px;font-weight:950;margin-top:3px}
             .bt-ctrl-search-wrap{margin:22px 0 16px;position:relative}.bt-ctrl-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:#7e919d}.bt-ctrl-search{width:100%;height:52px;border-radius:12px;border:1px solid #3e4d56;background:#10181d;color:#fff;padding:0 44px 0 44px;box-sizing:border-box;font-size:16px;outline:none}.bt-ctrl-search:focus{border-color:#25bce8;box-shadow:0 0 0 3px rgba(37,188,232,.08)}.bt-ctrl-clear{position:absolute;right:8px;top:8px;width:36px;height:36px;border:0;border-radius:8px;background:#1a252b;color:#9dafb9;font-size:18px;cursor:pointer}
             .bt-ctrl-result{color:#8fa1ab;font-size:11px;margin-bottom:9px}
-            .bt-ctrl-carousel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:12px max(0px,calc(50% - 132px)) 20px;scrollbar-width:none;overscroll-behavior-x:contain}.bt-ctrl-carousel::-webkit-scrollbar{display:none}
-            .bt-ctrl-card{scroll-snap-align:center;flex:0 0 264px;min-height:245px;border:1px solid #3d4d56;border-radius:13px;padding:20px;background:linear-gradient(145deg,#1a242a,#0e1519);color:#fff;text-align:left;box-sizing:border-box;cursor:pointer;box-shadow:0 14px 30px rgba(0,0,0,.28);position:relative}
-            .bt-ctrl-card:before{content:"";position:absolute;left:18px;top:0;width:72px;height:3px;background:linear-gradient(90deg,#08baf0,transparent)}.bt-ctrl-card .brand{color:#35c9f1;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}.bt-ctrl-card h3{font-size:24px;line-height:1.05;margin:20px 0 8px}.bt-ctrl-card .family{color:#a8b6bd;font-size:11px}.bt-ctrl-card p{color:#8e9da5;font-size:11px;line-height:1.5;margin-top:24px}.bt-ctrl-card .open{display:block;margin-top:20px;color:#dff8ff;font-size:11px;font-weight:900}
-            .bt-ctrl-controls{display:flex;justify-content:center;align-items:center;gap:12px;margin:0 0 18px}.bt-ctrl-arrow{width:42px;height:42px;border:1px solid #3f4d55;border-radius:9px;background:#172126;color:#fff;font-size:23px;cursor:pointer}.bt-ctrl-count{min-width:90px;text-align:center;color:#84949d;font-size:11px}
+            .bt-ctrl-list-view{display:flex;flex-direction:column;min-height:calc(100dvh - 100px)}
+            .bt-ctrl-result{margin-bottom:0}
+            .bt-ctrl-carousel{position:relative;display:flex;align-items:center;flex:1;min-height:310px;gap:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:24px max(12px,calc(50% - 132px));scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;box-sizing:border-box}.bt-ctrl-carousel::-webkit-scrollbar{display:none}
+            .bt-ctrl-card{scroll-snap-align:center;flex:0 0 264px;margin-right:-74px;min-height:250px;border:1px solid #3d4d56;border-radius:18px;padding:20px;background:linear-gradient(145deg,#1d303b,#0e171d);color:#fff;text-align:left;box-sizing:border-box;cursor:pointer;box-shadow:0 18px 36px rgba(0,0,0,.5);position:relative;transform:scale(.89) translateY(8px);opacity:.65;transition:transform .22s ease,opacity .22s ease,border-color .22s ease,box-shadow .22s ease}
+            .bt-ctrl-card:last-child{margin-right:0}.bt-ctrl-card.is-near{transform:scale(.94) translateY(4px);opacity:.86}.bt-ctrl-card.is-active{transform:scale(1);opacity:1;border-color:#2cc6f1;box-shadow:0 20px 44px rgba(0,0,0,.58),0 0 26px rgba(12,178,224,.22)}
+            .bt-ctrl-card:before{content:"";position:absolute;left:18px;top:0;width:72px;height:3px;background:linear-gradient(90deg,#08baf0,transparent)}.bt-ctrl-card .brand{color:#35c9f1;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}.bt-ctrl-card h3{font-size:24px;line-height:1.05;margin:20px 0 8px}.bt-ctrl-card .family{color:#a8b6bd;font-size:11px}.bt-ctrl-card p{color:#a8b6bd;font-size:11px;line-height:1.5;margin-top:24px}.bt-ctrl-card .open{display:block;margin-top:20px;color:#dff8ff;font-size:11px;font-weight:900}
+            .bt-ctrl-controls{display:flex;justify-content:center;align-items:center;gap:12px;margin:0 0 18px}.bt-ctrl-arrow{width:44px;height:44px;border:1px solid #3f4d55;border-radius:50%;background:#172126;color:#fff;font-size:23px;cursor:pointer}.bt-ctrl-count{min-width:90px;text-align:center;color:#a6b6bf;font-size:12px}
             .bt-ctrl-empty{padding:55px 20px;text-align:center;color:#7f919c}.bt-ctrl-empty strong{display:block;color:#dce5e9;margin-bottom:7px}
             .bt-ctrl-detail{display:none}.bt-ctrl-detail.show{display:block}.bt-ctrl-list-view.hidden{display:none}
             .bt-ctrl-detail-head{display:flex;align-items:flex-start;gap:12px;margin:20px 0}.bt-ctrl-detail-title{flex:1}.bt-ctrl-detail-title small{display:block;color:#39c9ef;font-size:9px;font-weight:900;text-transform:uppercase}.bt-ctrl-detail-title h2{font-size:27px;line-height:1.05;margin:5px 0}.bt-ctrl-detail-title span{color:#91a2ab;font-size:12px}
             .bt-ctrl-detail-box{border:1px solid #39474f;border-radius:12px;background:#11191e;padding:15px;margin:12px 0}.bt-ctrl-detail-box b{display:block;font-size:12px;margin-bottom:7px}.bt-ctrl-detail-box p,.bt-ctrl-detail-box li{color:#a9b6bd;font-size:12px;line-height:1.55}.bt-ctrl-detail-box ul{margin:0;padding-left:18px}
             .bt-ctrl-manual-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 9px}.bt-ctrl-manual-title strong{font-size:15px}.bt-ctrl-pdf{width:100%;height:62vh;min-height:520px;border:1px solid #41515a;border-radius:12px;background:#fff;overflow:hidden}.bt-ctrl-pdf iframe{width:100%;height:100%;border:0;background:#fff}.bt-ctrl-manual-fallback{padding:22px;border:1px dashed #44545d;border-radius:12px;text-align:center;color:#96a6af;font-size:12px;line-height:1.5;background:#11191e}.bt-ctrl-official{display:block;margin-top:12px;padding:13px;border-radius:10px;text-align:center;text-decoration:none;background:linear-gradient(180deg,#0aaee0,#087fae);color:#fff;font-size:12px;font-weight:950;border:1px solid #22c9f6}
             .bt-ctrl-note{margin-top:11px;color:#73848e;font-size:10px;line-height:1.5}
-            @media(max-width:520px){.bt-ctrl-card{flex-basis:250px}.bt-ctrl-carousel{padding-left:max(0px,calc(50% - 125px));padding-right:max(0px,calc(50% - 125px))}.bt-ctrl-pdf{height:68vh;min-height:460px}}
+            @media(max-width:520px){.bt-ctrl-card{flex-basis:250px}.bt-ctrl-carousel{padding-left:max(12px,calc(50% - 125px));padding-right:max(12px,calc(50% - 125px))}.bt-ctrl-card{margin-right:-68px}.bt-ctrl-pdf{height:68vh;min-height:460px}}
         `;
         document.head.appendChild(style);
     }
@@ -172,7 +175,7 @@
                         <button id="btCtrlClear" class="bt-ctrl-clear" type="button" aria-label="Limpar busca">×</button>
                     </div>
                     <div id="btCtrlResult" class="bt-ctrl-result"></div>
-                    <div id="btCtrlCarousel" class="bt-ctrl-carousel"></div>
+                    <div id="btCtrlCarousel" class="bt-ctrl-carousel" tabindex="0" role="region" aria-label="Modelos de controladores. Deslize para navegar"></div>
                     <div class="bt-ctrl-controls">
                         <button id="btCtrlPrev" class="bt-ctrl-arrow" type="button" aria-label="Anterior">‹</button>
                         <div id="btCtrlCount" class="bt-ctrl-count"></div>
@@ -189,7 +192,34 @@
         });
         document.getElementById("btCtrlPrev").addEventListener("click",()=>moveCarousel(-1));
         document.getElementById("btCtrlNext").addEventListener("click",()=>moveCarousel(1));
-        document.getElementById("btCtrlCarousel").addEventListener("scroll",updateCounter,{passive:true});
+        const carousel=document.getElementById("btCtrlCarousel");
+        carousel.addEventListener("scroll",()=>requestAnimationFrame(updateCounter),{passive:true});
+        let startX=null, dragged=false;
+        carousel.addEventListener("pointerdown",event=>{startX=event.clientX;dragged=false;});
+        carousel.addEventListener("pointermove",event=>{if(startX!==null&&Math.abs(event.clientX-startX)>8) dragged=true;});
+        carousel.addEventListener("pointerup",()=>{startX=null;window.setTimeout(()=>{dragged=false;},0);});
+        carousel.addEventListener("pointercancel",()=>{startX=null;dragged=false;});
+        carousel.addEventListener("click",event=>{
+            const card=event.target.closest(".bt-ctrl-card");
+            if(!card||!carousel.contains(card)) return;
+            if(dragged){event.preventDefault();event.stopPropagation();return;}
+            if(visibleCards()[centeredIndex()]!==card){
+                event.preventDefault();event.stopPropagation();
+                card.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
+            }
+        },true);
+        carousel.addEventListener("wheel",event=>{
+            if(!visibleCards().length) return;
+            if(Math.abs(event.deltaY)>Math.abs(event.deltaX)){
+                event.preventDefault();
+                carousel.scrollLeft+=event.deltaY;
+            }
+        },{passive:false});
+        carousel.addEventListener("keydown",event=>{
+            if(event.key==="ArrowRight"||event.key==="ArrowLeft"){
+                event.preventDefault();moveCarousel(event.key==="ArrowRight"?1:-1);
+            }
+        });
     }
 
     function filteredModels(term=""){
@@ -230,7 +260,15 @@
 
     function updateCounter(){
         const cards=visibleCards(); const count=document.getElementById("btCtrlCount");
-        if(!count) return; count.textContent=cards.length ? `${centeredIndex()+1} / ${cards.length}` : "0 / 0";
+        if(!count) return;
+        const active=centeredIndex();
+        count.textContent=cards.length ? `${active+1} / ${cards.length}` : "0 / 0";
+        cards.forEach((card,index)=>{
+            card.classList.toggle("is-active",index===active);
+            card.classList.toggle("is-near",Math.abs(index-active)===1);
+            card.style.zIndex=String(cards.length-Math.abs(index-active));
+            card.setAttribute("aria-label",`${index+1} de ${cards.length}: ${card.querySelector("h3")?.textContent||""}`);
+        });
     }
 
     function moveCarousel(direction){
