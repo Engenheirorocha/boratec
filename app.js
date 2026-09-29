@@ -13916,6 +13916,16 @@ function createBoraTecHome(){
                     <small>Organize atendimentos e acompanhe o resultado do mês.</small>
                 </button>
 
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="window.location.assign('./lojas.html')"
+                >
+                    <div class="bt-v182-action-icon">📍</div>
+                    <strong>Lojas perto de mim</strong>
+                    <small>Encontre peças, confirme a disponibilidade e trace a rota.</small>
+                </button>
+
             </div>
 
             <div class="bt-home-carousel-controls">
