@@ -19246,6 +19246,7 @@ window.openBoraTecHome = openBoraTecHome;
         /* CARROSSEL ROBUSTO */
         #btHomeScreen .bt-v182-actions{
             height:322px !important;
+            margin-top:clamp(28px,6vh,64px) !important;
             perspective:1050px;
             overflow:visible !important;
         }
