@@ -13906,6 +13906,16 @@ function createBoraTecHome(){
                     <small>PMOC, NR-10, NR-35 e referências para o trabalho em campo.</small>
                 </button>
 
+                <button
+                    class="bt-v182-action"
+                    type="button"
+                    onclick="window.location.assign('./agenda.html')"
+                >
+                    <div class="bt-v182-action-icon">📅</div>
+                    <strong>Agenda e resultados</strong>
+                    <small>Organize atendimentos e acompanhe o resultado do mês.</small>
+                </button>
+
             </div>
 
             <div class="bt-home-carousel-controls">
@@ -19509,4 +19519,3 @@ window.openBoraTecHome = openBoraTecHome;
 `;
     document.head.appendChild(style);
 })();
-
