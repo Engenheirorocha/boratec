@@ -5,6 +5,7 @@
     const endpoint = "https://overpass-api.de/api/interpreter";
     const cache = new Map();
     let activeRequest = 0;
+    const geocodeCache = new Map();
 
     function escapeHTML(value){
         return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -113,29 +114,83 @@
         if(box){ box.textContent = message; }
     }
 
+    async function searchAt(lat,lon,label,request){
+        document.getElementById("btShopLocation").textContent = "Buscando perto de: "+label;
+        setStatus("Buscando lojas próximas…");
+        try{
+            let stores = await findStores(lat,lon,15000);
+            if(request !== activeRequest){ return; }
+            if(stores.length < 3){ stores = await findStores(lat,lon,50000); }
+            if(request === activeRequest){ render(stores,lat,lon); }
+        }catch(error){
+            if(request === activeRequest){
+                setStatus("A busca de lojas está indisponível agora. Tente novamente em instantes.");
+            }
+        }
+    }
+
+    async function searchManual(event){
+        event.preventDefault();
+        const input = document.getElementById("btShopAddress");
+        const query = input.value.trim();
+        if(!query){ input.focus(); return; }
+        const request = ++activeRequest;
+        document.getElementById("btShopLocation").textContent = "";
+        setStatus("Localizando "+query+"…");
+        const form = document.getElementById("btShopForm");
+        form.querySelector("button").disabled = true;
+        try{
+            let place = geocodeCache.get(query.toLocaleLowerCase("pt-BR"));
+            if(!place){
+                const url = new URL("https://nominatim.openstreetmap.org/search");
+                url.search = new URLSearchParams({q:query,format:"jsonv2",countrycodes:"br",limit:"1",accept_language:"pt-BR"}).toString();
+                const response = await fetch(url,{headers:{"Accept":"application/json"},referrerPolicy:"strict-origin-when-cross-origin"});
+                if(!response.ok){ throw new Error("geocoding unavailable"); }
+                const results = await response.json();
+                place = results[0];
+                if(place){ geocodeCache.set(query.toLocaleLowerCase("pt-BR"),place); }
+            }
+            if(request !== activeRequest){ return; }
+            if(!place || !Number.isFinite(Number(place.lat)) || !Number.isFinite(Number(place.lon))){
+                setStatus("Local não encontrado. Informe bairro e cidade, por exemplo: Copacabana, Rio de Janeiro.");
+                return;
+            }
+            const label = place.display_name || query;
+            await searchAt(Number(place.lat),Number(place.lon),label,request);
+        }catch(error){
+            if(request === activeRequest){ setStatus("Não foi possível localizar esse endereço agora. Tente novamente."); }
+        }finally{
+            form.querySelector("button").disabled = false;
+        }
+    }
+
+    function showManualLocation(){
+        activeRequest++;
+        cache.clear();
+        const form = document.getElementById("btShopForm");
+        form.hidden = false;
+        document.getElementById("btShopLocation").textContent = "";
+        setStatus("Digite um bairro, cidade ou endereço no Brasil para buscar lojas.");
+        document.getElementById("btShopAddress").focus();
+    }
+
     async function loadNearbyShops(){
         const request = ++activeRequest;
-        if(!navigator.geolocation){ setStatus("Este dispositivo não oferece localização."); return; }
-        setStatus("Obtendo sua localização…");
-        navigator.geolocation.getCurrentPosition(async position=>{
+        cache.clear();
+        document.getElementById("btShopForm").hidden = true;
+        document.getElementById("btShopLocation").textContent = "";
+        if(!navigator.geolocation){ setStatus("Este dispositivo não oferece localização. Digite outra localização abaixo."); return; }
+        setStatus("Obtendo sua localização atual…");
+        navigator.geolocation.getCurrentPosition(position=>{
             if(request !== activeRequest){ return; }
             const {latitude:lat,longitude:lon} = position.coords;
-            setStatus("Buscando lojas próximas…");
-            try{
-                let stores = await findStores(lat,lon,15000);
-                if(stores.length < 3){ stores = await findStores(lat,lon,50000); }
-                if(request === activeRequest){ render(stores,lat,lon); }
-            }catch(error){
-                if(request === activeRequest){
-                    setStatus("A busca de lojas está indisponível agora. Tente novamente em instantes.");
-                }
-            }
+            searchAt(lat,lon,"GPS atual",request);
         },error=>{
             if(request !== activeRequest){ return; }
             setStatus(error.code === 1
-                ? "Permita o acesso à localização para ver as lojas próximas."
-                : "Não foi possível obter sua localização. Verifique o GPS e tente novamente.");
-        },{enableHighAccuracy:false,timeout:12000,maximumAge:0});
+                ? "Permita o acesso à localização ou digite um bairro ou cidade."
+                : "Não foi possível obter sua localização. Digite um bairro ou cidade.");
+        },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     }
 
     function openNearbyShops(){
@@ -147,18 +202,20 @@
                 .bt-shop-top button{background:#0b243b;color:#fff;border:1px solid #47717f;border-radius:10px;font-size:24px;width:42px;height:42px}
                 .bt-shop-top strong{font-size:22px}.bt-shop-card{display:block;margin:12px 0;padding:16px;border-radius:16px;background:#10283e;border:1px solid #36556b}
                 .bt-shop-card strong,.bt-shop-card span,.bt-shop-card small{display:block}.bt-shop-card span,.bt-shop-card small{color:#a9c1d2;margin-top:8px;line-height:1.5}
-                .bt-shop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-links a,.bt-shop-link,#btShopReload{display:inline-block;background:#087fae;color:white;border:0;border-radius:9px;padding:10px 13px;text-decoration:none;font-weight:700}
-                #btShopReload{margin-top:10px}.bt-shop-foot{color:#829bb0;font-size:12px;line-height:1.5;margin-top:22px}.bt-shop-foot a{color:#5ecfff}`;
+                .bt-shop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-links a,.bt-shop-link,.bt-shop-actions button,#btShopForm button{display:inline-block;background:#087fae;color:white;border:0;border-radius:9px;padding:10px 13px;text-decoration:none;font-weight:700}
+                .bt-shop-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-actions button{cursor:pointer}.bt-shop-actions button.secondary{background:#0b243b;border:1px solid #47717f}.bt-shop-location{color:#a9c1d2;line-height:1.5;overflow-wrap:anywhere}.bt-shop-form{margin-top:14px}.bt-shop-form[hidden]{display:none}.bt-shop-form label{display:block;margin-bottom:7px}.bt-shop-form input{width:100%;box-sizing:border-box;background:#10283e;color:#fff;border:1px solid #47717f;border-radius:9px;padding:12px;font-size:16px}.bt-shop-form button{margin-top:9px}.bt-shop-form button:disabled{opacity:.55}.bt-shop-foot{color:#829bb0;font-size:12px;line-height:1.5;margin-top:22px}.bt-shop-foot a{color:#5ecfff}`;
             document.head.appendChild(style);
             screen = document.createElement("section");
             screen.id = "btNearbyShopsScreen";
             screen.innerHTML = `<div class="bt-shop-shell"><div class="bt-shop-top"><button type="button" id="btShopClose" aria-label="Voltar">‹</button><strong>Lojas perto de mim</strong></div>
                 <p>Encontre até três lojas de refrigeração próximas. Confirme a disponibilidade da peça antes de ir.</p>
-                <div id="btShopResults" aria-live="polite"></div><button id="btShopReload" type="button">Buscar novamente</button>
+                <p id="btShopLocation" class="bt-shop-location"></p><div id="btShopResults" aria-live="polite"></div>\n                <div class="bt-shop-actions"><button id="btShopReload" type="button">Usar GPS agora</button><button id="btShopChange" class="secondary" type="button">Alterar localização</button></div>\n                <form id="btShopForm" class="bt-shop-form" hidden><label for="btShopAddress">Bairro, cidade ou endereço</label><input id="btShopAddress" type="text" placeholder="Ex.: Copacabana, Rio de Janeiro" autocomplete="street-address" required><button type="submit">Buscar neste local</button></form>
                 <div class="bt-shop-foot">As lojas dependem dos cadastros locais, e a distância mostrada é em linha reta. Telefone e WhatsApp só aparecem quando cadastrados. Dados: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>.</div></div>`;
             document.body.appendChild(screen);
             document.getElementById("btShopClose").addEventListener("click",closeNearbyShops);
             document.getElementById("btShopReload").addEventListener("click",loadNearbyShops);
+            document.getElementById("btShopChange").addEventListener("click",showManualLocation);
+            document.getElementById("btShopForm").addEventListener("submit",searchManual);
         }
         screen.classList.add("show");
         document.body.style.overflow = "hidden";
