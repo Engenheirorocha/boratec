@@ -102,7 +102,7 @@
             use:"Câmaras, balcões, ilhas e equipamentos de resfriados/congelados.",
             source:"https://www.elitechbrasil.com.br/ecs-974-neo-controlador-digital-temperatura-para-congelados-110v",
             models:[
-                {name:"ECS-974 NEO",note:"Controle de compressor, ventiladores e degelo em congelados.",manualUrl:"https://www.elitechbrasil.com.br/upload/produto/arquivo/ecs-974-neo-controlador-digital-temperatura-para-congelados-220v.pdf"},
+                {name:"ECS-974 NEO",note:"Controle de compressor, ventiladores e degelo em congelados.",manualUrl:"https://drive.google.com/file/d/1MrZ9-yUKRnC2TgDrzAIN8ImTW6i5MouC/preview"},
                 {name:"ECS-961 NEO",note:"Controlador eletrônico da linha ECS para refrigeração.",manualUrl:"https://institucional.elitechbrasil.com.br/wp-content/uploads/2019/08/Manual-ECS-961.pdf"},
                 {name:"ECS-974",note:"Geração anterior da família ainda encontrada em campo.",manualUrl:"https://xzhuaying.com/static/upload/file/20250122/1737516733134459.pdf"}
             ]
