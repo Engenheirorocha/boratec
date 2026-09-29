@@ -63,8 +63,8 @@
     }
 
     function queryFor(lat,lon,radius){
-        // Só lojas, com nome relacionado a refrigeração/climatização.
-        return `[out:json][timeout:20];(nwr(around:${radius},${lat},${lon})[shop][name~"refrigera|climatiza|ar.?condicionad|hvac",i];nwr(around:${radius},${lat},${lon})[shop=trade][trade~"hvac|refrigeration|air_conditioning",i];);out center tags;`;
+        // Inclui lojas identificadas pelo nome, descrição ou especialidade cadastrada.
+        return `[out:json][timeout:20];(nwr(around:${radius},${lat},${lon})[shop][name~"refrigera|climatiza|ar.?condicionad|hvac",i];nwr(around:${radius},${lat},${lon})[shop][description~"refrigera|climatiza|ar.?condicionad|hvac",i];nwr(around:${radius},${lat},${lon})[shop=trade][trade~"hvac|refrigeration|air_conditioning",i];);out center tags;`;
     }
 
     async function findStores(lat,lon,radius){
@@ -102,8 +102,8 @@
         const box = document.getElementById("btShopResults");
         if(!box){ return; }
         if(!stores.length){
-            box.innerHTML = `<p>Nenhuma loja de refrigeração cadastrada a até 15 km deste ponto na base consultada.</p>
-                <a class="bt-shop-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Procurar lojas no mapa</a>`;
+            box.innerHTML = `<p>Nenhuma loja de refrigeração cadastrada a até 15 km deste ponto no OpenStreetMap. Isso não significa que não haja lojas na região.</p>
+                <a class="bt-shop-link" target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Procurar no Google Maps</a>`;
             return;
         }
         box.innerHTML = stores.slice(0,3).map(store=>{
@@ -118,9 +118,7 @@
                 </div>
                 ${!tel && !store.whatsapp ? `<small>Contato não cadastrado. Confira a loja antes de sair.</small>` : ""}
             </article>`;
-        }).join("") + (stores.length < 3
-            ? `<p class="bt-shop-note">Estas são as lojas cadastradas a até 15 km. <a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Ver mais opções no mapa</a></p>`
-            : "");
+        }).join("") + `<p class="bt-shop-note">A lista usa as lojas cadastradas no OpenStreetMap a até 15 km. Faltou alguma? <a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("loja de refrigeração perto de "+lat+","+lon)}">Ver mais lojas no Google Maps</a></p>`;
     }
 
     function setStatus(message){
