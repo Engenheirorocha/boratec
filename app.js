@@ -14271,11 +14271,15 @@ function setupBoraTecHomeCarousel(){
         );
 
         dots.forEach(
-            (dot,index) =>
-                dot.classList.toggle(
-                    "active",
-                    index === current
-                )
+            (dot,index) => {
+                dot.classList.toggle("active",index === current);
+                if(index === current){
+                    dot.setAttribute("aria-current","true");
+                }
+                else{
+                    dot.removeAttribute("aria-current");
+                }
+            }
         );
     }
 
@@ -14286,6 +14290,12 @@ function setupBoraTecHomeCarousel(){
 
     prev.onclick = () => move(-1);
     next.onclick = () => move(1);
+    dots.forEach((dot,index) => {
+        dot.addEventListener("click",() => {
+            current = index;
+            render();
+        });
+    });
 
     rail.addEventListener(
         "pointerdown",
@@ -15102,6 +15112,7 @@ function createTechnicalArea(){
                 display:none;
                 overflow-y:auto;
                 background:
+                    radial-gradient(circle at 50% 48%,rgba(22,135,190,.19),transparent 48%),
                     radial-gradient(circle at 82% -8%,rgba(0,188,255,.16),transparent 32%),
                     linear-gradient(180deg,#06182b 0%,#071a2e 100%);
                 color:#fff;
@@ -15112,8 +15123,20 @@ function createTechnicalArea(){
             .bt-tech-shell{
                 width:min(100%,680px);
                 margin:0 auto;
-                padding:20px 18px 110px;
+                min-height:100vh;
+                min-height:100dvh;
+                padding:calc(20px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
                 box-sizing:border-box;
+                display:flex;
+                flex-direction:column;
+            }
+
+            .bt-tech-stage{
+                flex:1;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+                min-height:430px;
             }
 
             .bt-tech-top{
@@ -15161,26 +15184,28 @@ function createTechnicalArea(){
 
             .bt-tech-intro{
                 margin-bottom:18px;
+                text-align:center;
             }
 
             .bt-tech-intro strong{
                 display:block;
-                font-size:14px;
+                font-size:19px;
                 font-weight:950;
-                margin-bottom:5px;
+                margin-bottom:6px;
+                letter-spacing:-.3px;
             }
 
             .bt-tech-intro span{
                 display:block;
-                color:#86a0b5;
-                font-size:11px;
+                color:#a5bed0;
+                font-size:13px;
                 line-height:1.4;
             }
 
             .bt-tech-actions{
                 position:relative;
                 height:246px;
-                margin:clamp(28px,6vh,64px) -18px 8px;
+                margin:12px -18px 8px;
                 overflow:hidden;
                 touch-action:pan-y;
                 user-select:none;
@@ -15192,12 +15217,12 @@ function createTechnicalArea(){
                 left:50%;
                 width:min(72vw,250px);
                 min-height:220px;
-                border:1px solid rgba(119,151,178,.18);
-                border-radius:22px;
+                border:1px solid rgba(94,207,255,.22);
+                border-radius:26px;
                 padding:22px 18px;
                 text-align:center;
                 color:#fff;
-                background:linear-gradient(145deg,rgba(15,45,70,.98),rgba(9,35,58,.98));
+                background:linear-gradient(150deg,#143b59 0%,#0b2942 55%,#0a2038 100%);
                 box-shadow:0 16px 38px rgba(0,0,0,.22);
                 cursor:pointer;
                 box-sizing:border-box;
@@ -15217,7 +15242,22 @@ function createTechnicalArea(){
                 opacity:1;
                 pointer-events:auto;
                 filter:none;
+                border-color:rgba(94,207,255,.60);
+                background:linear-gradient(155deg,#174865 0%,#0b3150 55%,#09243c 100%);
+                box-shadow:0 22px 50px rgba(0,0,0,.34),0 0 30px rgba(49,185,232,.18),inset 0 1px 0 rgba(255,255,255,.12);
                 transform:translateX(-50%) scale(1);
+            }
+
+            .bt-tech-card.bt-tech-carousel-active:hover{
+                border-color:#78ddff;
+            }
+
+            .bt-tech-card:focus-visible,
+            .bt-tech-carousel-arrow:focus-visible,
+            .bt-tech-carousel-dot:focus-visible,
+            .bt-tech-back:focus-visible{
+                outline:2px solid #8ce4ff;
+                outline-offset:3px;
             }
 
             .bt-tech-card.bt-tech-carousel-prev{
@@ -15248,13 +15288,14 @@ function createTechnicalArea(){
             .bt-tech-card-icon{
                 width:68px;
                 height:68px;
-                border-radius:18px;
+                border-radius:20px;
                 display:flex;
                 align-items:center;
                 justify-content:center;
                 font-size:34px;
-                background:rgba(94,207,255,.08);
-                border:1px solid rgba(94,207,255,.12);
+                background:linear-gradient(145deg,rgba(94,207,255,.18),rgba(94,207,255,.06));
+                border:1px solid rgba(94,207,255,.34);
+                box-shadow:0 8px 24px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.10);
                 margin-bottom:18px;
             }
 
@@ -15323,7 +15364,7 @@ function createTechnicalArea(){
             .bt-tech-card small{
                 display:block;
                 max-width:190px;
-                color:#8098ad;
+                color:#b5ccdc;
                 font-size:11px;
                 line-height:1.42;
             }
@@ -15333,16 +15374,16 @@ function createTechnicalArea(){
                 align-items:center;
                 justify-content:center;
                 gap:12px;
-                margin:3px 0 24px;
+                margin:10px 0 18px;
             }
 
             .bt-tech-carousel-arrow{
                 width:42px;
                 height:42px;
-                border-radius:13px;
-                border:1px solid rgba(119,151,178,.20);
-                background:#0b243b;
-                color:#fff;
+                border-radius:50%;
+                border:1px solid rgba(94,207,255,.34);
+                background:#12334e;
+                color:#d6f6ff;
                 font-size:24px;
                 display:flex;
                 align-items:center;
@@ -15351,6 +15392,7 @@ function createTechnicalArea(){
             }
 
             .bt-tech-carousel-arrow:active{ transform:scale(.96); }
+            .bt-tech-carousel-arrow:hover{ background:#1b506e; }
 
             .bt-tech-carousel-dots{
                 min-width:104px;
@@ -15361,10 +15403,13 @@ function createTechnicalArea(){
             }
 
             .bt-tech-carousel-dot{
-                width:6px;
-                height:6px;
+                width:8px;
+                height:8px;
+                padding:0;
+                border:0;
                 border-radius:99px;
-                background:rgba(128,151,172,.30);
+                background:rgba(128,151,172,.40);
+                cursor:pointer;
                 transition:width .2s ease,background .2s ease;
             }
 
@@ -15383,7 +15428,16 @@ function createTechnicalArea(){
                 box-shadow:0 14px 34px rgba(0,0,0,.18);
             }
 
-            .bt-tech-workspace.show{ display:block; }
+            .bt-tech-workspace.show{ display:block; scroll-margin-top:24px; }
+
+            @media(max-height:650px){
+                .bt-tech-stage{ min-height:390px; }
+                .bt-tech-actions{ margin-top:8px; }
+            }
+
+            @media(prefers-reduced-motion:reduce){
+                .bt-tech-card,.bt-tech-carousel-dot{ transition:none; }
+            }
 
             .bt-tech-workspace-title{
                 display:flex;
@@ -15588,6 +15642,7 @@ function createTechnicalArea(){
                 </div>
             </div>
 
+            <div class="bt-tech-stage">
             <div class="bt-tech-intro">
                 <strong>Calculadoras</strong>
                 <span>Deslize para os lados e escolha a ferramenta.</span>
@@ -15658,7 +15713,7 @@ function createTechnicalArea(){
                 <div
                     id="btTechnicalCarouselDots"
                     class="bt-tech-carousel-dots"
-                    aria-hidden="true"
+                    aria-label="Escolher ferramenta"
                 ></div>
 
                 <button
@@ -15667,6 +15722,7 @@ function createTechnicalArea(){
                     type="button"
                     aria-label="Próximo"
                 >›</button>
+            </div>
             </div>
 
             <div id="btTechnicalWorkspace" class="bt-tech-workspace"></div>
@@ -15733,7 +15789,7 @@ function setupTechnicalAreaCarousel(){
         cards
         .map(
             (_,index) =>
-                `<span class="bt-tech-carousel-dot${index === 0 ? " active" : ""}"></span>`
+                `<button type="button" class="bt-tech-carousel-dot${index === 0 ? " active" : ""}" aria-label="Ferramenta ${index + 1} de ${cards.length}"></button>`
         )
         .join("");
 
