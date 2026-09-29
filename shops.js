@@ -99,14 +99,21 @@
     }
 
     function googleSearchURL(lat,lon){
-        const query = Number.isFinite(lat) && Number.isFinite(lon)
-            ? "lojas de refrigeração perto de "+lat+","+lon
-            : "lojas de refrigeração perto de mim";
-        return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query);
+        return "https://www.google.com/maps/search/"+
+            encodeURIComponent("lojas de refrigeração")+"/@"+lat+","+lon+",13z";
     }
 
     function setGoogleSearchPoint(lat,lon){
-        document.getElementById("btShopGoogle").href = googleSearchURL(lat,lon);
+        const link = document.getElementById("btShopGoogle");
+        if(Number.isFinite(lat) && Number.isFinite(lon)){
+            link.href = googleSearchURL(lat,lon);
+            link.removeAttribute("aria-disabled");
+            link.textContent = "Buscar lojas nesta região no Google Maps ↗";
+        }else{
+            link.removeAttribute("href");
+            link.setAttribute("aria-disabled","true");
+            link.textContent = "Aguardando localização para abrir o Google Maps";
+        }
     }
 
     function render(stores,lat,lon){
@@ -260,7 +267,7 @@
                 #btNearbyShopsScreen.show{display:block}.bt-shop-shell{max-width:680px;margin:auto}.bt-shop-top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
                 .bt-shop-top button{background:#0b243b;color:#fff;border:1px solid #47717f;border-radius:10px;font-size:24px;width:42px;height:42px}
                 .bt-shop-top strong{font-size:22px}.bt-shop-card{display:block;margin:12px 0;padding:16px;border-radius:16px;background:#10283e;border:1px solid #36556b}
-                .bt-shop-google{display:block;text-align:center;background:#087fae;color:#fff;border-radius:10px;padding:15px;margin:14px 0 18px;text-decoration:none;font-size:16px;font-weight:700}
+                .bt-shop-google{display:block;text-align:center;background:#087fae;color:#fff;border-radius:10px;padding:15px;margin:14px 0 18px;text-decoration:none;font-size:16px;font-weight:700}.bt-shop-google[aria-disabled="true"]{opacity:.55;cursor:wait}
                 .bt-shop-card strong,.bt-shop-card span,.bt-shop-card small{display:block}.bt-shop-card span,.bt-shop-card small{color:#a9c1d2;margin-top:8px;line-height:1.5}
                 .bt-shop-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-links a,.bt-shop-link,.bt-shop-actions button,#btShopForm button{display:inline-block;background:#087fae;color:white;border:0;border-radius:9px;padding:10px 13px;text-decoration:none;font-weight:700}
                 .bt-shop-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.bt-shop-actions button{cursor:pointer}.bt-shop-actions button.secondary{background:#0b243b;border:1px solid #47717f}.bt-shop-location,.bt-shop-note{color:#a9c1d2;line-height:1.5;overflow-wrap:anywhere}.bt-shop-location a,.bt-shop-note a{color:#5ecfff}.bt-shop-form{margin-top:14px}.bt-shop-form[hidden]{display:none}.bt-shop-form label{display:block;margin-bottom:7px}.bt-shop-form input{width:100%;box-sizing:border-box;background:#10283e;color:#fff;border:1px solid #47717f;border-radius:9px;padding:12px;font-size:16px}.bt-shop-form button{margin-top:9px}.bt-shop-form button:disabled{opacity:.55}.bt-shop-foot{color:#829bb0;font-size:12px;line-height:1.5;margin-top:22px}.bt-shop-foot a{color:#5ecfff}`;
@@ -269,8 +276,8 @@
             screen.id = "btNearbyShopsScreen";
             screen.innerHTML = `<div class="bt-shop-shell"><div class="bt-shop-top"><button type="button" id="btShopClose" aria-label="Voltar">‹</button><strong>Lojas perto de mim</strong></div>
                 <p>Procure lojas de refrigeração perto do ponto escolhido. Confirme a disponibilidade da peça antes de ir.</p>
-                <a id="btShopGoogle" class="bt-shop-google" href="${googleSearchURL()}" target="_blank" rel="noopener noreferrer">Buscar lojas no Google Maps ↗</a>
-                <p class="bt-shop-note">O Google Maps abre fora do BoraTec. A lista abaixo usa o OpenStreetMap.</p>
+                <a id="btShopGoogle" class="bt-shop-google" aria-disabled="true" target="_blank" rel="noopener noreferrer">Aguardando localização para abrir o Google Maps</a>
+                <p class="bt-shop-note">A busca do Google Maps abre centrada no ponto encontrado; ele pode sugerir lojas fora dessa região. A lista abaixo usa o OpenStreetMap.</p>
                 <p id="btShopLocation" class="bt-shop-location"></p><div id="btShopResults" aria-live="polite"></div>\n                <div class="bt-shop-actions"><button id="btShopReload" type="button">Usar GPS agora</button><button id="btShopChange" class="secondary" type="button">Alterar localização</button></div>\n                <form id="btShopForm" class="bt-shop-form" hidden><label for="btShopAddress">Bairro, cidade ou endereço</label><input id="btShopAddress" type="text" placeholder="Ex.: Copacabana, Rio de Janeiro" autocomplete="street-address" required><button type="submit">Buscar neste local</button></form>
                 <div class="bt-shop-foot">As lojas dependem dos cadastros locais, e a distância mostrada é em linha reta. Telefone e WhatsApp só aparecem quando cadastrados. Dados: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>.</div></div>`;
             document.body.appendChild(screen);
