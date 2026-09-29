@@ -86,7 +86,6 @@
             screen.id = "btNearbyShopsScreen";
             screen.innerHTML = `<div class="bt-shop-shell">
                 <div class="bt-shop-top"><button type="button" id="btShopClose" aria-label="Voltar">‹</button><strong>Lojas perto de mim</strong></div>
-                <p>Procure lojas de refrigeração perto da sua localização. Confirme a disponibilidade da peça antes de ir.</p>
                 <a id="btShopGoogle" class="bt-shop-google" aria-disabled="true" target="_blank" rel="noopener noreferrer">Localizando para abrir o Google Maps…</a>
                 </div>`;
             document.body.appendChild(screen);
