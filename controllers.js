@@ -207,7 +207,7 @@
             if(event.pointerType==="mouse"&&event.button!==0) return;
             pointerStartX=event.clientX;
             dragged=false;
-            try{carousel.setPointerCapture(event.pointerId);}catch(_){}
+
         });
         carousel.addEventListener("pointerup",event=>{
             if(pointerStartX===null) return;
