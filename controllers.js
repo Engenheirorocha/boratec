@@ -171,7 +171,7 @@
             .bt-ctrl-detail-box{border:1px solid #39474f;border-radius:12px;background:#11191e;padding:15px;margin:12px 0}.bt-ctrl-detail-box b{display:block;font-size:12px;margin-bottom:7px}.bt-ctrl-detail-box p,.bt-ctrl-detail-box li{color:#a9b6bd;font-size:12px;line-height:1.55}.bt-ctrl-detail-box ul{margin:0;padding-left:18px}
             .bt-ctrl-manual-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 9px}.bt-ctrl-manual-title strong{font-size:15px}.bt-ctrl-pdf-preview{position:relative;width:100%;height:40vh;min-height:300px;max-height:500px;border:1px solid #41515a;border-radius:12px;background:#fff;overflow:hidden}.bt-ctrl-pdf-preview iframe{width:100%;height:100%;border:0;background:#fff;pointer-events:none}.bt-ctrl-pdf-tap{position:absolute;inset:0;width:100%;height:100%;border:0;background:linear-gradient(180deg,transparent 60%,rgba(4,10,14,.62));color:#fff;cursor:pointer}.bt-ctrl-pdf-tap span{position:absolute;right:12px;bottom:12px;padding:10px 13px;border-radius:9px;background:#078bb8;color:#fff;font-size:11px;font-weight:900;box-shadow:0 3px 12px #0008}.bt-ctrl-pdf-modal{display:none;position:fixed;inset:0;z-index:20;background:#070d11}.bt-ctrl-pdf-modal.show{display:block}.bt-ctrl-pdf-modal iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}.bt-ctrl-pdf-close{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:2;width:42px;height:42px;border:1px solid #66808d;border-radius:50%;background:#14232bea;color:#fff;font-size:25px;cursor:pointer}.bt-ctrl-manual-fallback{padding:22px;border:1px dashed #44545d;border-radius:12px;text-align:center;color:#96a6af;font-size:12px;line-height:1.5;background:#11191e}.bt-ctrl-official{display:block;margin-top:12px;padding:13px;border-radius:10px;text-align:center;text-decoration:none;background:linear-gradient(180deg,#0aaee0,#087fae);color:#fff;font-size:12px;font-weight:950;border:1px solid #22c9f6}
             .bt-ctrl-note{margin-top:11px;color:#73848e;font-size:10px;line-height:1.5}
-            @media(max-width:520px){.bt-ctrl-card{width:min(72vw,250px)}.bt-ctrl-pdf{height:68vh;min-height:460px}}
+            @media(max-width:520px){.bt-ctrl-card{width:min(72vw,250px)}.bt-ctrl-pdf-preview{height:68vh;min-height:360px;max-height:none}}
         `;
         document.head.appendChild(style);
     }
@@ -336,7 +336,7 @@
     }
 
     function manualViewerUrl(url){
-        return "https://docs.google.com/gview?embedded=1&url="+encodeURIComponent(url);
+        return String(url);
     }
 
     function openManualFullscreen(){
