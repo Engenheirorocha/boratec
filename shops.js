@@ -55,7 +55,7 @@
     }
 
     async function findStores(lat,lon,radius){
-        const key = `${lat.toFixed(2)},${lon.toFixed(2)},${radius}`;
+        const key = `${lat.toFixed(3)},${lon.toFixed(3)},${radius}`;
         const saved = cache.get(key);
         if(saved && Date.now()-saved.time < 15*60*1000){ return saved.stores; }
         const controller = new AbortController();
@@ -135,7 +135,7 @@
             setStatus(error.code === 1
                 ? "Permita o acesso à localização para ver as lojas próximas."
                 : "Não foi possível obter sua localização. Verifique o GPS e tente novamente.");
-        },{enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+        },{enableHighAccuracy:false,timeout:12000,maximumAge:0});
     }
 
     function openNearbyShops(){
