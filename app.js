@@ -14878,6 +14878,39 @@ const btNormsCatalog = [
         ]
     },
     {
+        id:"nbr16069", icon:"🧯", title:"ABNT NBR 16069",
+        subtitle:"Segurança em sistemas frigoríficos",
+        scope:"Projeto, construção, instalação e operação de sistemas frigoríficos aplicados à refrigeração e climatização.",
+        guide:"Consulte os requisitos de segurança para o sistema e o fluido usados no projeto ou na instalação. Confirme também as instruções do fabricante.",
+        note:"A aplicação depende das características do sistema. Esta referência não substitui a NBR 16655 na instalação residencial de split.",
+        sources:[
+            {label:"Escopo da NBR 16069 — ABRAVA/CB-055",url:"https://abrava.com.br/cb-55-informa-a-publicacao-das-nbr-16069-e-13-598-de-refrigeracao/"},
+            {label:"Catálogo de normas — ABNT",url:"https://www.abntcatalogo.com.br/"}
+        ]
+    },
+    {
+        id:"nbriso51493", icon:"📍", title:"ABNT NBR ISO 5149-3",
+        subtitle:"Segurança no local de instalação",
+        scope:"Sistemas de refrigeração e bombas de calor: requisitos ambientais e de segurança relativos ao local de instalação.",
+        guide:"Confira se as condições do local e do sistema requerem medidas específicas previstas na norma antes da instalação.",
+        note:"Consulte a edição aplicável e as demais partes da série conforme o sistema atendido.",
+        sources:[
+            {label:"Série ISO 5149 — comissão técnica ABRAVA",url:"https://abrava.com.br/normalizacao/ce-055001-004-comissao-de-estudos-de-sistemas-de-refrigeracao-comercial-e-industrial/"},
+            {label:"Catálogo de normas — ABNT",url:"https://www.abntcatalogo.com.br/"}
+        ]
+    },
+    {
+        id:"nbr13971", icon:"🗓️", title:"ABNT NBR 13971",
+        subtitle:"Manutenção programada",
+        scope:"Manutenção programada de sistemas de refrigeração, condicionamento de ar, ventilação e aquecimento.",
+        guide:"Use a norma para orientar o planejamento das atividades e os registros de manutenção, conforme os equipamentos e o contrato atendidos.",
+        note:"Para PMOC, confira também a legislação e as exigências específicas da instalação.",
+        sources:[
+            {label:"NBR 13971 — comissão técnica ABRAVA",url:"https://abrava.com.br/normalizacao/ce-055002-003-comissao-de-estudos-de-sistemas-centrais-de-condicionamento-de-ar-e-ventilacao-comerciais-e-industriais/"},
+            {label:"Catálogo de normas — ABNT",url:"https://www.abntcatalogo.com.br/"}
+        ]
+    },
+    {
         id:"nr6", icon:"🦺", title:"NR-6",
         subtitle:"Equipamentos de proteção individual",
         scope:"Seleção, fornecimento e utilização de EPI conforme os riscos do trabalho.",
