@@ -18610,7 +18610,6 @@ function searchTechnicalLGErrorCode(){
             </div>
             <div class="bt-tech-result-secondary">O código orienta a inspeção; não identifica sozinho uma peça defeituosa.</div>
             <div class="bt-tech-result-secondary" style="margin-top:12px;">Resumo em português baseado em documentação técnica da LG. Confira a aplicação e as medições no manual do modelo.</div>
-            <div style="margin-top:12px;"><a href="https://www.lg.com/br/suporte/suporte-ao-producto/manuais/" target="_blank" rel="noopener noreferrer" style="color:#5ecfff;">Buscar manual do modelo na LG Brasil</a></div>
         </div>
     `;
 }
