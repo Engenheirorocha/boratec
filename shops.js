@@ -23,7 +23,6 @@
         latestPosition = position;
         link.href = searchURL(latitude,longitude);
         link.removeAttribute("aria-disabled");
-        document.getElementById("btShopAction").textContent = "Abrir Google Maps ↗";
         link.setAttribute("aria-label","Buscar lojas de refrigeração nesta região no Google Maps");
         document.getElementById("btShopStatus").textContent = "Localização atualizada • pronto para buscar";
         document.querySelector(".bt-shop-shell").dataset.state = "ready";
@@ -35,7 +34,6 @@
         latestPosition = null;
         link.removeAttribute("href");
         link.setAttribute("aria-disabled","true");
-        document.getElementById("btShopAction").textContent = "Tentar novamente";
         link.setAttribute("aria-label","Tentar obter a localização novamente");
         document.getElementById("btShopStatus").textContent = error && error.code === 1
             ? "Ative a localização para buscar lojas"
@@ -59,7 +57,6 @@
         if(!link){ return; }
         link.removeAttribute("href");
         link.setAttribute("aria-disabled","true");
-        document.getElementById("btShopAction").textContent = "Localizando…";
         link.setAttribute("aria-label","Buscando sua localização atual");
         document.getElementById("btShopStatus").textContent = "Buscando sua posição atual";
         document.querySelector(".bt-shop-shell").dataset.state = "locating";
@@ -89,7 +86,7 @@
 
             screen = document.createElement("section");
             screen.id = "btNearbyShopsScreen";
-            screen.innerHTML = "<div class=\"bt-shop-shell\" data-state=\"locating\">\n    <div class=\"bt-shop-top\"><button type=\"button\" id=\"btShopClose\" aria-label=\"Voltar\">‹</button><strong>Lojas perto de mim</strong></div>\n    <main class=\"bt-shop-main\">\n        <span class=\"bt-shop-eyebrow\">BoraTec • Área técnica</span>\n        <h2>Encontre o que precisa por perto</h2>\n        <p class=\"bt-shop-description\">Lojas de refrigeração na região em que você está agora.</p>\n        <div class=\"bt-shop-orbit\">\n            <a id=\"btShopGoogle\" class=\"bt-shop-google\" aria-disabled=\"true\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Localizando lojas de refrigeração\">\n                <svg viewBox=\"0 0 48 48\" aria-hidden=\"true\"><path d=\"M24 42s14-12 14-24a14 14 0 0 0-28 0c0 12 14 24 14 24Z\"/><circle cx=\"24\" cy=\"18\" r=\"5\"/></svg>\n                <span id=\"btShopAction\">Localizando…</span>\n            </a>\n        </div>\n        <p id=\"btShopStatus\" class=\"bt-shop-status\" role=\"status\" aria-live=\"polite\">Buscando sua posição atual</p>\n        <p class=\"bt-shop-tip\">Ao tocar no botão, você verá as lojas no Google Maps.</p>\n    </main>\n</div>";
+            screen.innerHTML = "<div class=\"bt-shop-shell\" data-state=\"locating\">\n    <div class=\"bt-shop-top\"><button type=\"button\" id=\"btShopClose\" aria-label=\"Voltar\">‹</button><strong>Lojas perto de mim</strong></div>\n    <main class=\"bt-shop-main\">\n        <span class=\"bt-shop-eyebrow\">BoraTec • Área técnica</span>\n        <h2>Encontre a loja mais perto</h2>\n        <p class=\"bt-shop-description\">Lojas de refrigeração na região em que você está agora.</p>\n        <div class=\"bt-shop-orbit\">\n            <a id=\"btShopGoogle\" class=\"bt-shop-google\" aria-disabled=\"true\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Localizando lojas de refrigeração\">\n                <svg viewBox=\"0 0 48 48\" aria-hidden=\"true\"><path d=\"M24 42s14-12 14-24a14 14 0 0 0-28 0c0 12 14 24 14 24Z\"/><circle cx=\"24\" cy=\"18\" r=\"5\"/></svg>\n            </a>\n        </div>\n        <p id=\"btShopStatus\" class=\"bt-shop-status\" role=\"status\" aria-live=\"polite\">Buscando sua posição atual</p>\n        <p class=\"bt-shop-tip\">Ao tocar no botão, você verá as lojas no Google Maps.</p>\n    </main>\n</div>";
             document.body.appendChild(screen);
             document.getElementById("btShopClose").addEventListener("click",closeNearbyShops);
             document.getElementById("btShopGoogle").addEventListener("click",event => {
