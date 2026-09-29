@@ -18100,6 +18100,441 @@ const btLGErrorCodes = {
         "sources": [
             "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
         ]
+    },
+    "CH01": {
+        "code": "CH01",
+        "title": "Falha do sensor de temperatura ambiente da unidade interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Com a alimentação desligada, confira encaixe do conector, chicote e posição do sensor indicado.",
+            "Meça o sensor e compare os valores com o manual de serviço do modelo; verifique a placa somente após conferir o circuito."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH02": {
+        "code": "CH02",
+        "title": "Falha do sensor de temperatura da tubulação de entrada da unidade interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Com a alimentação desligada, confira encaixe do conector, chicote e posição do sensor indicado.",
+            "Meça o sensor e compare os valores com o manual de serviço do modelo; verifique a placa somente após conferir o circuito."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH04": {
+        "code": "CH04",
+        "title": "Falha da chave de nível de condensado (opcional)",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Chave de nível acionada ou circuito da chave com falha, se o acessório estiver instalado."
+        ],
+        "steps": [
+            "Confirme se o modelo possui chave de nível; inspecione dreno e acúmulo de condensado.",
+            "Se houver bomba ou chave de nível, confira seu funcionamento e ligação conforme o manual específico."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH06": {
+        "code": "CH06",
+        "title": "Falha do sensor de temperatura da tubulação de saída da unidade interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Com a alimentação desligada, confira encaixe do conector, chicote e posição do sensor indicado.",
+            "Meça o sensor e compare os valores com o manual de serviço do modelo; verifique a placa somente após conferir o circuito."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH09": {
+        "code": "CH09",
+        "title": "Falha de memória EEPROM da unidade interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Falha no processamento ou nos dados da memória da placa interna; alimentação ou placa a investigar."
+        ],
+        "steps": [
+            "Confirme a alimentação e os conectores conforme o manual do modelo.",
+            "Se o erro persistir, siga o procedimento de diagnóstico de EEPROM da placa interna antes de decidir por substituição."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH12": {
+        "code": "CH12",
+        "title": "Falha do sensor de temperatura da tubulação intermediária da unidade interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Com a alimentação desligada, confira encaixe do conector, chicote e posição do sensor indicado.",
+            "Meça o sensor e compare os valores com o manual de serviço do modelo; verifique a placa somente após conferir o circuito."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH21": {
+        "code": "CH21",
+        "title": "Proteção de pico no módulo IPM do compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sobrecorrente, problema de alimentação, compressor ou acionamento inverter; a causa exata exige medições."
+        ],
+        "steps": [
+            "Registre quando a proteção atua e confira alimentação, conectores e cabos com o sistema desenergizado.",
+            "Siga o fluxograma do manual do modelo para testar compressor e placa inverter; não condene uma peça apenas pelo código."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH22": {
+        "code": "CH22",
+        "title": "Corrente de entrada CA elevada (CT2)",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Corrente de entrada acima do limite detectado; alimentação, carga ou medição de corrente a verificar."
+        ],
+        "steps": [
+            "Verifique tensão de alimentação e corrente com instrumento adequado, seguindo os limites do modelo.",
+            "Investigue compressor, circuito de potência e sensor de corrente pelo manual de serviço antes de trocar componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH23": {
+        "code": "CH23",
+        "title": "Tensão baixa no barramento CC",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Tensão do barramento CC fora da condição prevista; alimentação ou circuito conversor/inverter a verificar."
+        ],
+        "steps": [
+            "Confirme a tensão CA de entrada e conexões; desligue e aguarde a descarga prevista no manual.",
+            "A medição do barramento CC exige procedimento e equipamento apropriados; siga o manual do modelo."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH25": {
+        "code": "CH25",
+        "title": "Tensão de alimentação CA fora da faixa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Tensão CA baixa ou alta no equipamento, ou anomalia na alimentação a confirmar."
+        ],
+        "steps": [
+            "Meça a tensão na entrada do equipamento sob as condições previstas no manual e compare com a placa.",
+            "Confira disjuntor, conexões e alimentação; corrija a origem da tensão fora da faixa antes de reiniciar."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH27": {
+        "code": "CH27",
+        "title": "Sobrecorrente no circuito conversor do compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sobrecorrente, problema de alimentação, compressor ou acionamento inverter; a causa exata exige medições."
+        ],
+        "steps": [
+            "Registre quando a proteção atua e confira alimentação, conectores e cabos com o sistema desenergizado.",
+            "Siga o fluxograma do manual do modelo para testar compressor e placa inverter; não condene uma peça apenas pelo código."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH28": {
+        "code": "CH28",
+        "title": "Tensão CC elevada no circuito do compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Tensão do barramento CC fora da condição prevista; alimentação ou circuito conversor/inverter a verificar."
+        ],
+        "steps": [
+            "Confirme a tensão CA de entrada e conexões; desligue e aguarde a descarga prevista no manual.",
+            "A medição do barramento CC exige procedimento e equipamento apropriados; siga o manual do modelo."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH29": {
+        "code": "CH29",
+        "title": "Corrente elevada no compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sobrecorrente, problema de alimentação, compressor ou acionamento inverter; a causa exata exige medições."
+        ],
+        "steps": [
+            "Registre quando a proteção atua e confira alimentação, conectores e cabos com o sistema desenergizado.",
+            "Siga o fluxograma do manual do modelo para testar compressor e placa inverter; não condene uma peça apenas pelo código."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH31": {
+        "code": "CH31",
+        "title": "Leitura baixa no circuito do sensor de corrente (CT)",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor ou seu circuito com leitura anormal, incluindo conexão e placa a verificar."
+        ],
+        "steps": [
+            "Confirme conectores e alimentação com o equipamento desenergizado.",
+            "Siga o procedimento de medição do sensor de corrente no manual do modelo antes de substituir a placa."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH32": {
+        "code": "CH32",
+        "title": "Temperatura elevada na descarga do compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Temperatura de descarga acima do limite; ventilação, carga e circuito frigorífico devem ser avaliados conforme o modelo."
+        ],
+        "steps": [
+            "Verifique ventilação da condensadora e condições de operação.",
+            "Compare sensores e parâmetros frigoríficos com o manual; investigue a causa antes de alterar a carga de refrigerante."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH40": {
+        "code": "CH40",
+        "title": "Falha do sensor de corrente (CT)",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor ou seu circuito com leitura anormal, incluindo conexão e placa a verificar."
+        ],
+        "steps": [
+            "Confirme conectores e alimentação com o equipamento desenergizado.",
+            "Siga o procedimento de medição do sensor de corrente no manual do modelo antes de substituir a placa."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH41": {
+        "code": "CH41",
+        "title": "Falha do sensor de temperatura da descarga do compressor inverter",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH44": {
+        "code": "CH44",
+        "title": "Falha do sensor de temperatura do ar externo",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH45": {
+        "code": "CH45",
+        "title": "Falha do sensor intermediário da serpentina externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH46": {
+        "code": "CH46",
+        "title": "Falha do sensor da linha de sucção da unidade externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH48": {
+        "code": "CH48",
+        "title": "Falha do sensor da saída da serpentina externa (linha de líquido)",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH53": {
+        "code": "CH53",
+        "title": "Falha de comunicação da unidade externa para a interna",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Interrupção de alimentação ou comunicação entre unidades; cabos, bornes ou placas a verificar."
+        ],
+        "steps": [
+            "Com o circuito desenergizado, confira alimentação, bornes e cabo de comunicação pelo esquema do modelo.",
+            "Se persistir, faça as medições de comunicação previstas no manual antes de substituir placas."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH60": {
+        "code": "CH60",
+        "title": "Falha de verificação da memória EEPROM da placa externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Falha de verificação dos dados da memória da placa externa; alimentação ou placa a investigar."
+        ],
+        "steps": [
+            "Desenergize a unidade e respeite o tempo de descarga do circuito inverter.",
+            "Confira alimentação e conectores; siga o teste de EEPROM da placa externa previsto no manual específico."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH62": {
+        "code": "CH62",
+        "title": "Temperatura elevada no dissipador da placa inverter externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Resfriamento insuficiente do módulo inverter ou leitura de temperatura anormal; ventilação e sensor a verificar."
+        ],
+        "steps": [
+            "Verifique obstruções e ventilação na unidade externa.",
+            "Siga os testes de temperatura do dissipador e do circuito de potência no manual do modelo."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH63": {
+        "code": "CH63",
+        "title": "Temperatura baixa na tubulação da serpentina externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Temperatura baixa detectada na serpentina externa; sensor, circulação de ar e condições frigoríficas a investigar."
+        ],
+        "steps": [
+            "Verifique condição de operação e fluxo de ar da unidade externa.",
+            "Compare leitura do sensor e parâmetros do circuito com o manual específico antes de corrigir a carga."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH65": {
+        "code": "CH65",
+        "title": "Falha do sensor de temperatura do dissipador da placa externa",
+        "scope": "Referência: manual LG Single Zone Wall Mounted; confirme a aplicação e os testes no manual do modelo.",
+        "causes": [
+            "Sensor desconectado, em curto ou fora da faixa; conexão ou chicote com defeito, a confirmar por medição."
+        ],
+        "steps": [
+            "Desenergize e respeite o tempo de descarga indicado no manual antes de acessar a unidade externa.",
+            "Confira sensor, conector e chicote; compare a medição com a tabela do modelo antes de substituir componentes."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH07": {
+        "code": "CH07",
+        "title": "Conflito de modo de operação entre unidades",
+        "scope": "Somente modelos compatíveis com esta função; confirme no manual e na etiqueta do equipamento.",
+        "causes": [
+            "Unidades associadas solicitando aquecimento e refrigeração/desumidificação ao mesmo tempo, nos modelos que compartilham a condensadora."
+        ],
+        "steps": [
+            "Confirme se o sistema é 2 em 1 ou multi e compare o modo selecionado em cada unidade.",
+            "Coloque todas em modos compatíveis; se o erro permanecer, consulte o manual do conjunto."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH90": {
+        "code": "CH90",
+        "title": "Alerta de proteção durante teste de instalação",
+        "scope": "Somente modelos compatíveis com esta função; confirme no manual e na etiqueta do equipamento.",
+        "causes": [
+            "Durante o teste, conexões de tubulação a verificar; em operação normal, pode ocorrer falha elétrica temporária."
+        ],
+        "steps": [
+            "Se ocorreu após instalação ou realocação, confira as conexões de tubulação pelo manual do modelo.",
+            "Se surgiu durante o uso, faça um ciclo de alimentação de cerca de 5 minutos; persistindo, siga o diagnóstico do fabricante."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH91": {
+        "code": "CH91",
+        "title": "Alerta de proteção durante teste de instalação",
+        "scope": "Somente modelos compatíveis com esta função; confirme no manual e na etiqueta do equipamento.",
+        "causes": [
+            "Durante o teste, conexões de tubulação a verificar; em operação normal, pode ocorrer falha elétrica temporária."
+        ],
+        "steps": [
+            "Se ocorreu após instalação ou realocação, confira as conexões de tubulação pelo manual do modelo.",
+            "Se surgiu durante o uso, faça um ciclo de alimentação de cerca de 5 minutos; persistindo, siga o diagnóstico do fabricante."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
     }
 };
 
@@ -18131,7 +18566,7 @@ function openTechnicalErrorCodeBrand(brand){
         </button>
         <div id="btLGErrorResult" aria-live="polite"></div>
         <div class="bt-tech-info-note">
-            Base inicial: ${Object.keys(btLGErrorCodes).join(", ")}. Confirme o modelo e consulte o manual específico: o mesmo código pode variar entre linhas. Desligue a alimentação antes de abrir o equipamento; diagnóstico interno exige profissional habilitado.
+            Base LG: ${Object.keys(btLGErrorCodes).length} códigos. Confirme o modelo e consulte o manual específico: o mesmo código pode variar entre linhas. Desligue a alimentação antes de abrir o equipamento; diagnóstico interno exige profissional habilitado.
         </div>
     `;
 
