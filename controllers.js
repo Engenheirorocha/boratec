@@ -8,11 +8,11 @@
             use:"Resfriados, controle de temperatura e degelo natural.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
-                {name:"MT-512E 2HP",note:"Refrigeração/aquecimento, degelo natural e relé para cargas de até 2 HP."},
-                {name:"MT-512E Log",note:"Versão com registro de dados e recursos de monitoramento."},
-                {name:"MT-512E Faston",note:"Versão Evolution com conexões Faston."},
-                {name:"MT-512Ri",note:"Geração anterior ainda encontrada em campo."},
-                {name:"MT-512R",note:"Geração anterior da família MT-512."}
+                {name:"MT-512E 2HP",note:"Refrigeração/aquecimento, degelo natural e relé para cargas de até 2 HP.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/58_v5_pt_BR_4dea87e482.pdf"},
+                {name:"MT-512E Log",note:"Versão com registro de dados e recursos de monitoramento.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/424_v3_pt_BR_1927418b28.pdf"},
+                {name:"MT-512E Faston",note:"Versão Evolution com conexões Faston.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/421_v5_pt_BR_7f24759cee.pdf"},
+                {name:"MT-512Ri",note:"Geração anterior ainda encontrada em campo.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/MT_512_RIV_11_01_T_13387_PORT_c00b81a139.pdf"},
+                {name:"MT-512R",note:"Geração anterior da família MT-512.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/MT_512_06_1acac85bc8.pdf"}
             ]
         },
         {
@@ -20,10 +20,10 @@
             use:"Controle de temperatura em refrigeração ou aquecimento.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
-                {name:"MT-516E",note:"Controle de temperatura com saída auxiliar configurável."},
-                {name:"MT-516EVT",note:"Variante da família para aplicações com recursos adicionais."},
-                {name:"MT-516CVT",note:"Geração anterior, sucedida pela linha EVT."},
-                {name:"MT-516Ri",note:"Modelo anterior ainda comum em instalações existentes."}
+                {name:"MT-516E",note:"Controle de temperatura com saída auxiliar configurável.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/516_v1_pt_BR_4c1ca81a52.pdf"},
+                {name:"MT-516EVT",note:"Variante da família para aplicações com recursos adicionais.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/519_v4_pt_BR_15c28b2464.pdf"},
+                {name:"MT-516CVT",note:"Geração anterior, sucedida pela linha EVT.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/MT_516_CVT_09_01_12235_PORT_d86768a0c9.pdf"},
+                {name:"MT-516Ri",note:"Modelo anterior ainda comum em instalações existentes.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/MT_516_V11_03_T_10759_PORT_cbd42e161a.pdf"}
             ]
         },
         {
@@ -31,11 +31,19 @@
             use:"Congelados, compressor, ventilação e degelo.",
             source:"https://www.fullgauge.com/br/manuais/",
             models:[
-                {name:"TC-900E Power",note:"Controle de congelados com degelo e ventilação."},
-                {name:"TC-900E Log",note:"Controle de congelados com relógio e registro de dados."},
-                {name:"TC-900E 2HP",note:"Versão com relé reforçado para compressor de até 2 HP."},
-                {name:"TC-900Ri Power",note:"Geração anterior da família Power."},
-                {name:"TC-900Ri Clock",note:"Geração anterior com relógio para agenda de degelo."}
+                {name:"TC-900E Power",note:"Controle de congelados com degelo e ventilação.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/876_v6_pt_BR_2572772f79.pdf"},
+                {name:"TC-900E Log",note:"Controle de congelados com relógio e registro de dados.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/TC_900_ELOGV_05_01_T_20219_PORTUGUES_57f3db1710.pdf"},
+                {name:"TC-900E 2HP",note:"Versão com relé reforçado para compressor de até 2 HP.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/864_v6_pt_BR_49f14836be.pdf"},
+                {name:"TC-900Ri Power",note:"Geração anterior da família Power.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/TC_900_RIPWV_03_05_T_12768_PORT_7a3f5c3b31.pdf"},
+                {name:"TC-900Ri Clock",note:"Geração anterior com relógio para agenda de degelo.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/CLOCKV_10_05_T_11000_PORT_0ebf119900.pdf"}
+            ]
+        },
+        {
+            id:"fg-tic17", brand:"Full Gauge", family:"TIC-17",
+            use:"Termostato de uso geral para refrigeração ou aquecimento.",
+            source:"https://www.fullgauge.com/br/produtos/tic-17rgti/",
+            models:[
+                {name:"TIC-17RGTi",note:"Termostato digital para câmaras, balcões, freezers e outras aplicações.",manualUrl:"https://fullgauge-strapi-prod-media-f340da7.s3.sa-east-1.amazonaws.com/1080_v10_pt_BR_b513de9248.pdf"}
             ]
         },
         {
@@ -43,9 +51,9 @@
             use:"Termostatos e controladores compactos para refrigeração comercial.",
             source:"https://www.copeland.com/en-us/brands/dixell",
             models:[
-                {name:"XR02CX",note:"Controlador compacto para aplicações básicas de refrigeração."},
-                {name:"XR03CX",note:"Controlador para refrigeração com recursos de degelo."},
-                {name:"XR06CX",note:"Controle de compressor, ventilador e degelo com duas sondas.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/E-CLASS/XR06CX/XR06CX-GB.pdf"}
+                {name:"XR02CX",note:"Controlador compacto para aplicações básicas de refrigeração.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/E-CLASS/XR01-02CX/XR01-02CX-PT.pdf"},
+                {name:"XR03CX",note:"Controlador para refrigeração com recursos de degelo.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/E-CLASS/XR03-04CX/XR03-04CX-PT.pdf"},
+                {name:"XR06CX",note:"Controle de compressor, ventilador e degelo com duas sondas.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/E-CLASS/XR06CX/XR06CX-PT.pdf"}
             ]
         },
         {
@@ -54,8 +62,8 @@
             source:"https://www.copeland.com/en-us/brands/dixell",
             models:[
                 {name:"XR60CX",note:"Controlador universal para média e baixa temperatura.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/XR-CX/XR60CX/XR60CX-PT.pdf"},
-                {name:"XR70CX",note:"Família com recursos adicionais de saídas e controle."},
-                {name:"XR75CX",note:"Versão mais completa da linha XR para aplicações comerciais."}
+                {name:"XR70CX",note:"Família com recursos adicionais de saídas e controle.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/XR-CX/XR70CX/XR70CX-GB.pdf"},
+                {name:"XR75CX",note:"Versão mais completa da linha XR para aplicações comerciais.",manualUrl:"https://webapps.copeland.com/Dixell/Content/Pages/Manuals/XR-CX/XR75CX/XR75CX-PT.pdf"}
             ]
         },
         {
@@ -73,10 +81,10 @@
             use:"Vitrines, balcões, unidades estáticas e ventiladas.",
             source:"https://www.carel.com/product/easy",
             models:[
-                {name:"PJEZS",note:"Indicado para unidades estáticas em temperatura normal."},
-                {name:"PJEZC",note:"Indicado para unidades ventiladas e aplicações de baixa temperatura."},
-                {name:"PJEZY",note:"Variante da família easy para aplicações específicas."},
-                {name:"easy compact",note:"Família compacta para controle de refrigeração."}
+                {name:"PJEZS",note:"Indicado para unidades estáticas em temperatura normal.",manualUrl:"https://www.carel.com/documents/10191/0/%2B030220795/04016baa-8186-4dde-9176-b7d8cefe032c?version=1.0"},
+                {name:"PJEZC",note:"Indicado para unidades ventiladas e aplicações de baixa temperatura.",manualUrl:"https://www.carel.com/documents/10191/0/%2B030220795/04016baa-8186-4dde-9176-b7d8cefe032c?version=1.0"},
+                {name:"PJEZY",note:"Variante da família easy para aplicações específicas.",manualUrl:"https://www.carel.com/documents/10191/0/%2B030220795/04016baa-8186-4dde-9176-b7d8cefe032c?version=1.0"},
+                {name:"easy compact",note:"Família compacta para controle de refrigeração.",manualUrl:"https://www.carel.com/documents/10191/0/%2B030220795/04016baa-8186-4dde-9176-b7d8cefe032c?version=1.0"}
             ]
         },
         {
@@ -84,9 +92,9 @@
             use:"Refrigeração comercial e controle eletrônico de unidades frigoríficas.",
             source:"https://www.carel.com/ir33",
             models:[
-                {name:"IR33",note:"Família de controladores eletrônicos para refrigeração comercial."},
-                {name:"IR33C",note:"Variante da linha IR33 encontrada em aplicações frigoríficas."},
-                {name:"IR33 Universal",note:"Versão para aplicações de controle mais flexíveis."}
+                {name:"IR33",note:"Família de controladores eletrônicos para refrigeração comercial.",manualUrl:"https://www.airventilation.ru/files/Carel/-1-ad4e6ffb-97f5-4cfa-ae74-9a2015132b7cversion1.0.pdf"},
+                {name:"IR33C",note:"Variante da linha IR33 encontrada em aplicações frigoríficas.",manualUrl:"https://www.airventilation.ru/files/Carel/-1-ad4e6ffb-97f5-4cfa-ae74-9a2015132b7cversion1.0.pdf"},
+                {name:"IR33 Universal",note:"Versão para aplicações de controle mais flexíveis.",manualUrl:"https://www.carel.com/documents/10191/0/%2B030220805/02ebf09f-9c56-424a-b9ee-2864605a32cd?version=1.0"}
             ]
         },
         {
@@ -94,9 +102,9 @@
             use:"Câmaras, balcões, ilhas e equipamentos de resfriados/congelados.",
             source:"https://www.elitechbrasil.com.br/ecs-974-neo-controlador-digital-temperatura-para-congelados-110v",
             models:[
-                {name:"ECS-974 NEO",note:"Controle de compressor, ventiladores e degelo em congelados."},
-                {name:"ECS-961 NEO",note:"Controlador eletrônico da linha ECS para refrigeração."},
-                {name:"ECS-974",note:"Geração anterior da família ainda encontrada em campo."}
+                {name:"ECS-974 NEO",note:"Controle de compressor, ventiladores e degelo em congelados.",manualUrl:"https://www.elitechbrasil.com.br/upload/produto/arquivo/ecs-974-neo-controlador-digital-temperatura-para-congelados-220v.pdf"},
+                {name:"ECS-961 NEO",note:"Controlador eletrônico da linha ECS para refrigeração.",manualUrl:"https://institucional.elitechbrasil.com.br/wp-content/uploads/2019/08/Manual-ECS-961.pdf"},
+                {name:"ECS-974",note:"Geração anterior da família ainda encontrada em campo.",manualUrl:"https://xzhuaying.com/static/upload/file/20250122/1737516733134459.pdf"}
             ]
         },
         {
@@ -104,8 +112,8 @@
             use:"Controle de temperatura e processos térmicos, inclusive refrigeração.",
             source:"https://www.coel.com.br/produto/k49e-controlador-de-temperatura/manuais/",
             models:[
-                {name:"K49E",note:"Controle ON/OFF ou PID, com aplicação em aquecimento ou refrigeração."},
-                {name:"K49P",note:"Controle de tempo e temperatura com rampas, patamares e múltiplas saídas."}
+                {name:"K49E",note:"Controle ON/OFF ou PID, com aplicação em aquecimento ou refrigeração.",manualUrl:"https://cdn.media.coel.com.br/uploads/2016/08/Manual-de-Instrucoes-K49E_r5.pdf"},
+                {name:"K49P",note:"Controle de tempo e temperatura com rampas, patamares e múltiplas saídas.",manualUrl:"https://cdn.media.coel.com.br/uploads/2016/08/Manual-de-Instrucoes-K49P_r2.pdf"}
             ]
         }
     ];
