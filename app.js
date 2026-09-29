@@ -17962,6 +17962,148 @@ function renderTechnicalErrorCodesArea(){
     `;
 }
 
+const btLGErrorCodes = {
+    "CH05": {
+        "code": "CH05",
+        "title": "Falha de comunicação entre evaporadora e condensadora",
+        "scope": "Splits inverter compatíveis; confirme o código no manual do modelo.",
+        "causes": [
+            "Ligação de comunicação incorreta ou interrompida, especialmente após instalação ou mudança de local.",
+            "Falha temporária de alimentação ou outra anomalia elétrica."
+        ],
+        "steps": [
+            "Desligue no disjuntor por cerca de 5 minutos e religue; observe se o erro retorna.",
+            "Se surgiu após a instalação, confira com o circuito desligado os bornes e o cabo de comunicação conforme o esquema do modelo.",
+            "Se persistir, verifique alimentação e comunicação das unidades pelo manual de serviço antes de condenar placas."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH10": {
+        "code": "CH10",
+        "title": "Falha no ventilador da unidade interna",
+        "scope": "A descrição e os testes elétricos dependem do modelo.",
+        "causes": [
+            "Obstrução ou travamento do ventilador interno.",
+            "Falha no motor, conexões ou circuito de acionamento, a confirmar por teste."
+        ],
+        "steps": [
+            "Desligue a alimentação e procure obstruções visíveis no ventilador; remova resíduos com segurança.",
+            "Se a hélice está livre e o erro continua, confira motor, conectores e acionamento conforme o manual do modelo."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306",
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH26": {
+        "code": "CH26",
+        "title": "Falha na partida ou detecção de posição do compressor inverter",
+        "scope": "Referência de split LG de parede; a sequência de testes varia por modelo.",
+        "causes": [
+            "Conexão ou fiação do compressor inverter com defeito.",
+            "Problema no compressor ou no seu circuito de acionamento/placa externa.",
+            "Condição de sobrecarga ou falha no circuito frigorífico, a investigar."
+        ],
+        "steps": [
+            "Faça um único ciclo de desligamento no disjuntor por cerca de 5 minutos e veja se o código retorna.",
+            "Com o equipamento desenergizado e seguindo o tempo de descarga do manual, confira conectores e cabos do compressor.",
+            "Se persistir, compare medições do compressor e do acionamento com o manual específico; não substitua compressor ou placa apenas pelo código."
+        ],
+        "sources": [
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf",
+            "https://www.lg.com/africa/support/product-help/CT20080061-20155399529373"
+        ]
+    },
+    "CH38": {
+        "code": "CH38",
+        "title": "Proteção por indicação de pouco refrigerante",
+        "scope": "Em alguns modelos aparece como F4; confirme pelo manual.",
+        "causes": [
+            "Carga insuficiente, especialmente após instalação ou realocação.",
+            "Problema na conexão das tubulações; em uso normal, também pode haver falha elétrica temporária."
+        ],
+        "steps": [
+            "Se surgiu após instalação, inspecione conexões e tubulações e confirme a carga conforme a especificação do equipamento.",
+            "Se surgiu durante o uso, desligue por cerca de 5 minutos e confira se retorna.",
+            "Persistindo, investigue a causa da perda antes de corrigir a carga; não acrescente refrigerante apenas pelo código."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH61": {
+        "code": "CH61",
+        "title": "Temperatura elevada na unidade externa ou interna",
+        "scope": "Em refrigeração indica aquecimento da unidade externa; em aquecimento, da interna. Pode variar por modelo.",
+        "causes": [
+            "Em refrigeração: recirculação de ar quente ou ventilação insuficiente da condensadora.",
+            "Em aquecimento: entrada de ar restrita, inclusive por filtro interno sujo."
+        ],
+        "steps": [
+            "Em refrigeração, libere a ventilação da condensadora e remova obstáculos ao redor.",
+            "Em aquecimento, confira e limpe o filtro da unidade interna.",
+            "Após corrigir a condição, desligue no disjuntor por cerca de 5 minutos; se persistir, faça inspeção técnica."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH66": {
+        "code": "CH66",
+        "title": "Anomalia na comunicação ou na ligação das tubulações",
+        "scope": "Aplicável aos modelos inverter que oferecem essa detecção.",
+        "causes": [
+            "Ligação de comunicação ou tubulação incorreta após instalação ou realocação.",
+            "Falha elétrica temporária durante o uso."
+        ],
+        "steps": [
+            "Se apareceu logo após instalar, confronte cabos e tubulações com o diagrama do modelo, com a alimentação desligada.",
+            "Se apareceu durante o uso, desligue no disjuntor por cerca de 5 minutos e observe se retorna.",
+            "Persistindo, teste o circuito de comunicação e confira a instalação antes de trocar componentes."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    },
+    "CH67": {
+        "code": "CH67",
+        "title": "Falha no ventilador da unidade externa",
+        "scope": "Alguns modelos mostram EF; confirme a equivalência no manual.",
+        "causes": [
+            "Resíduos ou obstrução do ventilador externo.",
+            "Falha no motor ou acionamento a confirmar por diagnóstico."
+        ],
+        "steps": [
+            "Desligue a alimentação e confira se há obstrução visível no ventilador externo.",
+            "Remova resíduos com segurança; se o erro continuar, teste motor, conectores e acionamento segundo o manual específico."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306",
+            "https://media.us.lg.com/m/29b47ecceeb3f1c4/original/IM_SZ_WallMounted_ExtendedPiping_3HLV3-pdf.pdf"
+        ]
+    },
+    "CH93": {
+        "code": "CH93",
+        "title": "Comunicação instável entre unidades",
+        "scope": "Em alguns modelos posteriores a 2021, também pode indicar condensadora sem alimentação.",
+        "causes": [
+            "Alimentação da condensadora ausente ou instável.",
+            "Conexões ou comunicação entre unidades com falha."
+        ],
+        "steps": [
+            "Confira disjuntor e alimentação das duas unidades; em modelos com alimentação separada, confirme ambos os circuitos.",
+            "Se surgiu após instalação, confira as conexões de comunicação pelo esquema do modelo.",
+            "Desligue no disjuntor por cerca de 5 minutos; persistindo, faça diagnóstico técnico da alimentação e comunicação."
+        ],
+        "sources": [
+            "https://www.lg.com/us/support/help-library/lg-air-conditioner-guide-to-error-codes--20155047719306"
+        ]
+    }
+};
+
+
 function openTechnicalErrorCodeBrand(brand){
 
     if(brand !== "lg"){ return; }
@@ -17976,11 +18118,63 @@ function openTechnicalErrorCodeBrand(brand){
         <div class="bt-tech-workspace-title">
             <div>
                 <strong>LG • Códigos de erro</strong>
-                <span>Consulta técnica para equipamentos LG.</span>
+                <span>Digite o código exibido pelo aparelho.</span>
             </div>
         </div>
+        <div class="bt-tech-field full">
+            <label for="btLGErrorCodeInput">Código LG</label>
+            <input id="btLGErrorCodeInput" type="text" inputmode="text" autocomplete="off"
+                maxlength="6" placeholder="Ex.: CH26">
+        </div>
+        <button class="bt-tech-calc-button" type="button" onclick="searchTechnicalLGErrorCode()">
+            🔎 Consultar código
+        </button>
+        <div id="btLGErrorResult" aria-live="polite"></div>
         <div class="bt-tech-info-note">
-            A base de códigos LG está em preparação. Os diagnósticos aparecerão aqui após a conferência das fontes técnicas.
+            Base inicial: ${Object.keys(btLGErrorCodes).join(", ")}. Confirme o modelo e consulte o manual específico: o mesmo código pode variar entre linhas. Desligue a alimentação antes de abrir o equipamento; diagnóstico interno exige profissional habilitado.
+        </div>
+    `;
+
+    document.getElementById("btLGErrorCodeInput")?.addEventListener("keydown",event=>{
+        if(event.key === "Enter"){ searchTechnicalLGErrorCode(); }
+    });
+}
+
+function searchTechnicalLGErrorCode(){
+
+    const input = document.getElementById("btLGErrorCodeInput");
+    const result = document.getElementById("btLGErrorResult");
+    if(!input || !result){ return; }
+
+    const digits = input.value.trim().toUpperCase()
+        .replace(/\s+/g,"").replace(/^CH/,"");
+    const code = /^\d{1,3}$/.test(digits)
+        ? "CH" + digits.padStart(2,"0")
+        : "";
+    const entry = btLGErrorCodes[code];
+
+    if(!entry){
+        result.innerHTML = `
+            <div class="bt-tech-result" style="display:block;margin-top:16px;">
+                <div class="bt-tech-result-label">Código não encontrado nesta base</div>
+                <div class="bt-tech-result-secondary">Confira o código e o modelo na etiqueta. Por enquanto, consulte um dos códigos listados abaixo; não há diagnóstico cadastrado para esta busca.</div>
+            </div>
+        `;
+        return;
+    }
+
+    result.innerHTML = `
+        <div class="bt-tech-result" style="display:block;margin-top:16px;">
+            <div class="bt-tech-result-label">${entry.code} • ${entry.title}</div>
+            <div class="bt-tech-result-secondary">${entry.scope}</div>
+            <div style="margin-top:14px;"><strong>Causas possíveis</strong>
+                <ul style="padding-left:20px;line-height:1.55;">${entry.causes.map(item=>`<li>${item}</li>`).join("")}</ul>
+            </div>
+            <div style="margin-top:14px;"><strong>O que verificar / como corrigir</strong>
+                <ol style="padding-left:20px;line-height:1.55;">${entry.steps.map(item=>`<li>${item}</li>`).join("")}</ol>
+            </div>
+            <div class="bt-tech-result-secondary">O código orienta a inspeção; não identifica sozinho uma peça defeituosa.</div>
+            <div style="margin-top:12px;">${entry.sources.map((url,index)=>`<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:#5ecfff;margin-right:12px;">Fonte LG ${index+1}</a>`).join("")}</div>
         </div>
     `;
 }
@@ -18176,6 +18370,9 @@ window.openTechnicalCompressorTool =
 
 window.openTechnicalErrorCodeBrand =
     openTechnicalErrorCodeBrand;
+
+window.searchTechnicalLGErrorCode =
+    searchTechnicalLGErrorCode;
 
 window.renderTechnicalErrorCodesArea =
     renderTechnicalErrorCodesArea;
