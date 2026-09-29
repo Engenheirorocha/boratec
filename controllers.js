@@ -129,6 +129,7 @@
     })));
 
     let activeModels = models;
+    let activeManualUrl = null;
     let carouselIndex = 0;
     let pointerStartX = null;
     let dragged = false;
@@ -168,7 +169,7 @@
             .bt-ctrl-detail{display:none}.bt-ctrl-detail.show{display:block}.bt-ctrl-list-view.hidden{display:none}
             .bt-ctrl-detail-head{display:flex;align-items:flex-start;gap:12px;margin:20px 0}.bt-ctrl-detail-title{flex:1}.bt-ctrl-detail-title small{display:block;color:#39c9ef;font-size:9px;font-weight:900;text-transform:uppercase}.bt-ctrl-detail-title h2{font-size:27px;line-height:1.05;margin:5px 0}.bt-ctrl-detail-title span{color:#91a2ab;font-size:12px}
             .bt-ctrl-detail-box{border:1px solid #39474f;border-radius:12px;background:#11191e;padding:15px;margin:12px 0}.bt-ctrl-detail-box b{display:block;font-size:12px;margin-bottom:7px}.bt-ctrl-detail-box p,.bt-ctrl-detail-box li{color:#a9b6bd;font-size:12px;line-height:1.55}.bt-ctrl-detail-box ul{margin:0;padding-left:18px}
-            .bt-ctrl-manual-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 9px}.bt-ctrl-manual-title strong{font-size:15px}.bt-ctrl-pdf{width:100%;height:62vh;min-height:520px;border:1px solid #41515a;border-radius:12px;background:#fff;overflow:hidden}.bt-ctrl-pdf iframe{width:100%;height:100%;border:0;background:#fff}.bt-ctrl-manual-fallback{padding:22px;border:1px dashed #44545d;border-radius:12px;text-align:center;color:#96a6af;font-size:12px;line-height:1.5;background:#11191e}.bt-ctrl-official{display:block;margin-top:12px;padding:13px;border-radius:10px;text-align:center;text-decoration:none;background:linear-gradient(180deg,#0aaee0,#087fae);color:#fff;font-size:12px;font-weight:950;border:1px solid #22c9f6}
+            .bt-ctrl-manual-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 9px}.bt-ctrl-manual-title strong{font-size:15px}.bt-ctrl-pdf-preview{position:relative;width:100%;height:40vh;min-height:300px;max-height:500px;border:1px solid #41515a;border-radius:12px;background:#fff;overflow:hidden}.bt-ctrl-pdf-preview iframe{width:100%;height:100%;border:0;background:#fff;pointer-events:none}.bt-ctrl-pdf-tap{position:absolute;inset:0;width:100%;height:100%;border:0;background:linear-gradient(180deg,transparent 60%,rgba(4,10,14,.62));color:#fff;cursor:pointer}.bt-ctrl-pdf-tap span{position:absolute;right:12px;bottom:12px;padding:10px 13px;border-radius:9px;background:#078bb8;color:#fff;font-size:11px;font-weight:900;box-shadow:0 3px 12px #0008}.bt-ctrl-pdf-modal{display:none;position:fixed;inset:0;z-index:20;background:#070d11}.bt-ctrl-pdf-modal.show{display:block}.bt-ctrl-pdf-modal iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}.bt-ctrl-pdf-close{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:2;width:42px;height:42px;border:1px solid #66808d;border-radius:50%;background:#14232bea;color:#fff;font-size:25px;cursor:pointer}.bt-ctrl-manual-fallback{padding:22px;border:1px dashed #44545d;border-radius:12px;text-align:center;color:#96a6af;font-size:12px;line-height:1.5;background:#11191e}.bt-ctrl-official{display:block;margin-top:12px;padding:13px;border-radius:10px;text-align:center;text-decoration:none;background:linear-gradient(180deg,#0aaee0,#087fae);color:#fff;font-size:12px;font-weight:950;border:1px solid #22c9f6}
             .bt-ctrl-note{margin-top:11px;color:#73848e;font-size:10px;line-height:1.5}
             @media(max-width:520px){.bt-ctrl-card{width:min(72vw,250px)}.bt-ctrl-pdf{height:68vh;min-height:460px}}
         `;
@@ -201,6 +202,10 @@
                     </div>
                 </div>
                 <div id="btCtrlDetail" class="bt-ctrl-detail"></div>
+            </div>
+            <div id="btCtrlManualModal" class="bt-ctrl-pdf-modal" aria-label="Manual ampliado">
+                <button class="bt-ctrl-pdf-close" type="button" onclick="closeBoraTecManualFullScreen()" aria-label="Fechar manual">×</button>
+                <iframe title="Manual ampliado do controlador" loading="lazy"></iframe>
             </div>`;
         document.body.appendChild(screen);
         document.getElementById("btCtrlMainBack").addEventListener("click",backMain);
@@ -330,11 +335,33 @@
         document.getElementById("btControllersScreen")?.scrollTo(0,0);
     }
 
+    function manualViewerUrl(url){
+        return "https://docs.google.com/gview?embedded=1&url="+encodeURIComponent(url);
+    }
+
+    function openManualFullscreen(){
+        if(!activeManualUrl) return;
+        const modal=document.getElementById("btCtrlManualModal");
+        const frame=modal?.querySelector("iframe");
+        if(!modal||!frame) return;
+        frame.src=manualViewerUrl(activeManualUrl);
+        modal.classList.add("show");
+    }
+
+    function closeManualFullscreen(){
+        const modal=document.getElementById("btCtrlManualModal");
+        if(!modal) return;
+        modal.classList.remove("show");
+        const frame=modal.querySelector("iframe");
+        if(frame) frame.src="about:blank";
+    }
+
     function openModel(familyId,index){
         const f=families.find(item=>item.id===familyId); const m=f?.models?.[index]; if(!f||!m) return;
         const list=document.getElementById("btCtrlListView"); const detail=document.getElementById("btCtrlDetail");
         list.classList.add("hidden"); detail.classList.add("show");
         const manual=m.manualUrl||null;
+        activeManualUrl=manual;
         detail.innerHTML=`
             <div class="bt-ctrl-detail-head">
                 <button class="bt-ctrl-back" type="button" onclick="openBoraTecControllersList()" aria-label="Voltar">‹</button>
@@ -343,7 +370,7 @@
             <div class="bt-ctrl-detail-box"><b>Aplicação</b><p>${esc(m.note)} ${esc(f.use)}</p></div>
             <div class="bt-ctrl-detail-box"><b>Antes de alterar parâmetros</b><ul><li>Confirme o modelo e o sufixo completos.</li><li>Confira alimentação, sensores e diagrama correspondente.</li><li>Registre set point e parâmetros atuais antes de modificar.</li><li>Desenergize o equipamento antes de qualquer alteração de cabeamento.</li></ul></div>
             <div class="bt-ctrl-manual-title"><strong>Manual do fabricante</strong></div>
-            ${manual ? `<div class="bt-ctrl-pdf"><iframe src="${esc(manual)}#view=FitH" title="Manual ${esc(m.name)}" loading="lazy"></iframe></div><div class="bt-ctrl-note">Se o fabricante bloquear a visualização dentro do app, use o botão abaixo.</div>` : `<div class="bt-ctrl-manual-fallback">Ainda não temos um PDF direto deste modelo para exibir dentro do BoraTec. O botão abaixo leva à fonte oficial do fabricante para escolher a revisão correta.</div>`}
+            ${manual ? `<div class="bt-ctrl-pdf-preview"><iframe src="${esc(manualViewerUrl(manual))}" title="Prévia do manual ${esc(m.name)}" loading="lazy"></iframe><button class="bt-ctrl-pdf-tap" type="button" onclick="openBoraTecManualFullScreen()"><span>TOQUE PARA AMPLIAR ↗</span></button></div><div class="bt-ctrl-note">Toque na prévia para abrir o PDF em tela cheia e ampliar a leitura.</div>` : `<div class="bt-ctrl-manual-fallback">Ainda não temos um PDF direto deste modelo para exibir dentro do BoraTec. O botão abaixo leva à fonte oficial do fabricante para escolher a revisão correta.</div>`}
             <a class="bt-ctrl-official" href="${esc(manual||f.source)}" target="_blank" rel="noopener noreferrer">ABRIR FONTE OFICIAL ↗</a>`;
         document.getElementById("btControllersScreen")?.scrollTo(0,0);
     }
@@ -381,6 +408,8 @@
         return true;
     }
 
+    window.openBoraTecManualFullScreen=openManualFullscreen;
+    window.closeBoraTecManualFullScreen=closeManualFullscreen;
     window.openBoraTecControllers=openControllers;
     window.openBoraTecControllersList=showList;
     window.openBoraTecControllerModel=openModel;
