@@ -11577,6 +11577,7 @@ function createCommunityInterface(){
     );
 
 
+    btCommunityPhotoControls();
     const input =
         document.getElementById(
             "btCommunityInput"
@@ -11806,6 +11807,7 @@ async function loadCommunityMessages(
             sender_id,
             content,
             reply_to_id,
+            image_path,
             created_at,
             profiles (
                 id,
@@ -11832,6 +11834,8 @@ async function loadCommunityMessages(
             data
             ||
             [];
+
+        await btLoadCommunityPhotoLinks(messages);
 
         const messageMap =
             new Map(
@@ -12160,6 +12164,7 @@ async function loadCommunityMessages(
                                 ${replyHTML}
 
                                 <div class="bt-community-text">${escapeHtml(message.content)}</div>
+                                ${btCommunityPhotoHTML(message)}
 
                                 <div class="bt-community-actions">
 
@@ -12495,7 +12500,8 @@ async function sendCommunityMessage(
         )
         .trim();
 
-    if(!content){
+    if(btCommunityPhotoBusy){ showToast("Aguarde a preparação ou o envio da foto."); return; }
+    if(!content && !btCommunityPhoto){
         return;
     }
 
@@ -12506,7 +12512,17 @@ async function sendCommunityMessage(
         return;
     }
 
+    let uploadedPaths = [], photoPath = null, inserted = false;
+    btCommunityPhotoBusy = true;
     try{
+        if(btCommunityPhoto){
+            const folder=boraUser.id+"/"+crypto.randomUUID();
+            photoPath=folder+"/photo.jpg";
+            for(const [path,blob] of [[photoPath,btCommunityPhoto.photo],[folder+"/thumb.jpg",btCommunityPhoto.thumb]]){
+                const {error}=await boraSupabase.storage.from("community-photos").upload(path,blob,{contentType:"image/jpeg",cacheControl:"60",upsert:false});
+                if(error)throw error;uploadedPaths.push(path);
+            }
+        }
 
         if(button){
             button.disabled =
@@ -12524,7 +12540,8 @@ async function sendCommunityMessage(
             sender_id:
                 boraUser.id,
             content:
-                content,
+                content || "📷 Foto",
+            image_path:photoPath,
             reply_to_id:
                 btCommunityReplyTo?.id
                 ||
@@ -12535,6 +12552,8 @@ async function sendCommunityMessage(
             throw error;
         }
 
+        inserted = true;
+        btClearCommunityPhoto();
         if(input){
             input.value =
                 "";
@@ -12550,6 +12569,7 @@ async function sendCommunityMessage(
         );
 
     }catch(error){
+        if(!inserted && uploadedPaths.length)await boraSupabase.storage.from("community-photos").remove(uploadedPaths);
 
         console.error(
             "Erro ao enviar comunidade:",
@@ -12561,6 +12581,7 @@ async function sendCommunityMessage(
         );
 
     }finally{
+        btCommunityPhotoBusy = false;
 
         if(button){
             button.disabled =
@@ -19626,3 +19647,87 @@ window.openBoraTecHome = openBoraTecHome;
 `;
     document.head.appendChild(style);
 })();
+
+/* Community photos: private storage, 48-hour retention. */
+let btCommunityPhoto = null, btCommunityPhotoPreview = null, btCommunityPhotoBusy = false, btCommunityPhotoSelection = 0;
+const btCommunityPhotoLinks = new Map();
+function btClearCommunityPhoto(){
+    btCommunityPhotoSelection++;
+    btCommunityPhoto=null;
+    if(btCommunityPhotoPreview) URL.revokeObjectURL(btCommunityPhotoPreview);
+    btCommunityPhotoPreview=null;
+    const preview=document.getElementById('btCommunityPhotoPreview');
+    if(preview){preview.hidden=true;preview.querySelector('img').removeAttribute('src');}
+}
+function btCommunityPhotoControls(){
+    const form=document.querySelector('#btCommunityOverlay .bt-community-compose');
+    if(!form || document.getElementById('btCommunityPhotoPick'))return;
+    const style=document.createElement('style');style.textContent=`
+.bt-photo-attach{display:flex;flex-direction:column;gap:4px}.bt-photo-attach button{background:#123b60;color:white;border:1px solid #397089;border-radius:8px;padding:8px;font:12px system-ui}
+#btCommunityPhotoPreview{padding:8px 12px;background:#0a2239}#btCommunityPhotoPreview[hidden]{display:none}
+#btCommunityPhotoPreview img{height:90px;max-width:75%;object-fit:contain}#btCommunityPhotoPreview button{margin-left:10px}
+.bt-community-photo{display:block;border:0;background:none;padding:0;margin-top:8px}.bt-community-photo img{max-width:100%;width:240px;max-height:220px;object-fit:contain;border-radius:8px}
+#btCommunityPhotoZoom{background:#06182b;color:white;border:1px solid #397089;max-width:96vw;max-height:92dvh;padding:12px;z-index:2147483647}#btCommunityPhotoZoom::backdrop{background:#000c}#btCommunityPhotoZoom img{max-width:88vw;max-height:78dvh;display:block}#btCommunityPhotoZoom button{padding:8px}
+`;document.head.appendChild(style);
+    const controls=document.createElement('div');controls.className='bt-photo-attach';
+    controls.innerHTML='<button type="button" id="btCommunityPhotoPick" aria-label="Anexar foto da galeria">📎 Foto</button><button type="button" id="btCommunityPhotoCamera" aria-label="Tirar foto">📷 Câmera</button>';
+    form.prepend(controls);
+    const preview=document.createElement('div');preview.id='btCommunityPhotoPreview';preview.hidden=true;
+    preview.innerHTML='<img alt="Foto preparada para envio"><button type="button">Remover</button><small style="display:block">A foto expira após 48 horas.</small>';
+    form.before(preview);preview.querySelector('button').onclick=()=>{if(!btCommunityPhotoBusy)btClearCommunityPhoto()};
+    for(const [id,capture] of [['btCommunityPhotoPick',false],['btCommunityPhotoCamera',true]]){
+        const input=document.createElement('input');input.type='file';input.accept='image/*';input.hidden=true;
+        if(capture)input.setAttribute('capture','environment');
+        form.appendChild(input);
+        document.getElementById(id).onclick=()=>{if(!btCommunityPhotoBusy)input.click()};
+        input.onchange=async()=>{const file=input.files[0];input.value='';if(file)await btPrepareCommunityPhoto(file)};
+    }
+}
+async function btPrepareCommunityPhoto(file){
+    if(btCommunityPhotoBusy)return;
+    if(file.size>20*1024*1024 || !file.type.startsWith('image/')){showToast('Escolha uma foto de até 20 MB.');return;}
+    const selection=++btCommunityPhotoSelection;btCommunityPhotoBusy=true;
+    try{
+        const image=await createImageBitmap(file);
+        const canvas=document.createElement('canvas');
+        const scale=Math.min(1,1600/Math.max(image.width,image.height));canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);
+        const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);image.close();
+        const encode=(c,q)=>new Promise(resolve=>c.toBlob(resolve,'image/jpeg',q));
+        let photo=await encode(canvas,.84);
+        if(!photo)throw Error('Encoding failed');
+        if(photo.size>1024*1024)photo=await encode(canvas,.72);
+        if(!photo || photo.size>1024*1024)throw Error('Image too large');
+        const thumbCanvas=document.createElement('canvas');const ts=Math.min(1,360/Math.max(canvas.width,canvas.height));thumbCanvas.width=Math.round(canvas.width*ts);thumbCanvas.height=Math.round(canvas.height*ts);
+        thumbCanvas.getContext('2d').drawImage(canvas,0,0,thumbCanvas.width,thumbCanvas.height);
+        const thumb=await encode(thumbCanvas,.72);if(!thumb)throw Error('Thumbnail failed');
+        if(selection!==btCommunityPhotoSelection)return;
+        btClearCommunityPhoto();btCommunityPhoto={photo,thumb};
+        btCommunityPhotoPreview=URL.createObjectURL(photo);
+        const preview=document.getElementById('btCommunityPhotoPreview');preview.querySelector('img').src=btCommunityPhotoPreview;preview.hidden=false;
+        showToast('Foto preparada. Confira os detalhes antes de enviar.');
+    }catch(error){showToast('Não foi possível preparar a foto. Tente JPG ou PNG.');}
+    finally{btCommunityPhotoBusy=false;}
+}
+async function btLoadCommunityPhotoLinks(messages){
+    btCommunityPhotoLinks.clear();
+    const paths=messages.filter(m=>m.image_path && Date.now()<new Date(m.created_at).getTime()+48*3600000).flatMap(m=>[m.image_path,m.image_path.replace(/photo\.jpg$/,'thumb.jpg')]);
+    if(!paths.length)return;
+    const {data,error}=await boraSupabase.storage.from('community-photos').createSignedUrls(paths,600);
+    if(!error)(data||[]).forEach(x=>{if(x.signedUrl)btCommunityPhotoLinks.set(x.path,x.signedUrl)});
+}
+function btCommunityPhotoHTML(message){
+    if(!message.image_path)return '';
+    if(Date.now()>=new Date(message.created_at).getTime()+48*3600000)return '<small>Foto expirada</small>';
+    const thumb=btCommunityPhotoLinks.get(message.image_path.replace(/photo\.jpg$/,'thumb.jpg'));
+    if(!thumb)return '<small>Foto temporariamente indisponível</small>';
+    return '<button class="bt-community-photo" type="button" onclick="btOpenCommunityPhoto(this)" data-path="'+escapeHtml(message.image_path)+'" data-expires="'+(new Date(message.created_at).getTime()+48*3600000)+'" aria-label="Ampliar foto"><img loading="lazy" src="'+escapeHtml(thumb)+'" alt="Foto anexada à mensagem"></button>';
+}
+async function btOpenCommunityPhoto(button){
+    const expires=Number(button.dataset.expires);
+    if(Date.now()>=expires){showToast('Foto expirada');return}
+    const {data,error}=await boraSupabase.storage.from('community-photos').createSignedUrl(button.dataset.path,Math.max(1,Math.min(600,Math.floor((expires-Date.now())/1000))));
+    if(error){showToast('Não foi possível abrir a foto');return}
+    let dialog=document.getElementById('btCommunityPhotoZoom');
+    if(!dialog){dialog=document.createElement('dialog');dialog.id='btCommunityPhotoZoom';dialog.innerHTML='<button type="button">Fechar</button><img alt="Foto ampliada da comunidade">';dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.querySelector('img').removeAttribute('src'));document.body.appendChild(dialog)}
+    dialog.querySelector('img').src=data.signedUrl;if(!dialog.open)dialog.showModal();
+}
