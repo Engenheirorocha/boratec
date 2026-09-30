@@ -2443,6 +2443,8 @@ function createChatInterface(){
 
     }
 
+    btPrivatePhotoControls();
+
 }
 
 
@@ -2455,6 +2457,7 @@ async function openChat(
     title
 ){
 
+    if(currentConversationId !== conversationId) btClearPrivatePhoto();
     currentConversationId =
         conversationId;
 
@@ -3171,6 +3174,7 @@ async function loadChatMessages(){
     }
 
 
+    const loadingConversation = currentConversationId;
     const container =
         document.getElementById(
             "boratecChatMessages"
@@ -3199,6 +3203,7 @@ async function loadChatMessages(){
             conversation_id,
             sender_id,
             content,
+            image_path,
             created_at
         `)
         .eq(
@@ -3220,6 +3225,8 @@ async function loadChatMessages(){
         }
 
 
+        await btLoadPrivatePhotoLinks(data || []);
+        if(currentConversationId !== loadingConversation)return;
         renderMessages(
             data
             ||
@@ -3355,6 +3362,7 @@ function messageHTML(message){
                 message.content
             )}
 
+            ${btPrivatePhotoHTML(message)}
             <span class="bt-msg-time">
                 ${time}
             </span>
@@ -3371,92 +3379,32 @@ function messageHTML(message){
 ========================================================= */
 
 async function sendChatMessage(event){
-
-    event.preventDefault();
-
-
-    if(!currentConversationId){
-
-        return;
-
-    }
-
-
-    const input =
-        document.getElementById(
-            "boratecChatInput"
-        );
-
-
-    const content =
-        input
-        .value
-        .trim();
-
-
-    if(!content){
-
-        return;
-
-    }
-
-
-    input.value =
-        "";
-
-
-    try{
-
-        const {
-            error
-        } =
-        await boraSupabase
-        .from("messages")
-        .insert({
-
-            conversation_id:
-                currentConversationId,
-
-            sender_id:
-                boraUser.id,
-
-            content:
-                content
-
-        });
-
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "Erro enviar:",
-            error
-        );
-
-
-        input.value =
-            content;
-
-
-        showToast(
-            "Mensagem não enviada"
-        );
-
-    }
-
+ event.preventDefault();
+ if(!currentConversationId || !boraUser || !boraSupabase)return;
+ if(btPrivatePhotoBusy){showToast("Aguarde a preparação ou o envio da foto.");return;}
+ const conversation=currentConversationId, input=document.getElementById("boratecChatInput");
+ const content=input.value.trim(), draft=btPrivatePhotoConversation===conversation?btPrivatePhoto:null;
+ if(!content && !draft)return;
+ if(content.length>1000){showToast("Mensagem muito longa");return;}
+ const button=document.querySelector("#boratecChatOverlay .bt-chat-send");
+ btPrivatePhotoBusy=true; if(button)button.disabled=true;
+ let paths=[],imagePath=null,inserted=false;
+ try{
+  if(draft){
+   const folder=boraUser.id+"/"+conversation+"/"+crypto.randomUUID();imagePath=folder+"/photo.jpg";
+   for(const [path,blob] of [[imagePath,draft.photo],[folder+"/thumb.jpg",draft.thumb]]){
+    const {error}=await boraSupabase.storage.from("private-chat-photos").upload(path,blob,{contentType:"image/jpeg",cacheControl:"60",upsert:false});
+    if(error)throw error;paths.push(path);
+   }
+  }
+  const {error}=await boraSupabase.from("messages").insert({conversation_id:conversation,sender_id:boraUser.id,content:content || "📷 Foto",image_path:imagePath});
+  if(error)throw error;inserted=true;
+  if(currentConversationId===conversation){input.value="";btClearPrivatePhoto();}
+ }catch(error){
+  if(!inserted && paths.length)await boraSupabase.storage.from("private-chat-photos").remove(paths);
+  showToast("Mensagem não enviada. Tente novamente.");
+ }finally{btPrivatePhotoBusy=false;if(button)button.disabled=false;}
 }
-
-
-/* =========================================================
-   REALTIME CHAT
-========================================================= */
 
 function listenConversationMessages(){
 
@@ -3533,7 +3481,10 @@ function stopMessagesChannel(){
    APPEND MENSAGEM
 ========================================================= */
 
-function appendMessage(message){
+async function appendMessage(message){
+    if(message.conversation_id !== currentConversationId)return;
+    await btLoadPrivatePhotoLinks([message]);
+    if(message.conversation_id !== currentConversationId)return;
 
     const container =
         document.getElementById(
@@ -19729,5 +19680,94 @@ async function btOpenCommunityPhoto(button){
     if(error){showToast('Não foi possível abrir a foto');return}
     let dialog=document.getElementById('btCommunityPhotoZoom');
     if(!dialog){dialog=document.createElement('dialog');dialog.id='btCommunityPhotoZoom';dialog.innerHTML='<button type="button">Fechar</button><img alt="Foto ampliada da comunidade">';dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.querySelector('img').removeAttribute('src'));document.body.appendChild(dialog)}
+    dialog.querySelector('img').src=data.signedUrl;if(!dialog.open)dialog.showModal();
+}
+
+/* Community photos: private storage, 48-hour retention. */
+let btPrivatePhotoConversation = null;
+let btPrivatePhoto = null, btPrivatePhotoPreview = null, btPrivatePhotoBusy = false, btPrivatePhotoSelection = 0;
+const btPrivatePhotoLinks = new Map();
+function btClearCommunityPhoto(){
+    btPrivatePhotoSelection++;
+    btPrivatePhoto=null;
+    btPrivatePhotoConversation=null;
+    if(btPrivatePhotoPreview) URL.revokeObjectURL(btPrivatePhotoPreview);
+    btPrivatePhotoPreview=null;
+    const preview=document.getElementById('btPrivatePhotoPreview');
+    if(preview){preview.hidden=true;preview.querySelector('img').removeAttribute('src');}
+}
+function btPrivatePhotoControls(){
+    const form=document.querySelector('#boratecChatOverlay .bt-chat-footer');
+    if(!form || document.getElementById('btPrivatePhotoPick'))return;
+    const style=document.createElement('style');style.textContent=`
+#boratecChatOverlay .bt-chat-footer{position:static;flex-shrink:0;align-items:flex-end}#boratecChatInput{min-width:0}#boratecChatMessages{padding-bottom:18px}
+
+.bt-private-photo-attach{display:flex;flex-direction:column;gap:4px}.bt-photo-attach button{background:#123b60;color:white;border:1px solid #397089;border-radius:8px;padding:8px;font:12px system-ui}
+#btPrivatePhotoPreview{padding:8px 12px;background:#0a2239}#btPrivatePhotoPreview[hidden]{display:none}
+#btPrivatePhotoPreview img{height:90px;max-width:75%;object-fit:contain}#btPrivatePhotoPreview button{margin-left:10px}
+.bt-private-photo{display:block;border:0;background:none;padding:0;margin-top:8px}.bt-private-photo img{max-width:100%;width:240px;max-height:220px;object-fit:contain;border-radius:8px}
+#btPrivatePhotoZoom{background:#06182b;color:white;border:1px solid #397089;max-width:96vw;max-height:92dvh;padding:12px;z-index:2147483647}#btPrivatePhotoZoom::backdrop{background:#000c}#btPrivatePhotoZoom img{max-width:88vw;max-height:78dvh;display:block}#btPrivatePhotoZoom button{padding:8px}
+`;document.head.appendChild(style);
+    const controls=document.createElement('div');controls.className='bt-private-photo-attach';
+    controls.innerHTML='<button type="button" id="btPrivatePhotoPick" aria-label="Anexar foto da galeria">📎 Foto</button><button type="button" id="btPrivatePhotoCamera" aria-label="Tirar foto">📷 Câmera</button>';
+    form.prepend(controls);
+    const preview=document.createElement('div');preview.id='btPrivatePhotoPreview';preview.hidden=true;
+    preview.innerHTML='<img alt="Foto preparada para envio"><button type="button">Remover</button><small style="display:block">A foto expira após 48 horas.</small>';
+    form.before(preview);preview.querySelector('button').onclick=()=>{if(!btPrivatePhotoBusy)btClearCommunityPhoto()};
+    for(const [id,capture] of [['btPrivatePhotoPick',false],['btPrivatePhotoCamera',true]]){
+        const input=document.createElement('input');input.type='file';input.accept='image/*';input.hidden=true;
+        if(capture)input.setAttribute('capture','environment');
+        form.appendChild(input);
+        document.getElementById(id).onclick=()=>{if(!btPrivatePhotoBusy)input.click()};
+        input.onchange=async()=>{const file=input.files[0];input.value='';if(file)await btPrepareCommunityPhoto(file)};
+    }
+}
+async function btPrepareCommunityPhoto(file){
+    if(btPrivatePhotoBusy)return;
+    if(file.size>20*1024*1024 || !file.type.startsWith('image/')){showToast('Escolha uma foto de até 20 MB.');return;}
+    const conversation=currentConversationId;
+    const selection=++btPrivatePhotoSelection;btPrivatePhotoBusy=true;
+    try{
+        const image=await createImageBitmap(file);
+        const canvas=document.createElement('canvas');
+        const scale=Math.min(1,1600/Math.max(image.width,image.height));canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);
+        const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);image.close();
+        const encode=(c,q)=>new Promise(resolve=>c.toBlob(resolve,'image/jpeg',q));
+        let photo=await encode(canvas,.84);
+        if(!photo)throw Error('Encoding failed');
+        if(photo.size>1024*1024)photo=await encode(canvas,.72);
+        if(!photo || photo.size>1024*1024)throw Error('Image too large');
+        const thumbCanvas=document.createElement('canvas');const ts=Math.min(1,360/Math.max(canvas.width,canvas.height));thumbCanvas.width=Math.round(canvas.width*ts);thumbCanvas.height=Math.round(canvas.height*ts);
+        thumbCanvas.getContext('2d').drawImage(canvas,0,0,thumbCanvas.width,thumbCanvas.height);
+        const thumb=await encode(thumbCanvas,.72);if(!thumb)throw Error('Thumbnail failed');
+        if(selection!==btPrivatePhotoSelection || currentConversationId!==conversation)return;
+        btClearCommunityPhoto();btPrivatePhoto={photo,thumb};btPrivatePhotoConversation=conversation;
+        btPrivatePhotoPreview=URL.createObjectURL(photo);
+        const preview=document.getElementById('btPrivatePhotoPreview');preview.querySelector('img').src=btPrivatePhotoPreview;preview.hidden=false;
+        showToast('Foto preparada. Confira os detalhes antes de enviar.');
+    }catch(error){showToast('Não foi possível preparar a foto. Tente JPG ou PNG.');}
+    finally{btPrivatePhotoBusy=false;}
+}
+async function btLoadCommunityPhotoLinks(messages){
+    btPrivatePhotoLinks.clear();
+    const paths=messages.filter(m=>m.image_path && Date.now()<new Date(m.created_at).getTime()+48*3600000).flatMap(m=>[m.image_path,m.image_path.replace(/photo\.jpg$/,'thumb.jpg')]);
+    if(!paths.length)return;
+    const {data,error}=await boraSupabase.storage.from('private-chat-photos').createSignedUrls(paths,600);
+    if(!error)(data||[]).forEach(x=>{if(x.signedUrl)btPrivatePhotoLinks.set(x.path,x.signedUrl)});
+}
+function btPrivatePhotoHTML(message){
+    if(!message.image_path)return '';
+    if(Date.now()>=new Date(message.created_at).getTime()+48*3600000)return '<small>Foto expirada</small>';
+    const thumb=btPrivatePhotoLinks.get(message.image_path.replace(/photo\.jpg$/,'thumb.jpg'));
+    if(!thumb)return '<small>Foto temporariamente indisponível</small>';
+    return '<button class="bt-private-photo" type="button" onclick="btOpenCommunityPhoto(this)" data-path="'+escapeHtml(message.image_path)+'" data-expires="'+(new Date(message.created_at).getTime()+48*3600000)+'" aria-label="Ampliar foto"><img loading="lazy" src="'+escapeHtml(thumb)+'" alt="Foto anexada à mensagem"></button>';
+}
+async function btOpenCommunityPhoto(button){
+    const expires=Number(button.dataset.expires);
+    if(Date.now()>=expires){showToast('Foto expirada');return}
+    const {data,error}=await boraSupabase.storage.from('private-chat-photos').createSignedUrl(button.dataset.path,Math.max(1,Math.min(600,Math.floor((expires-Date.now())/1000))));
+    if(error){showToast('Não foi possível abrir a foto');return}
+    let dialog=document.getElementById('btPrivatePhotoZoom');
+    if(!dialog){dialog=document.createElement('dialog');dialog.id='btPrivatePhotoZoom';dialog.innerHTML='<button type="button">Fechar</button><img alt="Foto ampliada da comunidade">';dialog.querySelector('button').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.querySelector('img').removeAttribute('src'));document.body.appendChild(dialog)}
     dialog.querySelector('img').src=data.signedUrl;if(!dialog.open)dialog.showModal();
 }
