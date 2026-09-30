@@ -14027,36 +14027,8 @@ function createBoraTecHome(){
 }
 
 
-async function shareBoraTec(){
-    // Share the app entry point, without session parameters or the current screen.
-    const url = new URL("./index.html", window.location.href).href;
-    const button = document.getElementById("btShareAppButton");
-    if(button?.disabled) return;
-    if(button) button.disabled = true;
-
-    try{
-        if(typeof navigator.share === "function"){
-            try{
-                await navigator.share({
-                    title:"BoraTec",
-                    text:"Conheça o BoraTec: serviços, profissionais e ferramentas para refrigeração.",
-                    url
-                });
-                return;
-            }catch(error){
-                if(error?.name === "AbortError") return;
-            }
-        }
-
-        try{
-            await navigator.clipboard.writeText(url);
-            showToast("Link do BoraTec copiado! Envie para outros profissionais.");
-        }catch(error){
-            window.prompt("Copie o link e compartilhe o BoraTec:", url);
-        }
-    }finally{
-        if(button) button.disabled = false;
-    }
+function shareBoraTec(){
+    return window.openBoraTecShare();
 }
 
 window.shareBoraTec = shareBoraTec;
