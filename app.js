@@ -13916,6 +13916,12 @@ function createBoraTecHome(){
                     <small>PMOC, NR-10, NR-35 e referências para o trabalho em campo.</small>
                 </button>
 
+                <button class="bt-v182-action" type="button" onclick="window.location.assign('./orcamento.html')">
+                    <div class="bt-v182-action-icon">🧾</div>
+                    <strong>Orçamento</strong>
+                    <small>Crie e baixe um PDF com seus dados e sua logomarca.</small>
+                </button>
+
                 <button
                     class="bt-v182-action"
                     type="button"
