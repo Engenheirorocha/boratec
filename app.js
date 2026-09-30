@@ -19687,7 +19687,7 @@ async function btOpenCommunityPhoto(button){
 let btPrivatePhotoConversation = null;
 let btPrivatePhoto = null, btPrivatePhotoPreview = null, btPrivatePhotoBusy = false, btPrivatePhotoSelection = 0;
 const btPrivatePhotoLinks = new Map();
-function btClearCommunityPhoto(){
+function btClearPrivatePhoto(){
     btPrivatePhotoSelection++;
     btPrivatePhoto=null;
     btPrivatePhotoConversation=null;
@@ -19713,16 +19713,16 @@ function btPrivatePhotoControls(){
     form.prepend(controls);
     const preview=document.createElement('div');preview.id='btPrivatePhotoPreview';preview.hidden=true;
     preview.innerHTML='<img alt="Foto preparada para envio"><button type="button">Remover</button><small style="display:block">A foto expira após 48 horas.</small>';
-    form.before(preview);preview.querySelector('button').onclick=()=>{if(!btPrivatePhotoBusy)btClearCommunityPhoto()};
+    form.before(preview);preview.querySelector('button').onclick=()=>{if(!btPrivatePhotoBusy)btClearPrivatePhoto()};
     for(const [id,capture] of [['btPrivatePhotoPick',false],['btPrivatePhotoCamera',true]]){
         const input=document.createElement('input');input.type='file';input.accept='image/*';input.hidden=true;
         if(capture)input.setAttribute('capture','environment');
         form.appendChild(input);
         document.getElementById(id).onclick=()=>{if(!btPrivatePhotoBusy)input.click()};
-        input.onchange=async()=>{const file=input.files[0];input.value='';if(file)await btPrepareCommunityPhoto(file)};
+        input.onchange=async()=>{const file=input.files[0];input.value='';if(file)await btPreparePrivatePhoto(file)};
     }
 }
-async function btPrepareCommunityPhoto(file){
+async function btPreparePrivatePhoto(file){
     if(btPrivatePhotoBusy)return;
     if(file.size>20*1024*1024 || !file.type.startsWith('image/')){showToast('Escolha uma foto de até 20 MB.');return;}
     const conversation=currentConversationId;
@@ -19741,14 +19741,14 @@ async function btPrepareCommunityPhoto(file){
         thumbCanvas.getContext('2d').drawImage(canvas,0,0,thumbCanvas.width,thumbCanvas.height);
         const thumb=await encode(thumbCanvas,.72);if(!thumb)throw Error('Thumbnail failed');
         if(selection!==btPrivatePhotoSelection || currentConversationId!==conversation)return;
-        btClearCommunityPhoto();btPrivatePhoto={photo,thumb};btPrivatePhotoConversation=conversation;
+        btClearPrivatePhoto();btPrivatePhoto={photo,thumb};btPrivatePhotoConversation=conversation;
         btPrivatePhotoPreview=URL.createObjectURL(photo);
         const preview=document.getElementById('btPrivatePhotoPreview');preview.querySelector('img').src=btPrivatePhotoPreview;preview.hidden=false;
         showToast('Foto preparada. Confira os detalhes antes de enviar.');
     }catch(error){showToast('Não foi possível preparar a foto. Tente JPG ou PNG.');}
     finally{btPrivatePhotoBusy=false;}
 }
-async function btLoadCommunityPhotoLinks(messages){
+async function btLoadPrivatePhotoLinks(messages){
     btPrivatePhotoLinks.clear();
     const paths=messages.filter(m=>m.image_path && Date.now()<new Date(m.created_at).getTime()+48*3600000).flatMap(m=>[m.image_path,m.image_path.replace(/photo\.jpg$/,'thumb.jpg')]);
     if(!paths.length)return;
@@ -19760,9 +19760,9 @@ function btPrivatePhotoHTML(message){
     if(Date.now()>=new Date(message.created_at).getTime()+48*3600000)return '<small>Foto expirada</small>';
     const thumb=btPrivatePhotoLinks.get(message.image_path.replace(/photo\.jpg$/,'thumb.jpg'));
     if(!thumb)return '<small>Foto temporariamente indisponível</small>';
-    return '<button class="bt-private-photo" type="button" onclick="btOpenCommunityPhoto(this)" data-path="'+escapeHtml(message.image_path)+'" data-expires="'+(new Date(message.created_at).getTime()+48*3600000)+'" aria-label="Ampliar foto"><img loading="lazy" src="'+escapeHtml(thumb)+'" alt="Foto anexada à mensagem"></button>';
+    return '<button class="bt-private-photo" type="button" onclick="btOpenPrivatePhoto(this)" data-path="'+escapeHtml(message.image_path)+'" data-expires="'+(new Date(message.created_at).getTime()+48*3600000)+'" aria-label="Ampliar foto"><img loading="lazy" src="'+escapeHtml(thumb)+'" alt="Foto anexada à mensagem"></button>';
 }
-async function btOpenCommunityPhoto(button){
+async function btOpenPrivatePhoto(button){
     const expires=Number(button.dataset.expires);
     if(Date.now()>=expires){showToast('Foto expirada');return}
     const {data,error}=await boraSupabase.storage.from('private-chat-photos').createSignedUrl(button.dataset.path,Math.max(1,Math.min(600,Math.floor((expires-Date.now())/1000))));
