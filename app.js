@@ -13952,6 +13952,19 @@ function createBoraTecHome(){
 
             <div class="bt-home-help-row">
                 <button
+                    id="btShareAppButton"
+                    class="bt-home-help-button"
+                    style="grid-column:1 / -1"
+                    type="button"
+                    onclick="shareBoraTec()"
+                >
+                    <span class="bt-home-help-icon" aria-hidden="true">↗</span>
+                    <span class="bt-home-help-copy">
+                        <strong>Compartilhar BoraTec</strong>
+                        <small>Convide outros profissionais pelo link</small>
+                    </span>
+                </button>
+                <button
                     class="bt-home-help-button support"
                     type="button"
                     onclick="openBoraTecSupportWhatsApp()"
@@ -14012,6 +14025,41 @@ function createBoraTecHome(){
         });
     }
 }
+
+
+async function shareBoraTec(){
+    // Share the app entry point, without session parameters or the current screen.
+    const url = new URL("./index.html", window.location.href).href;
+    const button = document.getElementById("btShareAppButton");
+    if(button?.disabled) return;
+    if(button) button.disabled = true;
+
+    try{
+        if(typeof navigator.share === "function"){
+            try{
+                await navigator.share({
+                    title:"BoraTec",
+                    text:"Conheça o BoraTec: serviços, profissionais e ferramentas para refrigeração.",
+                    url
+                });
+                return;
+            }catch(error){
+                if(error?.name === "AbortError") return;
+            }
+        }
+
+        try{
+            await navigator.clipboard.writeText(url);
+            showToast("Link do BoraTec copiado! Envie para outros profissionais.");
+        }catch(error){
+            window.prompt("Copie o link e compartilhe o BoraTec:", url);
+        }
+    }finally{
+        if(button) button.disabled = false;
+    }
+}
+
+window.shareBoraTec = shareBoraTec;
 
 
 function openBoraTecSupportWhatsApp(){
@@ -18790,7 +18838,9 @@ async function initializeBoraTecV1(){
 
     createCommunityInterface();
 
-    createBoraTecHome();
+    // Show the first screen before any authentication or data request finishes.
+    // Later data refreshes must not send the user back here after navigation.
+    openBoraTecHome();
 
     setupCommunityNav();
 
@@ -18831,8 +18881,9 @@ async function initializeBoraTecV1(){
                     setupHelperAvailabilityPublishOption();
 
                     await loadBoraTecHome();
-
-                    openBoraTecHome();
+                    startBoraTecOnlinePresence().catch(error => {
+                        console.warn("BoraTec Presence: inicialização ignorada.", error);
+                    });
 
                     showInstallHelpIfNeeded();
 
