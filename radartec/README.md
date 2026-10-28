@@ -1,23 +1,15 @@
-# RadarTec — protótipo independente
+# RadarTec — portal de oportunidades para técnicos de refrigeração
 
-Esta pasta foi criada na branch `radartec-prototipo` do repositório BoraTec, **sem alterar a branch main nem a aplicação publicada**. A infraestrutura de produção atual do BoraTec não foi modificada.
+**Projeto independente do BoraTec.** Esta cópia está temporariamente isolada na branch `radartec-prototipo` de um repositório existente, porque o conector GitHub não permite criar um repositório novo. **Não foi alterada a aplicação BoraTec em produção.**
 
-## Funcionalidades da interface
-- PWA instalável, responsiva, com service worker e manifest.
-- Feed de oportunidades, busca, filtros por UF e segmento, classificação e ordenação, paginação e link oficial.
-- Mensagens claras de ausência de dados; nunca inventa editais.
-- Sanitização de textos vindos do coletor e links limitados a fontes oficiais.
+## Para publicar como projeto realmente independente
+1. Crie um novo repositório `radartec` em https://github.com/new.
+2. Transfira **o conteúdo desta pasta** para a raiz do novo repositório. O pacote ZIP completo preparado para publicação inclui uma versão mais extensa do site e coletor.
+3. No novo repositório: Settings > Pages > Deploy from a branch > main > / (root).
+4. No menu Actions execute `Atualizar oportunidades RadarTec` (workflow_dispatch).
+5. Se necessário habilite permissões de escrita em Settings > Actions > General > Workflow permissions.
+6. Confira o arquivo `data/licitacoes.json` e os logs do workflow.
 
-## Integração
-A interface aceita uma URL da função Supabase por `?api=https://SEU-PROJETO.supabase.co/functions/v1/radartec-feed`. O endpoint deve retornar JSON: `{updated_at: string, items: [{title,category,uf,city,agency,value,deadline,published_at,url}]}`.
+Este é um beta gratuito, sem cobrança e sem login. Os dados devem vir da API do Portal Nacional de Contratações Públicas (PNCP), podem sofrer bloqueios e conter resultados incompletos ou desatualizados. Confira sempre a situação e requisitos no edital oficial. O valor estimado não demonstra elegibilidade de MEI.
 
-O coletor está em `supabase/functions/radartec-feed/index.ts`. **Ainda não implantado:** precisamos de um projeto Supabase independente para preservar o BoraTec. Não usar service role no navegador.
-
-## Limites atuais
-- Sem feed real até implantar e testar o coletor.
-- Sem notificações push, autenticação, favoritos sincronizados ou pagamentos.
-- O PNCP não tem busca garantida por termos em todos os endpoints: é necessária classificação no backend.
-- Testar cobertura, paginação, datas, rate limits, situações de licitações e editais originais antes da produção.
-
-## Publicação
-Esta branch não altera o GitHub Pages existente. Para publicar de modo independente será necessário um repositório/site próprio ou um pipeline de publicação isolado, após revisão.
+**Atenção:** workflows agendados normalmente executam na branch padrão. Enquanto a cópia estiver somente na branch `radartec-prototipo` dentro do repositório BoraTec, a automação do novo projeto **não estará ativada**. Não altere a branch padrão do BoraTec para tentar ativá-la.
