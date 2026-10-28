@@ -1,6 +1,6 @@
 # RadarTec — protótipo independente
 
-Esta pasta foi criada na branch `radartec-prototipo` do repositório BoraTec, **sem alterar a branch main nem a aplicação publicada**. A infraestrutura de produção atual do BoraTec não foi modificada.
+O protótipo foi desenvolvido na branch `radartec-prototipo` e a interface foi copiada para a pasta isolada `radartec/` na branch main. Nenhum arquivo existente da aplicação BoraTec foi modificado. A publicação via GitHub Pages ainda precisa de verificação.
 
 ## Funcionalidades da interface
 - PWA instalável, responsiva, com service worker e manifest.
@@ -20,4 +20,4 @@ O coletor está em `supabase/functions/radartec-feed/index.ts`. **Ainda não imp
 - Testar cobertura, paginação, datas, rate limits, situações de licitações e editais originais antes da produção.
 
 ## Publicação
-Esta branch não altera o GitHub Pages existente. Para publicar de modo independente será necessário um repositório/site próprio ou um pipeline de publicação isolado, após revisão.
+A pasta `radartec/` na branch main pode ser servida pelo GitHub Pages existente se a publicação estiver configurada para a raiz da branch main. Isso não altera as telas existentes do BoraTec. Um domínio/repositório próprio pode ser criado futuramente.
