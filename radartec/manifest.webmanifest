@@ -1,0 +1,18 @@
+{
+  "name": "RadarTec — Licitações de Refrigeração",
+  "short_name": "RadarTec",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07121d",
+  "theme_color": "#071623",
+  "description": "Radar de licitações de refrigeração, PMOC e climatização",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
